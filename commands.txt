@@ -1,0 +1,8 @@
+| Acción              | Comando                       |
+| ------------------- | ----------------------------- |
+| Dev ambos           | `pnpm dev`                    |
+| Dev solo React      | `pnpm dev:frontend`           |
+| Dev solo Express    | `pnpm dev:backend`            |
+| Compilar ambos      | `pnpm build`                  |
+| Start backend prod  | `pnpm --filter express start` |
+| Start frontend prod | `pnpm --filter react start`   |

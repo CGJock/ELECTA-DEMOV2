@@ -1,0 +1,4 @@
+packages:
+  - packages/front-end/react
+  - packages/back-end/Express
+  - shared
