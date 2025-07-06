@@ -18,7 +18,7 @@ export async function initTables(): Promise<void> {
     //Creation of table votes
     await pool.query(`
       CREATE TABLE IF NOT EXISTS votes (
-      id SERIAL PRIMARY KEY,
+      id INTEGER PRIMARY KEY,
       valid_votes INT DEFAULT 0,
       blank_votes INT DEFAULT 0,
       null_votes INT DEFAULT 0
@@ -58,7 +58,7 @@ export async function initTables(): Promise<void> {
     //Creation of table departments_votes will show the rows for each departemnt and the votes for each party in specific department
     await pool.query(`
       CREATE TABLE IF NOT EXISTS departments_votes (
-      id INT PRIMARY KEY,
+      id SERIAL PRIMARY KEY,
       department_id INT REFERENCES departments(id) ON DELETE CASCADE,
       party_id INT REFERENCES political_parties(id) ON DELETE CASCADE,
       votes INT DEFAULT 0,

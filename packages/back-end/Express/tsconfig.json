@@ -15,6 +15,6 @@
       "@shared/*": ["../../shared/*"]
     }
   },
-  "include": ["*.ts", "routes/**/*.ts", "../../../../shared/**/*"],
+  "include": ["*.ts", "routes/**/*.ts", "../../../../shared/**/*", "src/database/db.ts", "src/database/seedCandidates.ts", "src/database/initTables.ts", "src/database/ensureDB.ts", "src/database/seedDepartments.ts", "src/database/seedParties.ts"],
   "exclude": ["node_modules", "dist"]
 }

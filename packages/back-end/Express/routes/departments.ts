@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import pool from '../db.js';
+import pool from '../src/database/db.js';
 
 const router = Router();
 
-// GET /users
-router.get('/departments', async (_req, res) => {
+// GET /departments
+router.get('/', async (_req, res) => {
   console.log('➡️  GET /departments hit');
   try {
     const result = await pool.query('SELECT * FROM departments ORDER BY id');

@@ -21,9 +21,9 @@ export async function insertDepartments(): Promise<void> {
       );
     }
 
-    console.log('Departamentos insertados correctamente');
+    console.log('Departments succesfully inserted');
   } catch (error) {
-    console.error('Error insertando departamentos:', error);
+    console.error('Error inserting departments:', error);
   }
 }
 

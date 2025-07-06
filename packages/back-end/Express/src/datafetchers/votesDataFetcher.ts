@@ -9,8 +9,8 @@ export interface VotesBreakdown {
   validVotes: number;
   validPercentage: number;
 }
-
-export async function getVotesBreakdown(pool: Pool): Promise<VotesBreakdown> {
+//makes an addition of the values in the table votes
+export async function getVotesSummary(pool: Pool): Promise<VotesBreakdown> {
   const result = await pool.query(`
     SELECT
       SUM(valid_votes) AS validVotes,
@@ -19,7 +19,7 @@ export async function getVotesBreakdown(pool: Pool): Promise<VotesBreakdown> {
       SUM(valid_votes + blank_votes + null_votes) AS totalVotes
     FROM votes;
   `);
-
+    //it's using results in the first row so is the only information needed
   const row = result.rows[0];
 
   const totalVotes = Number(row.totalvotes) || 0;
