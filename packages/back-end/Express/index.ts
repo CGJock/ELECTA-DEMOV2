@@ -1,34 +1,51 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-dotenv.config();
+import pool from './src/database/db.js';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
-import { ensureDatabase } from './ensureDB.js';
-import { initTables } from './initTables.js';
 import depRouter from './routes/departments.js';
-import  { insertDepartments }  from './seedDepartments.js'
-import { insertParties } from './seedParties.js';
-import { insertCandidates } from 'seedCandidates.js';
+import voteRouter from './routes/updateVotes.js';
+import { runMigrations } from './src/database/migrate.js';
+import { listenToVotesChanges } from './src/Listeners/listenVotes.js';
+import { setupSocketHandlers } from './src/Socketio/setupSocketHandlers.js'
+import { setupGlobalBroadcaster } from './src/Socketio/GlobalBroadcaster.js'
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:4000'],
-    methods: ['GET', 'POST']
+  origin: ['http://localhost:3000', 'http://localhost:4000'],
+  methods: ['GET', 'POST', 'UPDATE']
 }));
 
-app.use('/api', depRouter);
+app.use('/api/departments', depRouter);
+app.use('/api/votes', voteRouter);
+
+
+// Inicializar servidor HTTP + socket.io
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: ['http://localhost:3000', 'http://localhost:4000'],
+    methods: ['GET', 'POST']
+  }
+});
 
 (async () => {
   try {
-    await ensureDatabase();
-    await initTables();
-    await insertCandidates();
-    await insertDepartments();
-    await insertParties();
-    const PORT = process.env.PORT;
-    app.listen(PORT, () => {
+    await runMigrations();
+
+    const PORT = process.env.PORT || 5000;
+    httpServer.listen(PORT, () => {
+      
+      setupSocketHandlers(io, pool)
+      setupGlobalBroadcaster(io, pool); 
+      listenToVotesChanges(pool, io);//listen to notify in postresql
+      
       console.log(`Servidor backend listo en http://localhost:${PORT}`);
     });
   } catch (err) {

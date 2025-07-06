@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
+//create conection to postgresql
 const pool = new Pool({
   host: process.env.PG_HOST,
   port: Number(process.env.PG_PORT),

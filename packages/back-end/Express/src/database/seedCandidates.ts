@@ -20,8 +20,8 @@ export async function insertCandidates(): Promise<void> {
         [ candidate.id, candidate.name ]
       );
     }
-     console.log('Departamentos insertados correctamente');
+     console.log('Candidates succesfully inserted');
   } catch (error) {
-    console.error('Error insertando departamentos:', error);
+    console.error('Error inserting candidates:', error);
   }
 }

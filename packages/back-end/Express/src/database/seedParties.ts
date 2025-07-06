@@ -20,9 +20,9 @@ export async function insertParties(): Promise<void> {
         [party.id, party.abbr, party.name]
       );
     }
-     console.log('Departamentos insertados correctamente');
+     console.log('Parties succesfully inserted');
   } catch (error) {
-    console.error('Error insertando departamentos:', error);
+    console.error('Error inserting parties:', error);
   }
 }
 
