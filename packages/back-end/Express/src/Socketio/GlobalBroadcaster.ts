@@ -1,12 +1,12 @@
 // src/socket/globalBroadcaster.ts
 import { Server } from 'socket.io';
 import { Pool } from 'pg';
-import { getTotalSummary } from '../datafetchers/breakdownSummary.js'; 
-import { getLocationSummary } from '../datafetchers/locationBreakdownSummary.js'; 
+import { getTotalSummary } from '@fetchers/breakdownSummary.js'; 
+import { getLocationSummary } from '@fetchers/locationBreakdownSummary.js'; 
 
-const getAllLocationIds = async (db: Pool): Promise<number[]> => {
-  const result = await db.query('SELECT id FROM departments'); // or your table name
-  return result.rows.map(row => row.id);
+const getAllLocationIds = async (db: Pool): Promise<string[]> => {
+  const result = await db.query('SELECT code FROM departments'); // or your table name
+  return result.rows.map(row => row.code);
 };
 
 
@@ -23,14 +23,14 @@ export function setupGlobalBroadcaster(io: Server, db: Pool) {
 
   // Emitir resumen por cada ubicación solo a quienes estén suscritos
   const sendLocationSummaries = async () => {
-    const locationsIds = await getAllLocationIds(db);
+    const locationCodes = await getAllLocationIds(db);
 
-    for (const id of locationsIds) {
+    for (const code of locationCodes) {
       try {
-        const data = await getLocationSummary(db, id);
-        io.to(`location-${id}`).emit('location-breakdown-summary', data);
+        const data = await getLocationSummary(db, code);
+        io.to(`location-${code}`).emit('location-breakdown-summary', data);
       } catch {
-        io.to(`location-${id}`).emit('location-breakdown-summary', {
+        io.to(`location-${code}`).emit('location-breakdown-summary', {
           error: 'Failed to fetch location summary'
         });
       }

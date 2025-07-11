@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { Pool } from 'pg';
-import { getTotalSummary } from '../datafetchers/breakdownSummary.js'
-import { getLocationSummary } from '../datafetchers/locationBreakdownSummary.js';
+import { getTotalSummary } from '@fetchers/breakdownSummary.js'
+import { getLocationSummary } from '@fetchers/locationBreakdownSummary.js';
 
 
 export function setupSocketHandlers(io: Server, db: Pool) {
@@ -30,7 +30,7 @@ export function setupSocketHandlers(io: Server, db: Pool) {
     });
 
         // Suscripción a un locationId específico
-    socket.on('subscribe-to-location', (locationId: number) => {
+    socket.on('subscribe-to-location', (locationCode: string) => {
         // Primero salir de cualquier room anterior de ubicación (opcional si solo una a la vez)
       for (const room of socket.rooms) {
         if (room.startsWith('location-')) {
@@ -38,8 +38,8 @@ export function setupSocketHandlers(io: Server, db: Pool) {
         }
       }
         // Unirse a la nueva ubicación
-      socket.join(`location-${locationId}`);
-      console.log(`Cliente ${socket.id} se unió a location-${locationId}`);
+      socket.join(`location-${locationCode}`);
+      console.log(`Cliente ${socket.id} se unió a location-${locationCode}`);
     });
 
     socket.on('disconnect', () => {

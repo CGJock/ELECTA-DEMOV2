@@ -1,26 +1,23 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import pool from './src/database/db.js';
+import pool from '@db/db.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
-import depRouter from './routes/departments.js';
-import voteRouter from './routes/updateVotes.js';
-import { runMigrations } from './src/database/migrate.js';
-import { listenToVotesChanges } from './src/Listeners/listenVotes.js';
-import { setupSocketHandlers } from './src/Socketio/setupSocketHandlers.js'
-import { setupGlobalBroadcaster } from './src/Socketio/GlobalBroadcaster.js'
+import depRouter from '@routes/departments.js';
+import voteRouter from '@routes/updateVotes.js';
+import { runMigrations } from '@db/migrate.js';
+import { listenToVotesChanges } from '@listeners/listenVotes.js';
+import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
+import { setupGlobalBroadcaster } from '@socket/GlobalBroadcaster.js'
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:4000'],
-  methods: ['GET', 'POST', 'UPDATE']
-}));
+app.use(cors());
 
 app.use('/api/departments', depRouter);
 app.use('/api/votes', voteRouter);
