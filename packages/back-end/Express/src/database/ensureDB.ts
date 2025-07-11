@@ -6,26 +6,26 @@ export async function ensureDatabase(): Promise<void> {
   const client = new Client({
     host: process.env.PG_HOST,
     port: Number(process.env.PG_PORT),
-    user: process.env.PG_USER,
-    password: process.env.PG_PASSWORD,
+    user: process.env.PGADMIN_USER,
+    password: process.env.PGADMIN_PASSWORD,
     database: 'postgres', // base existente para crear otras
   });
 
   await client.connect();
 
-  const electaDB = process.env.PG_DATABASE;
+  const electa_db = process.env.PG_DATABASE;
 
   const res = await client.query(
     'SELECT 1 FROM pg_database WHERE datname = $1',
-    [electaDB]
+    [electa_db]
   );
 
   if (res.rowCount === 0) {
-    console.log(`Base '${electaDB}' no existe. Creando...`);
-    await client.query(`CREATE DATABASE ${electaDB}`);
-    console.log(`Base '${electaDB}' creada.`);
+    console.log(`Base '${electa_db}' no existe. Creando...`);
+    await client.query(`CREATE DATABASE ${electa_db}`);
+    console.log(`Base '${electa_db}' creada.`);
   } else {
-    console.log(`Base '${electaDB}' ya existe.`);
+    console.log(`Base '${electa_db}' ya existe.`);
   }
 
   await client.end();

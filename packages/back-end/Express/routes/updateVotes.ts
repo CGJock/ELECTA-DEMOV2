@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
-import pool from '../src/database/db.js';
+import pool from '@db/db.js';
+import { getLatestElectionRoundId } from '@utils/getLastRound.js';
 
 const router = Router();
 
@@ -8,85 +9,138 @@ interface PartyVote {
   votes: number;
 }
 
-interface VoteRequestBody {
-  department?: string;
-  null_votes?: number;
-  blank_votes?: number;
-  total_votes?: number;
-  partyvotes?: PartyVote[];
+interface TallyVoteImg {
+  abbr: string;
+  imageUrl: string;
 }
 
-router.post('/', async (req: Request<{}, {}, VoteRequestBody>, res: Response) => {
-  const {
-    department,
-    null_votes = 0,
-    blank_votes = 0,
-    total_votes = 0,
-    partyvotes = []
-  } = req.body;
+router.post('/', async (req: Request, res: Response) => {
+  const body = req.body;
 
-  const valid_votes = total_votes - null_votes - blank_votes;
+  const department = body.Departamento?.trim();
+  const null_votes = Number(body.nullVotes ?? 0);
+  const blank_votes = Number(body.blankVotes ?? 0);
+  const valid_votes = Number(body.validVotes ?? 0);
+
+  const IGNORE_KEYS = [
+    'Departamento', 'Provincia', 'Municipio', 'Localidad', 'Recinto',
+    'nullVotes', 'blankVotes', 'validVotes'
+  ];
+
+  const partyVotes: PartyVote[] = [];
+  const tallyImages: TallyVoteImg[] = [];
+
+  // Parse incoming body
+  for (const [key, value] of Object.entries(body)) {
+    if (IGNORE_KEYS.includes(key)) continue;
+
+    // Detect image URLs
+    if (key.toLowerCase().includes('tallyvote') && typeof value === 'string') {
+      const abbr = key
+        .replace(/_?image_?url/i, '')
+        .replace(/tallyvote/i, '')
+        .replace(/_/g, ' ')
+        .trim()
+        .toUpperCase();
+
+      tallyImages.push({ abbr, imageUrl: value });
+      continue;
+    }
+
+    // Assume party: value is number of votes
+    if (typeof value === 'string' && !isNaN(Number(value))) {
+      const abbr = key.trim().toUpperCase();
+      const votes = parseInt(value, 10);
+      partyVotes.push({ abbr, votes });
+    }
+  }
+
   const client = await pool.connect();
 
   try {
     await client.query('BEGIN');
 
-    const departmentNormalized = department?.trim().toUpperCase();
+    const election_round_id = await getLatestElectionRoundId();
+    if (!election_round_id) throw new Error('No se encontró ninguna ronda electoral activa.');
 
-    // ✅ Buscar el id del departamento por name
+    const departmentTrimmed = department?.trim();
+
     const deptResult = await client.query(
-      `SELECT id FROM departments WHERE UPPER(TRIM(name)) = $1`,
-      [departmentNormalized]
+      `SELECT code FROM departments WHERE TRIM(name) ILIKE $1`,
+      [departmentTrimmed]
     );
 
     if (deptResult.rows.length === 0) {
-      throw new Error(`No se encontró el departamento con name '${department}'`);
+      throw new Error(`No se encontró el departamento con nombre '${department}'`);
     }
 
-    const department_id = deptResult.rows[0].id;
+    const department_code = deptResult.rows[0].code;
 
-    // makes sure the row exist, since is a single row table
+    // Insert base vote record if not exists
     await client.query(`
-        INSERT INTO votes (id, valid_votes, blank_votes, null_votes)
-        VALUES (1, 0, 0, 0)
-        ON CONFLICT (id) DO NOTHING;
-      `);
+      INSERT INTO votes (election_round_id, valid_votes, blank_votes, null_votes)
+      VALUES ($1, 0, 0, 0)
+      ON CONFLICT (election_round_id) DO NOTHING;
+    `, [election_round_id]);
 
-      // update global
-      await client.query(`
-        UPDATE votes
-        SET
-          valid_votes = valid_votes + $1,
-          blank_votes = blank_votes + $2,
-          null_votes = null_votes + $3
-        WHERE id = 1;
-      `, [valid_votes, blank_votes, null_votes]);
+    // Update general vote totals
+    await client.query(`
+      UPDATE votes
+      SET valid_votes = valid_votes + $2,
+          blank_votes = blank_votes + $3,
+          null_votes = null_votes + $4
+      WHERE election_round_id = $1;
+    `, [election_round_id, valid_votes, blank_votes, null_votes]);
 
-    // ✅ Insertar votos por partido en departments_votes
-    for (const party of partyvotes) {
-      const partyAbbrNormalized = party.abbr?.trim().toUpperCase();
+    for (const party of partyVotes) {
+      const abbr = party.abbr;
 
-      const partyResult = await client.query(
-        `SELECT id FROM political_parties WHERE UPPER(TRIM(abbr)) = $1`,
-        [partyAbbrNormalized]
+      // Check if party already exists
+      const result = await client.query(
+        `SELECT id FROM political_parties WHERE TRIM(abbr) ILIKE $1`,
+        [abbr]
       );
 
-      if (partyResult.rows.length === 0) {
-        throw new Error(`No se encontró el partido con abbr '${party.abbr}'`);
+      let party_id: number;
+
+      if (result.rows.length === 0) {
+        // Insert new party
+        const insertRes = await client.query(
+          `INSERT INTO political_parties (abbr) VALUES ($1) RETURNING id`,
+          [abbr]
+        );
+        party_id = insertRes.rows[0].id;
+      } else {
+        party_id = result.rows[0].id;
       }
 
-      const party_id = partyResult.rows[0].id;
-
+      // Insert or update department votes
       await client.query(`
-        INSERT INTO departments_votes ( department_id, party_id, votes)
-        VALUES ( $1, $2, $3)
-        ON CONFLICT (department_id, party_id)
-        DO UPDATE SET votes = departments_votes.votes + EXCLUDED.votes;
-      `, [department_id, party_id, party.votes]);
+        INSERT INTO department_votes (election_round_id, department_code, party_id, votes)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (election_round_id, department_code, party_id)
+        DO UPDATE SET votes = department_votes.votes + EXCLUDED.votes;
+      `, [election_round_id, department_code, party_id, party.votes]);
+    }
+
+    // Save tally image if present
+    const firstImage = tallyImages[0];
+    if (firstImage?.imageUrl) {
+      await client.query(`
+        INSERT INTO ballot_tallies (election_round_id, department_code, image_url)
+        VALUES ($1, $2, $3);
+      `, [election_round_id, department_code, firstImage.imageUrl]);
     }
 
     await client.query('COMMIT');
-    res.status(200).json({ message: 'Votos registrados correctamente.' });
+
+    res.status(200).json({
+      message: 'Votos y datos registrados correctamente.',
+      election_round_id,
+      department: departmentTrimmed,
+      parties: partyVotes,
+      tally_image: firstImage?.imageUrl ?? null
+    });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Error registrando votos:', error);
