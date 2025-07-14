@@ -22,6 +22,10 @@ export const useHelmet = helmet(helmetConfig);
 
 // Middleware para limitar cantidad de peticiones por IP
 export const votosLimiter = rateLimit({
+    validate: {
+		validationsConfig: false,
+		default: true,
+	},
   windowMs: 60 * 1000,  // 1 minute
   max: 100,              // 100xminute requests max
   standardHeaders: true,
