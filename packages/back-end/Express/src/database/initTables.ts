@@ -6,6 +6,7 @@ export async function initTables(): Promise<void> {
       name: 'departments',
       sql: `
         CREATE TABLE IF NOT EXISTS departments (
+           id SERIAL UNIQUE,
           code TEXT PRIMARY KEY,
           name TEXT NOT NULL
         );
@@ -15,6 +16,7 @@ export async function initTables(): Promise<void> {
       name: 'provinces',
       sql: `
         CREATE TABLE IF NOT EXISTS provinces (
+           id SERIAL UNIQUE,
           code TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           department_code TEXT NOT NULL REFERENCES departments(code) ON DELETE CASCADE
@@ -25,6 +27,7 @@ export async function initTables(): Promise<void> {
       name: 'municipalities',
       sql: `
         CREATE TABLE IF NOT EXISTS municipalities (
+          id SERIAL UNIQUE,
           code TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           province_code TEXT NOT NULL REFERENCES provinces(code) ON DELETE CASCADE
@@ -68,10 +71,14 @@ export async function initTables(): Promise<void> {
       sql: `
         CREATE TABLE IF NOT EXISTS ballot_tallies (
           id SERIAL PRIMARY KEY,
+          project_id TEXT,
+          project_name TEXT,
+          date_start_time TIMESTAMP,
+          date_time_complete TIMESTAMP,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           election_round_id INTEGER NOT NULL REFERENCES election_rounds(id),
           department_code VARCHAR NOT NULL REFERENCES departments(code),
-          image_url TEXT NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          image_url TEXT NOT NULL
         );
       `
     },

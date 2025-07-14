@@ -11,6 +11,8 @@ const aliasMap = {
   '@data/': 'data',
   '@listeners/': 'src/Listeners',
   '@socket/': 'src/Socketio',
+  '@middleware/': 'src/middlewares',
+  '@configuration/': 'src/config',
 };
 
 function toPosix(p) {

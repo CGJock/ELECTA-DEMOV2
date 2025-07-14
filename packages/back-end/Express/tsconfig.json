@@ -19,7 +19,9 @@
       "@fetchers/*": ["src/datafetchers/*"],
       "@data/*": ["data/*"],
       "@listeners/*": ["src/Listeners/*"],
-      "@socket/*": ["src/Socketio/*"]
+      "@socket/*": ["src/Socketio/*"],
+      "@middlerare/*": ["src/middlewares/*"],
+      "@configuration/*": ["src/config/*"]
     }
   },
   "include": [

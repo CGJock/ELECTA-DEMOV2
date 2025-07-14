@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-// Definir __dirname en módulo ES
+// Define __dirname in module ES
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const baseUrl = resolve(__dirname);

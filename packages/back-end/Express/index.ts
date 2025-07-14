@@ -4,6 +4,8 @@ import cors from 'cors';
 import pool from '@db/db.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { useHelmet } from '@middlerare/security.js';
+;
 
 import depRouter from '@routes/departments.js';
 import voteRouter from '@routes/updateVotes.js';
@@ -14,16 +16,24 @@ import { setupGlobalBroadcaster } from '@socket/GlobalBroadcaster.js'
 
 dotenv.config();
 
+
 const app = express();
+
+
 app.use(express.json());
+
 
 app.use(cors());
 
+// enabling the Helmet middleware
+app.use(useHelmet); //protects http headers
+
+//Routes
 app.use('/api/departments', depRouter);
 app.use('/api/votes', voteRouter);
 
 
-// Inicializar servidor HTTP + socket.io
+// Initialize HTTP server + socket.io
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
@@ -38,7 +48,6 @@ const io = new Server(httpServer, {
 
     const PORT = process.env.PORT || 5000;
     httpServer.listen(PORT, () => {
-      
       setupSocketHandlers(io, pool)
       setupGlobalBroadcaster(io, pool); 
       listenToVotesChanges(pool, io);//listen to notify in postresql

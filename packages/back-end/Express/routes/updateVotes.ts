@@ -1,22 +1,53 @@
 import { Router, Request, Response } from 'express';
+import { z } from 'zod';
 import pool from '@db/db.js';
 import { getLatestElectionRoundId } from '@utils/getLastRound.js';
+import { validateApiKey, votosLimiter } from '@middlerare/security.js';
+import { cleanDateField, cleanNumberField } from '@utils/validations.js';
 
 const router = Router();
 
-interface PartyVote {
+interface PartyData {
   abbr: string;
   votes: number;
 }
 
-interface TallyVoteImg {
-  abbr: string;
-  imageUrl: string;
+interface TallyData {
+  imageUrl: string; 
+  project_id: string;
+  project_name: string;
+  date_start_time: Date;
+  date_time_complete: Date;
 }
 
-router.post('/', async (req: Request, res: Response) => {
-  const body = req.body;
 
+// base squema to extact known values
+const voteSchema = z.object({
+  Departamento: z.string().transform((val) => val.trim()),
+  nullVotes: cleanNumberField('nullVotes'),
+  blankVotes: cleanNumberField('blankVotes'),
+  validVotes: cleanNumberField('validVotes'),
+}).loose(); // allow extra urls and parties
+
+//schemma for images
+const tallyImageSchema = z.object({
+  date_start_time: cleanDateField('date_start_time'),
+  date_time_complete: cleanDateField('date_time_complete'),
+  imageUrl: z.string().url(),
+  project_id: z.string(),
+  project_name: z.string()
+});
+
+router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response) => {
+  
+  //validate base fields -votes departaments
+    const parseResult = voteSchema.safeParse(req.body);
+      if (!parseResult.success) {
+    res.status(400).json({ errors: parseResult.error.flatten() }); // 
+    return;
+  }
+  
+  const body = req.body;
   const department = body.Departamento?.trim();
   const null_votes = Number(body.nullVotes ?? 0);
   const blank_votes = Number(body.blankVotes ?? 0);
@@ -24,36 +55,61 @@ router.post('/', async (req: Request, res: Response) => {
 
   const IGNORE_KEYS = [
     'Departamento', 'Provincia', 'Municipio', 'Localidad', 'Recinto',
-    'nullVotes', 'blankVotes', 'validVotes'
+    'nullVotes', 'blankVotes', 'validVotes','project_id','project_name','date_start_time',
+    'date_time_complete',
   ];
 
-  const partyVotes: PartyVote[] = [];
-  const tallyImages: TallyVoteImg[] = [];
+  const partyVotes: PartyData[] = [];
+  let tallyImage: z.infer<typeof tallyImageSchema> | null = null;
+  let imageUrlFound = '';
 
-  // Parse incoming body
+  // extracts parties and tally img
   for (const [key, value] of Object.entries(body)) {
-    if (IGNORE_KEYS.includes(key)) continue;
+  if (key.toLowerCase().includes('_img_url') && typeof value === 'string') {
+    imageUrlFound = value;
+    break; // toma la primera que encuentre
+  }
+}
 
-    // Detect image URLs
-    if (key.toLowerCase().includes('tallyvote') && typeof value === 'string') {
-      const abbr = key
-        .replace(/_?image_?url/i, '')
-        .replace(/tallyvote/i, '')
-        .replace(/_/g, ' ')
-        .trim()
-        .toUpperCase();
 
-      tallyImages.push({ abbr, imageUrl: value });
-      continue;
-    }
+    // detects images, firts with _img_url in the name
+   if (
+  imageUrlFound &&
+  typeof body.project_id === 'string' &&
+  typeof body.project_name === 'string' &&
+  typeof body.date_start_time === 'string' &&
+  typeof body.date_time_complete === 'string'
+) {
+  try {
+    tallyImage = tallyImageSchema.parse({
+      imageUrl: imageUrlFound,
+      project_id: body.project_id,
+      project_name: body.project_name,
+      date_start_time: body.date_start_time,
+      date_time_complete: body.date_time_complete,
+    });
+  } catch (err) {
+    res.status(400).json({
+      error: 'Error al validar los datos de la imagen de boleta.',
+      details: (err as z.ZodError).flatten(),
+    });
+    return;
+  }
+}
 
-    // Assume party: value is number of votes
-    if (typeof value === 'string' && !isNaN(Number(value))) {
-      const abbr = key.trim().toUpperCase();
-      const votes = parseInt(value, 10);
-      partyVotes.push({ abbr, votes });
+    // Parse votes per party
+    for (const [key, value] of Object.entries(body)) {
+  if (IGNORE_KEYS.includes(key)) continue;
+  if (key.toLowerCase().includes('_img_url')) continue;
+
+  if (typeof value === 'string') {
+    const cleaned = value.replace(/[^\d]/g, '');
+    const num = Number(cleaned);
+    if (!isNaN(num)) {
+      partyVotes.push({ abbr: key.trim().toUpperCase(), votes: num });
     }
   }
+}
 
   const client = await pool.connect();
 
@@ -61,13 +117,13 @@ router.post('/', async (req: Request, res: Response) => {
     await client.query('BEGIN');
 
     const election_round_id = await getLatestElectionRoundId();
-    if (!election_round_id) throw new Error('No se encontró ninguna ronda electoral activa.');
-
-    const departmentTrimmed = department?.trim();
+    if (!election_round_id) {
+      throw new Error('No se encontró ninguna ronda electoral activa.');
+    }
 
     const deptResult = await client.query(
       `SELECT code FROM departments WHERE TRIM(name) ILIKE $1`,
-      [departmentTrimmed]
+      [department]
     );
 
     if (deptResult.rows.length === 0) {
@@ -76,14 +132,13 @@ router.post('/', async (req: Request, res: Response) => {
 
     const department_code = deptResult.rows[0].code;
 
-    // Insert base vote record if not exists
+    // Insertar votos generales si no existen
     await client.query(`
       INSERT INTO votes (election_round_id, valid_votes, blank_votes, null_votes)
       VALUES ($1, 0, 0, 0)
       ON CONFLICT (election_round_id) DO NOTHING;
     `, [election_round_id]);
 
-    // Update general vote totals
     await client.query(`
       UPDATE votes
       SET valid_votes = valid_votes + $2,
@@ -92,10 +147,8 @@ router.post('/', async (req: Request, res: Response) => {
       WHERE election_round_id = $1;
     `, [election_round_id, valid_votes, blank_votes, null_votes]);
 
-    for (const party of partyVotes) {
-      const abbr = party.abbr;
-
-      // Check if party already exists
+    // Insert votes per party
+    for (const { abbr, votes } of partyVotes) {
       const result = await client.query(
         `SELECT id FROM political_parties WHERE TRIM(abbr) ILIKE $1`,
         [abbr]
@@ -104,7 +157,6 @@ router.post('/', async (req: Request, res: Response) => {
       let party_id: number;
 
       if (result.rows.length === 0) {
-        // Insert new party
         const insertRes = await client.query(
           `INSERT INTO political_parties (abbr) VALUES ($1) RETURNING id`,
           [abbr]
@@ -114,22 +166,30 @@ router.post('/', async (req: Request, res: Response) => {
         party_id = result.rows[0].id;
       }
 
-      // Insert or update department votes
       await client.query(`
         INSERT INTO department_votes (election_round_id, department_code, party_id, votes)
         VALUES ($1, $2, $3, $4)
         ON CONFLICT (election_round_id, department_code, party_id)
         DO UPDATE SET votes = department_votes.votes + EXCLUDED.votes;
-      `, [election_round_id, department_code, party_id, party.votes]);
+      `, [election_round_id, department_code, party_id, votes]);
     }
 
-    // Save tally image if present
-    const firstImage = tallyImages[0];
-    if (firstImage?.imageUrl) {
+    // sabes tally update info
+    if (tallyImage) {
       await client.query(`
-        INSERT INTO ballot_tallies (election_round_id, department_code, image_url)
-        VALUES ($1, $2, $3);
-      `, [election_round_id, department_code, firstImage.imageUrl]);
+        INSERT INTO ballot_tallies (
+          election_round_id, project_id, project_name, department_code, image_url, date_start_time, date_time_complete
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7);
+      `, [
+        election_round_id,
+        tallyImage.project_id,
+        tallyImage.project_name,
+        department_code,
+        tallyImage.imageUrl,
+        tallyImage.date_start_time,
+        tallyImage.date_time_complete,
+      ]);
     }
 
     await client.query('COMMIT');
@@ -137,9 +197,9 @@ router.post('/', async (req: Request, res: Response) => {
     res.status(200).json({
       message: 'Votos y datos registrados correctamente.',
       election_round_id,
-      department: departmentTrimmed,
+      department,
       parties: partyVotes,
-      tally_image: firstImage?.imageUrl ?? null
+      TallyData: tallyImage ?? null,
     });
   } catch (error) {
     await client.query('ROLLBACK');
