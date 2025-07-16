@@ -5,7 +5,7 @@ import pool from '@db/db.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { useHelmet } from '@middlerare/security.js';
-;
+
 
 import depRouter from '@routes/departments.js';
 import voteRouter from '@routes/updateVotes.js';
@@ -18,12 +18,14 @@ dotenv.config();
 
 
 const app = express();
+app.set('trust proxy', 1)
 
 
 app.use(express.json());
-
-
 app.use(cors());
+
+
+
 
 // enabling the Helmet middleware
 app.use(useHelmet); //protects http headers
@@ -33,12 +35,14 @@ app.use('/api/departments', depRouter);
 app.use('/api/votes', voteRouter);
 
 
-// Initialize HTTP server + socket.io
+// inizialize node server
 const httpServer = createServer(app);
+//initialize io server in node http
 const io = new Server(httpServer, {
   cors: {
     origin: ['http://localhost:3000', 'http://localhost:4000'],
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
@@ -46,7 +50,7 @@ const io = new Server(httpServer, {
   try {
     await runMigrations();
 
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 4000;
     httpServer.listen(PORT, () => {
       setupSocketHandlers(io, pool)
       setupGlobalBroadcaster(io, pool); 

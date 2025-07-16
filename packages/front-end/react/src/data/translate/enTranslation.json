@@ -1,0 +1,106 @@
+{
+  "header": {
+    "title": "ELECTA - Bolivia",
+    "subtitle": "Electoral Dashboard",
+    "language": "Language",
+    "spanish": "Español",
+    "english": "English"
+  },
+  "stats": {
+    "title": "Election Statistics",
+    "tab_table": "Table",
+    "tab_chart": "Chart",
+    "loading": "Loading...",
+    "election_statistics": "Election Statistics",
+    "detailed_statistics": "Detailed statistics and analytics will be displayed here."
+  },
+  "map": {
+    "title": "Showing Results: {{name}}",
+    "return_global": "Go To National Results",
+    "national": "National",
+    "tooltip_total_votes": "Total Votes",
+    "tooltip_parties": "Parties",
+    "mostrando_resultados": "Results -"
+  },
+  "parties": {
+    "title": "Political Party",
+    "percentage": "Total Votes",
+    "votes": "Votes",
+    "ver_mas": "See more",
+    "ver_menos": "See less"
+  },
+  "footer": {
+    "company_desc": "Professional platform for electoral monitoring and data visualization for Bolivia.",
+    "status_live": "Status: Live",
+    "status_realtime": "Real-time updates",
+    "quick_links": "Quick Links",
+    "link_home": "Home",
+    "link_elections": "Upcoming Elections",
+    "link_about": "About Us",
+    "link_contact": "Contact Us",
+    "contact": "Contact",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "follow_us": "Follow Us",
+    "rights_reserved": "All rights reserved.",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service"
+  },
+  "counter": {
+    "loading": "Loading vote summary...",
+    "total_votes": "Total Vote Count",
+    "null_votes": "Null Votes",
+    "blank_votes": "Blank Votes"
+  },
+  "incidents": {
+    "title": "INCIDENTS",
+    "no_incidents": "No incidents reported",
+    "reports": "Incident Reports",
+    "severity_high": "HIGH",
+    "severity_medium": "MEDIUM",
+    "severity_low": "LOW",
+    "location": "Location",
+    "time": "Time"
+  },
+  "nav": {
+    "home": "HOME",
+    "elections": "Upcoming Elections",
+    "about": "About Us",
+    "contact": "Contact Us"
+  },
+  "candidate": {
+    "age": "years old",
+    "experience": "Experience",
+    "main_proposals": "Main Proposals",
+    "no_proposals": "No proposals registered",
+    "current_votes": "Current Votes",
+    "percentage": "Percentage"
+  },
+  "excel": {
+  "party": "Party",
+  "votes": "Votes",
+  "type": "Tipo Voto",
+  "percentage": "Percentage",
+  "total_votes": "Total Votes",
+  "valid_votes": "Valid Votes",
+  "null_votes": "Null Votes",
+  "blank_votes": "Blank Votes",
+  "location": "Location",
+  "timestamp": "Generated At"
+  },
+  "ver_mas": "See more",
+  "ver_menos": "See less",
+  "votechart": {
+    "results": "Results",
+    "national_results": "National Results",
+    "political_parties": "Political Parties",
+    "votes": "Votes",
+    "percentage": "Percentage",
+    "total_votes": "Total Votes",
+    "timestamp": "Last update: {{date}}",
+    "download": "Download Excel"
+  },
+  "result": "Result"
+}
+
