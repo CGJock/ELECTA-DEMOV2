@@ -1,0 +1,105 @@
+{
+  "header": {
+    "title": "ELECTA - Bolivia",
+    "subtitle": "Dashboard Electoral",
+    "language": "Idioma",
+    "spanish": "Español",
+    "english": "Inglés"
+  },
+  "stats": {
+    "title": "Estadísticas Electorales",
+    "tab_table": "Tabla",
+    "tab_chart": "Gráfico",
+    "loading": "Cargando...",
+    "election_statistics": "Estadísticas Electorales",
+    "detailed_statistics": "Las estadísticas y análisis detallados se mostrarán aquí."
+  },
+  "map": {
+    "title": "Mostrando resultados: {{name}}",
+    "return_global": "Volver a resultados nacionales",
+    "national": "Nacionales",
+    "tooltip_total_votes": "Total de Votos",
+    "tooltip_parties": "Partidos",
+    "mostrando_resultados": "Mostrando resultados -"
+  },
+  "parties": {
+    "title": "Partido Político",
+    "percentage": "Votos Totales",
+    "votes": "Votos",
+    "ver_mas": "Ver más",
+    "ver_menos": "Ver menos"
+  },
+  "footer": {
+    "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para Bolivia.",
+    "status_live": "Estado: En vivo",
+    "status_realtime": "Actualizaciones en tiempo real",
+    "quick_links": "Enlaces Rápidos",
+    "link_home": "Inicio",
+    "link_elections": "Próximas Elecciones",
+    "link_about": "Sobre Nosotros",
+    "link_contact": "Contáctanos",
+    "contact": "Contacto",
+    "email": "Correo",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "follow_us": "Síguenos",
+    "rights_reserved": "Todos los derechos reservados.",
+    "privacy_policy": "Política de Privacidad",
+    "terms_of_service": "Términos de Servicio"
+  },
+  "counter": {
+    "loading": "Cargando resumen de votos...",
+    "total_votes": "Conteo Total De Votos",
+    "null_votes": "Votos Nulos",
+    "blank_votes": "Votos En Blanco"
+  },
+  "incidents": {
+    "title": "INCIDENTES",
+    "no_incidents": "No hay incidentes reportados",
+    "reports": "Reportes de Incidentes",
+    "severity_high": "ALTA",
+    "severity_medium": "MEDIA",
+    "severity_low": "BAJA",
+    "location": "Ubicación",
+    "time": "Hora"
+  },
+  "nav": {
+    "home": "INICIO",
+    "elections": "Próximas Elecciones",
+    "about": "Sobre Nosotros",
+    "contact": "Contáctanos"
+  },
+  "candidate": {
+    "age": "años",
+    "experience": "Experiencia",
+    "main_proposals": "Propuestas Principales",
+    "no_proposals": "Sin propuestas registradas",
+    "current_votes": "Votos actuales",
+    "percentage": "Porcentaje"
+  },
+  "excel": {
+  "party": "Partido",
+  "votes": "Votos",
+  "type": "Vote Type",
+  "percentage": "Porcentaje",
+  "total_votes": "Votos Totales",
+  "valid_votes": "Votos Válidos",
+  "null_votes": "Votos Nulos",
+  "blank_votes": "Votos Blancos",
+  "location": "Ubicación",
+  "timestamp": "Fecha y Hora de Generación"
+  },
+  "ver_mas": "Ver más",
+  "ver_menos": "Ver menos",
+  "votechart": {
+    "results": "Resultados",
+    "national_results": "Resultados Nacionales",
+    "political_parties": "Partidos Políticos",
+    "votes": "Votos",
+    "percentage": "Porcentaje",
+    "total_votes": "Votos Totales",
+    "timestamp": "Última actualización: {{date}}",
+    "download": "Descarga Excel"
+  },
+  "result": "Resultado"
+}
