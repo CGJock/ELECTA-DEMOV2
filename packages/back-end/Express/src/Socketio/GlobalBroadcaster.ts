@@ -11,11 +11,12 @@ const getAllLocationIds = async (db: Pool): Promise<string[]> => {
 
 
 export function setupGlobalBroadcaster(io: Server, db: Pool) {
+ 
   // Emitir resumen global a todos los clientes
   const sendGlobalSummary = async () => {
     try {
       const data = await getTotalSummary(db);
-      io.emit('total-breakdown-summary', data); // 🔊 broadcast global
+      io.emit('total-breakdown-summary', data); //broadcast global
     } catch {
       io.emit('total-breakdown-summary', { error: 'Failed to fetch total summary' });
     }
