@@ -38,9 +38,10 @@ app.use('/api/votes', voteRouter);
 // inizialize node server
 const httpServer = createServer(app);
 //initialize io server in node http
+const client_url = process.env.CLIENT_URL || 'http://localhost:3000';
 const io = new Server(httpServer, {
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:4000'],
+    origin: [client_url],
     methods: ['GET', 'POST'],
     credentials: true
   }
