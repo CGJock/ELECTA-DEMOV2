@@ -9,10 +9,11 @@ const router = Router();
 
 interface PartyData {
   abbr: string;
-  votes: number;
+  votes: number | null;
 }
 
 interface TallyData {
+  verification: string
   imageUrl: string; 
   project_id: string;
   project_name: string;
@@ -20,6 +21,14 @@ interface TallyData {
   date_time_complete: Date;
 }
 
+//to check aliases in key values
+const fieldAliasMap: Record<string, string> = {
+  "VOTOS VÁLID0S": "validVotes",
+  "VOTOS BLANCOS": "blankVotes",
+  "VOTOS NULOS": "nullVotes",
+  "image_url": "image_url", // por si acaso viene como image_url
+  "Imagen": "image_url"     // opcional
+};
 
 // base squema to extact known values
 const voteSchema = z.object({
@@ -31,6 +40,13 @@ const voteSchema = z.object({
 
 //schemma for images
 const tallyImageSchema = z.object({
+ verification: z.preprocess(
+  (val) => {
+    if (typeof val === 'string') return parseFloat(val);
+    return val;
+  },
+  z.number()
+),
   date_start_time: cleanDateField('date_start_time'),
   date_time_complete: cleanDateField('date_time_complete'),
   imageUrl: z.string().url(),
@@ -39,24 +55,39 @@ const tallyImageSchema = z.object({
 });
 
 router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response) => {
-  
-  //validate base fields -votes departaments
-    const parseResult = voteSchema.safeParse(req.body);
-      if (!parseResult.success) {
-    res.status(400).json({ errors: parseResult.error.flatten() }); // 
-    return;
+
+  // mormalize keys
+  const normalizedBody: Record<string, any> = {};
+  for (const [key, value] of Object.entries(req.body)) {
+    const trimmedKey = key.trim();
+    const mappedKey = fieldAliasMap[trimmedKey] || trimmedKey;
+    normalizedBody[mappedKey] = value;
   }
   
-  const body = req.body;
+     // validate json squema
+  const parseResult = voteSchema.safeParse(normalizedBody);
+  if (!parseResult.success) {
+    res.status(400).json({ errors: parseResult.error.flatten() });
+    return;
+  }
+
+ 
+  
+  const body = normalizedBody;
   const department = body.Departamento?.trim();
   const null_votes = Number(body.nullVotes ?? 0);
   const blank_votes = Number(body.blankVotes ?? 0);
   const valid_votes = Number(body.validVotes ?? 0);
 
-  const IGNORE_KEYS = [
+
+    //ignore keys to not be added on party values
+
+   const IGNORE_KEYS = [
     'Departamento', 'Provincia', 'Municipio', 'Localidad', 'Recinto',
-    'nullVotes', 'blankVotes', 'validVotes','project_id','project_name','date_start_time',
-    'date_time_complete',
+    'nullVotes', 'blankVotes', 'validVotes',
+    'VOTOS VÁLID0S', 'VOTOS BLANCOS', 'VOTOS NULOS',
+    'project_id', 'project_name', 'date_start_time', 'date_time_complete',
+    'image_url','verification'
   ];
 
   const partyVotes: PartyData[] = [];
@@ -71,10 +102,15 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
   }
 }
 
+     // Fallback: usar image_url si no se encontró otra
+  if (!imageUrlFound && typeof body.image_url === 'string') {
+    imageUrlFound = body.image_url;
+  }
 
     // detects images, firts with _img_url in the name
    if (
   imageUrlFound &&
+  typeof body.verification === 'string' &&
   typeof body.project_id === 'string' &&
   typeof body.project_name === 'string' &&
   typeof body.date_start_time === 'string' &&
@@ -82,6 +118,7 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
 ) {
   try {
     tallyImage = tallyImageSchema.parse({
+      verification: body.verification,
       imageUrl: imageUrlFound,
       project_id: body.project_id,
       project_name: body.project_name,
@@ -103,12 +140,20 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
   if (key.toLowerCase().includes('_img_url')) continue;
 
   if (typeof value === 'string') {
-    const cleaned = value.replace(/[^\d]/g, '');
-    const num = Number(cleaned);
-    if (!isNaN(num)) {
-      partyVotes.push({ abbr: key.trim().toUpperCase(), votes: num });
-    }
+  const trimmed = value.trim();
+
+  if (trimmed === '-1') {
+    partyVotes.push({ abbr: key.trim().toUpperCase(), votes: null });
+    continue;
   }
+
+  const cleaned = trimmed.replace(/[^\d]/g, '');
+  const num = Number(cleaned);
+
+  if (!isNaN(num)) {
+    partyVotes.push({ abbr: key.trim().toUpperCase(), votes: num });
+  }
+}
 }
 
   const client = await pool.connect();
@@ -149,22 +194,32 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
 
     // Insert votes per party
     for (const { abbr, votes } of partyVotes) {
-      const result = await client.query(
-        `SELECT id FROM political_parties WHERE TRIM(abbr) ILIKE $1`,
-        [abbr]
-      );
+  const result = await client.query(
+    `SELECT id FROM political_parties WHERE TRIM(abbr) ILIKE $1`,
+    [abbr]
+  );
 
-      let party_id: number;
+  let party_id: number;
 
-      if (result.rows.length === 0) {
-        const insertRes = await client.query(
-          `INSERT INTO political_parties (abbr) VALUES ($1) RETURNING id`,
-          [abbr]
-        );
-        party_id = insertRes.rows[0].id;
-      } else {
-        party_id = result.rows[0].id;
-      }
+  if (result.rows.length === 0) {
+    const insertRes = await client.query(
+      `INSERT INTO political_parties (abbr) VALUES ($1) RETURNING id`,
+      [abbr]
+    );
+    party_id = insertRes.rows[0].id;
+  } else {
+    party_id = result.rows[0].id;
+  }
+
+  // Si votes es null, lo tratamos como 0 para la suma
+  const safeVotes = votes ?? 0;
+
+  await client.query(`
+    INSERT INTO department_votes (election_round_id, department_code, party_id, votes)
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (election_round_id, department_code, party_id)
+    DO UPDATE SET votes = department_votes.votes + EXCLUDED.votes;
+  `, [election_round_id, department_code, party_id, safeVotes])
 
       await client.query(`
         INSERT INTO department_votes (election_round_id, department_code, party_id, votes)
@@ -178,13 +233,14 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
     if (tallyImage) {
       await client.query(`
         INSERT INTO ballot_tallies (
-          election_round_id, project_id, project_name, department_code, image_url, date_start_time, date_time_complete
+          election_round_id, project_id, project_name,verification_code, department_code, image_url, date_start_time, date_time_complete
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7);
+        VALUES ($1, $2, $3, $4, $5, $6, $7,$8);
       `, [
         election_round_id,
         tallyImage.project_id,
         tallyImage.project_name,
+        tallyImage.verification,
         department_code,
         tallyImage.imageUrl,
         tallyImage.date_start_time,

@@ -76,6 +76,7 @@ export async function initTables(): Promise<void> {
           date_start_time TIMESTAMP,
           date_time_complete TIMESTAMP,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          verification_code NUMERIC(10,3),
           election_round_id INTEGER NOT NULL REFERENCES election_rounds(id),
           department_code VARCHAR NOT NULL REFERENCES departments(code),
           image_url TEXT NOT NULL

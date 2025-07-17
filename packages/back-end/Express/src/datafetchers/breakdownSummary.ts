@@ -22,7 +22,7 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
   // Sumar votos por partido en la ronda actual
   const resultVotes = await db.query(
     `SELECT COALESCE(SUM(votes), 0) as count
-     FROM departments_votes
+     FROM department_votes
      WHERE election_round_id = $1`,
     [roundId]
   );
@@ -44,7 +44,7 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
     `
     SELECT p.name, p.abbr, COALESCE(SUM(dv.votes), 0) as count
     FROM political_parties p
-    LEFT JOIN departments_votes dv
+    LEFT JOIN department_votes dv
       ON p.id = dv.party_id AND dv.election_round_id = $1
     GROUP BY p.id
     ORDER BY count DESC

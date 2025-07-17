@@ -14,15 +14,18 @@ export interface VotesBreakdown {
 export async function getVotesSummary(pool: Pool): Promise<VotesBreakdown> {
   const electionRoundId = await getLatestElectionRoundId();
   if (!electionRoundId) throw new Error('No se encontró una ronda electoral válida');
-  const result = await pool.query(`
+  const result = await pool.query(
+    `
     SELECT
-      SUM(valid_votes) AS validVotes,
-      SUM(blank_votes) AS blankVotes,
-      SUM(null_votes) AS nullVotes,
-      SUM(valid_votes + blank_votes + null_votes) AS totalVotes
-      FROM votes;
-    WHERE election_round_id = $1;
-  `, [electionRoundId]);
+      SUM(valid_votes) AS "validVotes",
+      SUM(blank_votes) AS "blankVotes",
+      SUM(null_votes) AS "nullVotes",
+      SUM(valid_votes + blank_votes + null_votes) AS "totalVotes"
+    FROM votes
+    WHERE election_round_id = $1
+    `,
+    [electionRoundId]
+  );
     //it's using results in the first row so is the only information needed
   const row = result.rows[0];
 
