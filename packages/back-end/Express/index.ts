@@ -19,10 +19,14 @@ dotenv.config();
 
 const app = express();
 app.set('trust proxy', 1)
+const client_url = process.env.CLIENT_URL || 'http://localhost:3000';
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: [client_url],
+  credentials: true,
+}));
 
 
 
@@ -38,7 +42,7 @@ app.use('/api/votes', voteRouter);
 // inizialize node server
 const httpServer = createServer(app);
 //initialize io server in node http
-const client_url = process.env.CLIENT_URL || 'http://localhost:3000';
+
 const io = new Server(httpServer, {
   cors: {
     origin: [client_url],
