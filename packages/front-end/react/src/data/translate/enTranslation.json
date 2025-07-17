@@ -51,7 +51,8 @@
     "loading": "Loading vote summary...",
     "total_votes": "Total Vote Count",
     "null_votes": "Null Votes",
-    "blank_votes": "Blank Votes"
+    "blank_votes": "Blank Votes",
+    "total_votes_hint": "voteshint"
   },
   "incidents": {
     "title": "INCIDENTS",
