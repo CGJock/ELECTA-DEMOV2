@@ -28,13 +28,13 @@ interface VoteChartProps {
 
 export default function VoteChart({ active }: VoteChartProps) {
 
-  const { globalSummary, breakdownLocData, selectedLocationId, timestamp } = useSocketData();
+  const { globalSummary, breakdownLocData, selectedLocationCode, timestamp } = useSocketData();
 
   const { t } = useTranslation();
 
 
   const currentSummary =
-    selectedLocationId && breakdownLocData
+    selectedLocationCode && breakdownLocData
       ? breakdownLocData
       : globalSummary;
 
@@ -71,7 +71,7 @@ const tickValues = generateTicks(totalVotes, 50000);
   return (
     <div className="w-full h-96 min-w-[300px] min-h-[300px]  rounded-md flex flex-col p-2">
       <div className="text-center text-base font-semibold text-gray-700 mb-1 select-none">
-        {selectedLocationId && breakdownLocData?.locationName
+        {selectedLocationCode && breakdownLocData?.locationName
           ? `${t('votechart.results')} - ${breakdownLocData.locationName}`
           : t('votechart.national_results')}
       </div>

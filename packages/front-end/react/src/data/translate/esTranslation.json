@@ -51,7 +51,8 @@
     "loading": "Cargando resumen de votos...",
     "total_votes": "Conteo Total De Votos",
     "null_votes": "Votos Nulos",
-    "blank_votes": "Votos En Blanco"
+    "blank_votes": "Votos En Blanco",
+    "total_votes_hint": "voteshint"
   },
   "incidents": {
     "title": "INCIDENTES",

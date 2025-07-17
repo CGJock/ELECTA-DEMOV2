@@ -43,7 +43,9 @@ interface SocketDataContextValue {
 
 const SocketDataContext = createContext<SocketDataContextValue | undefined>(undefined);
 
-const socket = io('http://localhost:4000');
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
+    withCredentials: true,
+  });
 
 export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [globalSummary, setGlobalSummary] = useState<GlobalSummary | null>(null);
@@ -56,12 +58,11 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   useEffect(() => {
     
 
-    socket.emit('get-vote-breakdown');
-    socket.emit('get-global-summary');
-    socket.emit('get-location-summary',1)
+    
 
     // Escuchar resumen en tiempo real desde NOTIFY PostgreSQL
     socket.on('full-vote-data', (data) => {
+      console.log(data)
       setbreakdownData({
         totalVotes: data.totalVotes,
         nullVotes: data.nullVotes,
@@ -74,26 +75,34 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
       setTimestamp(new Date().toISOString());
     });
 
+    //socket that listens to the whole data information + individual party data
     socket.on('total-breakdown-summary', (data) => {
+      console.log(`total-brakdownsummary`,data)
       if (!data.error) setGlobalSummary(data);
       setTimestamp(new Date().toISOString());
     });
 
-    socket.on('vote-breakdown', (data) => {
-      if (!data.error) setbreakdownData(data);
-    });
+    // socket.on('total-breakdown-summary', (data) => {
+    //   console.log(`total-brakdown-summary`,data)
+    //   if (!data.error) setbreakdownData(data);
+    // });
 
      socket.on('location-breakdown-summary', (data) => {
+      console.log(`location-breakdown-summary`,data)
       if (!data.error) setbreakdownLocData(data);
       setTimestamp(new Date().toISOString());
     });
 
 
+    socket.emit('get-total-breakdown');
+    socket.emit('get-global-summary');
+    socket.emit('get-location-summary',1)
+
     return () => {
       socket.off('global-vote-summary');
       socket.off('vote-breakdown');
       socket.off('location-breakdown-summary')
-      // socket.disconnect();
+      // socket.off('full-vote-data')
     };
   }, []);
 

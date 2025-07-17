@@ -233,7 +233,7 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
     if (tallyImage) {
       await client.query(`
         INSERT INTO ballot_tallies (
-          election_round_id, project_id, project_name,verification, department_code, image_url, date_start_time, date_time_complete
+          election_round_id, project_id, project_name,verification_code, department_code, image_url, date_start_time, date_time_complete
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7,$8);
       `, [
