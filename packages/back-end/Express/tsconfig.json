@@ -6,15 +6,29 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "rootDir": "./",
     "outDir": "dist",
+    "rootDir": ".",
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["../../shared/*"]
+      "@shared/*": ["../../shared/*"],
+      "@db/*": ["src/database/*"],
+      "@utils/*": ["src/utils/*"],
+      "@routes/*": ["routes/*"],
+      "@fetchers/*": ["src/datafetchers/*"],
+      "@data/*": ["data/*"],
+      "@listeners/*": ["src/Listeners/*"],
+      "@socket/*": ["src/Socketio/*"],
+      "@middlerare/*": ["src/middlewares/*"],
+      "@configuration/*": ["src/config/*"]
     }
   },
-  "include": ["*.ts", "routes/**/*.ts", "../../../../shared/**/*"],
+  "include": [
+    "*.ts",
+    "src/**/*.ts",
+    "routes/**/*.ts",
+    "data/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }
