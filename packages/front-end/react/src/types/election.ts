@@ -22,9 +22,10 @@ export interface PoliticalParty {
   id: string
   name: string
   abbreviation: string
+  aliases: string[];
   color: string
   votes: number
-  percentage: number
+  percentage: number | string
   candidate: Candidate
 }
 

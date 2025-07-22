@@ -14,6 +14,7 @@ import {
 import { useSocketData } from '@/context/context';
 import { useTranslation } from 'react-i18next';
 
+
 type VoteData = {
   name: string;
   abbr: string;
@@ -28,26 +29,32 @@ interface VoteChartProps {
 
 export default function VoteChart({ active }: VoteChartProps) {
 
-  const { globalSummary, breakdownLocData, selectedLocationCode, timestamp } = useSocketData();
+  const { globalSummary, breakdownLocData, setbreakdownLocData, selectedLocationCode, timestamp } = useSocketData();
 
   const { t } = useTranslation();
 
 
-  const currentSummary =
-    selectedLocationCode && breakdownLocData
-      ? breakdownLocData
-      : globalSummary;
+  const currentSummary = selectedLocationCode
+  ? breakdownLocData || globalSummary // Usa breakdownLocData si existe, o globalSummary como fallback
+  : globalSummary;
+
+  console.log(`data actual ${currentSummary?.partyBreakdown}`)
+   console.log(`breadownlocdata ${breakdownLocData}`)
 
   const totalVotes = currentSummary?.totalVotes || 0;
+  console.log(selectedLocationCode)
 
-  const data: VoteData[] =
-    currentSummary?.partyBreakdown.map((party) => ({
+  const data: VoteData[] = Array.isArray(currentSummary?.partyBreakdown)
+  ? currentSummary!.partyBreakdown.map((party) => ({
       name: party.name,
       abbr: party.abbr,
       votes: party.count,
       totalVotes,
       percentage: Number(party.percentage),
-    })).sort((a, b) => b.percentage - a.percentage) || [];
+    })).sort((a, b) => b.percentage - a.percentage)
+  : [];
+
+   console.log(`data ${data}`)
 
   function generateTicks(max: number, step: number): number[] {
   const ticks = [];
@@ -71,9 +78,9 @@ const tickValues = generateTicks(totalVotes, 50000);
   return (
     <div className="w-full h-96 min-w-[300px] min-h-[300px]  rounded-md flex flex-col p-2">
       <div className="text-center text-base font-semibold text-gray-700 mb-1 select-none">
-        {selectedLocationCode && breakdownLocData?.locationName
-          ? `${t('votechart.results')} - ${breakdownLocData.locationName}`
-          : t('votechart.national_results')}
+        {selectedLocationCode === null
+          ? t('votechart.national_results')
+          : `${t('votechart.department_results')} - ${breakdownLocData?.locationName ?? ''}`}
       </div>
 
       <div className="flex flex-1">

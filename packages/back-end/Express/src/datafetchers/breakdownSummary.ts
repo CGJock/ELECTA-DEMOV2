@@ -21,23 +21,30 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
 
   // Sumar votos por partido en la ronda actual
   const resultVotes = await db.query(
-    `SELECT COALESCE(SUM(votes), 0) as count
-     FROM department_votes
-     WHERE election_round_id = $1`,
+    `
+    SELECT 
+    COALESCE(SUM(valid_votes), 0) AS valid_votes,
+    COALESCE(SUM(blank_votes), 0) AS blank_votes,
+    COALESCE(SUM(null_votes), 0) AS null_votes,
+    COALESCE(SUM(valid_votes + blank_votes + null_votes), 0) AS "totalVotes"
+    FROM votes
+    WHERE election_round_id = $1;
+    `,
     [roundId]
   );
-  const totalVotes = Number(resultVotes.rows[0].count);
+  const vote_data = resultVotes.rows[0]
 
   // Votos nulos y en blanco (asumiendo una fila por ronda en la tabla `votes`)
-  const resultSpecialVotes = await db.query(
-    `SELECT COALESCE(blank_votes, 0) AS blank, COALESCE(null_votes, 0) AS null
-     FROM votes
-     WHERE election_round_id = $1
-     LIMIT 1`,
-    [roundId]
-  );
-  const blankVotes = Number(resultSpecialVotes.rows[0]?.blank || 0);
-  const nullVotes = Number(resultSpecialVotes.rows[0]?.null || 0);
+  // const resultSpecialVotes = await db.query(
+  //   `SELECT COALESCE(blank_votes, 0) AS blank, COALESCE(null_votes, 0) AS null
+  //    FROM votes
+  //    WHERE election_round_id = $1
+  //    LIMIT 1`,
+  //   [roundId]
+  // );
+  const totalVotes = vote_data.totalVotes
+  const blankVotes = vote_data.blank_votes
+  const nullVotes = vote_data.null_votes
 
   // Votos por partido
   const resultBreakdown = await db.query(
