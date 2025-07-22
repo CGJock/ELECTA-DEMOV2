@@ -1,0 +1,181 @@
+{
+  "info": {
+    "name": "ELECTA API Collection",
+    "description": "Colección completa para probar la API de ELECTA - Sistema de Elecciones",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔍 Departamentos",
+      "item": [
+        {
+          "name": "GET Departamentos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/departments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "departments"]
+            },
+            "description": "Obtener lista de todos los departamentos"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🗳️ Votos",
+      "item": [
+        {
+          "name": "POST Actualizar Votos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}",
+                "description": "API Key para autenticación"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Departamento\": \"La Paz\",\n  \"nullVotes\": 150,\n  \"blankVotes\": 50,\n  \"validVotes\": 2500,\n  \"MAS\": 1200,\n  \"AP\": 800,\n  \"FP\": 500,\n  \"verification\": \"12345\",\n  \"image_url\": \"https://example.com/acta.jpg\",\n  \"project_id\": \"proj_001\",\n  \"project_name\": \"Elecciones 2024\",\n  \"date_start_time\": \"2024-01-15T10:00:00Z\",\n  \"date_time_complete\": \"2024-01-15T10:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/votes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "votes"]
+            },
+            "description": "Actualizar votos de un departamento con datos de partidos y acta"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Votos Sin Acta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Departamento\": \"Cochabamba\",\n  \"nullVotes\": 100,\n  \"blankVotes\": 30,\n  \"validVotes\": 1800,\n  \"MAS\": 900,\n  \"AP\": 600,\n  \"FP\": 300\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/votes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "votes"]
+            },
+            "description": "Actualizar votos sin datos de acta (solo votos)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 WebSocket Endpoints",
+      "item": [
+        {
+          "name": "GET Breakdown Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/breakdown-summary",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "breakdown-summary"]
+            },
+            "description": "Obtener resumen de breakdown de votos (si existe endpoint REST)"
+          },
+          "response": []
+        },
+        {
+          "name": "GET Global Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/global-summary",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "global-summary"]
+            },
+            "description": "Obtener resumen global de votos (si existe endpoint REST)"
+          },
+          "response": []
+        }
+      ]
+    },
+
+    {
+      "name": "🔧 Health Check",
+      "item": [
+        {
+          "name": "GET Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["health"]
+            },
+            "description": "Verificar estado del servidor"
+          },
+          "response": []
+        },
+        {
+          "name": "GET Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": [""]
+            },
+            "description": "Endpoint raíz del servidor"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "api_key",
+      "value": "your_api_key_here",
+      "description": "API Key para autenticación en endpoints protegidos"
+    },
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000",
+      "description": "URL base del servidor"
+    }
+  ]
+} 

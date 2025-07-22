@@ -1,7 +1,13 @@
 import React from 'react';
+// Importar el hook personalizado para datos en tiempo real
+import { useVoteBreakdown } from '../services/useDataService';
 
 const VotingStats: React.FC = () => {
-  // Hardcoded voting statistics data
+  // Usar el hook para obtener datos en tiempo real
+  const { voteBreakdown, loading, error } = useVoteBreakdown();
+
+  // Código original comentado - datos hardcodeados
+  /*
   const stats = {
     totalVotes: 2847592,
     validVotes: {
@@ -17,10 +23,53 @@ const VotingStats: React.FC = () => {
       percentage: 1.5
     }
   };
+  */
 
   const formatNumber = (num: number): string => {
     return num.toLocaleString();
   };
+
+  // Mostrar loading mientras se cargan los datos
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+          Estadísticas de Votación
+        </h2>
+        <div className="text-center text-gray-500 dark:text-gray-400">
+          Cargando datos en tiempo real...
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar error si hay algún problema
+  if (error) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+          Estadísticas de Votación
+        </h2>
+        <div className="text-center text-red-500">
+          Error al cargar datos: {error}
+        </div>
+      </div>
+    );
+  }
+
+  // Usar datos reales si están disponibles, sino mostrar mensaje
+  if (!voteBreakdown) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+          Estadísticas de Votación
+        </h2>
+        <div className="text-center text-gray-500 dark:text-gray-400">
+          No hay datos disponibles en este momento
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
@@ -36,7 +85,7 @@ const VotingStats: React.FC = () => {
               Total de Votos Emitidos
             </span>
             <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {formatNumber(stats.totalVotes)}
+              {formatNumber(voteBreakdown.totalVotes)}
             </span>
           </div>
         </div>
@@ -48,10 +97,10 @@ const VotingStats: React.FC = () => {
           </span>
           <div className="text-right">
             <span className="text-lg font-semibold text-green-600 dark:text-green-400">
-              {formatNumber(stats.validVotes.count)}
+              {formatNumber(voteBreakdown.validVotes)}
             </span>
             <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-              ({stats.validVotes.percentage}%)
+              ({voteBreakdown.validPercentage.toFixed(1)}%)
             </span>
           </div>
         </div>
@@ -63,10 +112,10 @@ const VotingStats: React.FC = () => {
           </span>
           <div className="text-right">
             <span className="text-lg font-semibold text-red-600 dark:text-red-400">
-              {formatNumber(stats.nullVotes.count)}
+              {formatNumber(voteBreakdown.nullVotes)}
             </span>
             <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-              ({stats.nullVotes.percentage}%)
+              ({voteBreakdown.nullPercentage.toFixed(1)}%)
             </span>
           </div>
         </div>
@@ -78,10 +127,10 @@ const VotingStats: React.FC = () => {
           </span>
           <div className="text-right">
             <span className="text-lg font-semibold text-yellow-600 dark:text-yellow-400">
-              {formatNumber(stats.blankVotes.count)}
+              {formatNumber(voteBreakdown.blankVotes)}
             </span>
             <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-              ({stats.blankVotes.percentage}%)
+              ({voteBreakdown.blankPercentage.toFixed(1)}%)
             </span>
           </div>
         </div>

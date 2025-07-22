@@ -116,7 +116,7 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
             {candidate.candidate.age} {t('candidate.age')}
           </p>
           <p style={{ color: '#94a3b8', marginBottom: '12px' }}>
-            {candidate.candidate.education}
+            {candidate.candidate.education.es}
           </p>
           <div 
             style={{
@@ -139,7 +139,7 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
             {t('candidate.experience')}
           </h3>
           <p style={{ color: '#cbd5e1', fontSize: '0.875rem', lineHeight: '1.6' }}>
-            {candidate.candidate.experience}
+            {candidate.candidate.experience.es}
           </p>
         </div>
 

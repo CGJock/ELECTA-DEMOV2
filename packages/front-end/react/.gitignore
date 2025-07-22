@@ -24,7 +24,8 @@
 .DS_Store
 *.pem
 #enviroment variables
-.env
+# .env
+# .env.local
 
 # debug
 npm-debug.log*

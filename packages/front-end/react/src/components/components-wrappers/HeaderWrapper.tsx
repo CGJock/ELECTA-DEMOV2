@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 // Importa el Header y desactiva SSR (solo cliente)
-const Header = dynamic(() => import('../Header'), { ssr: false });
+const Header = dynamic(() => import('@components/Header'), { ssr: false });
 
 export default function HeaderWrapper() {
   return <Header />;

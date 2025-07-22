@@ -27,7 +27,8 @@
     "percentage": "Votos Totales",
     "votes": "Votos",
     "ver_mas": "Ver más",
-    "ver_menos": "Ver menos"
+    "ver_menos": "Ver menos",
+    "disqualified_disclaimer": "Candidato descalificado por el TSE por presentar solvencia fiscal fuera de plazo."
   },
   "footer": {
     "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para Bolivia.",
@@ -45,29 +46,48 @@
     "follow_us": "Síguenos",
     "rights_reserved": "Todos los derechos reservados.",
     "privacy_policy": "Política de Privacidad",
-    "terms_of_service": "Términos de Servicio"
+    "terms_of_service": "Términos de Servicio",
+    "incident_form": "Formulario de incidentes"
   },
   "counter": {
     "loading": "Cargando resumen de votos...",
     "total_votes": "Conteo Total De Votos",
     "null_votes": "Votos Nulos",
     "blank_votes": "Votos En Blanco",
-    "total_votes_hint": "voteshint"
+    "top_candidates": "Candidatos principales"
+  },
+  "secondRound": {
+    "title": "SEGUNDA RONDA",
+    "subtitle": "Elecciones Presidenciales Bolivia 2025",
+    "votes": "Votos",
+    "percentage": "Porcentaje",
+    "live": "Resultados en tiempo real"
   },
   "incidents": {
-    "title": "INCIDENTES",
+    "form_title": "Reportar incidente",
+    "title": "Título",
+    "description": "Descripción",
+    "location": "Ubicación",
+    "status": "Estado",
+    "submit": "Reportar incidente",
+    "required": "Este campo es obligatorio.",
     "no_incidents": "No hay incidentes reportados",
     "reports": "Reportes de Incidentes",
-    "severity_high": "ALTA",
-    "severity_medium": "MEDIA",
-    "severity_low": "BAJA",
-    "location": "Ubicación",
-    "time": "Hora"
+    "status_stuck": "EN CURSO",
+    "status_new": "NUEVO",
+    "status_resolved": "RESUELTO",
+    "time": "Hora",
+    "disclaimer": "Los datos mostrados provienen de terceros. ELECTA no se hace responsable por la veracidad o consecuencias del uso de esta información.",
+    "zone": "Zona/Barrio",
+    "email": "Correo electrónico",
+    "select_department": "Selecciona un departamento",
+    "department": "Departamento"
   },
   "nav": {
     "home": "INICIO",
     "elections": "Próximas Elecciones",
     "about": "Sobre Nosotros",
+    "faq": "Preguntas Frecuentes",
     "contact": "Contáctanos"
   },
   "candidate": {
@@ -102,5 +122,351 @@
     "timestamp": "Última actualización: {{date}}",
     "download": "Descarga Excel"
   },
-  "result": "Resultado"
+  "result": "Resultado",
+  "subscription": {
+    "banner_message": "🗳️ Resultados Electorales en Vivo — Recibe alertas sobre cambios importantes",
+    "subscribe_button": "Suscribirse",
+    "modal_title": "Suscríbete a alertas electorales",
+    "unsubscribe_modal_title": "Cancelar suscripción a alertas",
+    "name_label": "Nombre",
+    "email_label": "Email",
+    "name_placeholder": "Nombre",
+    "email_placeholder": "Email",
+    "subscribe_loading": "Enviando...",
+    "subscribe_success": "¡Suscripción exitosa!",
+    "subscribe_error": "No se pudo suscribir",
+    "unsubscribe_button": "Cancelar suscripción",
+    "unsubscribe_loading": "Procesando...",
+    "unsubscribe_success": "¡Desuscripción exitosa!",
+    "unsubscribe_error": "No se pudo desuscribir",
+    "invalid_name": "Nombre inválido. Solo letras y espacios, 2-50 caracteres.",
+    "invalid_email": "Email inválido.",
+    "footer_unsubscribe_text": "¿No quieres recibir más notificaciones?",
+    "footer_unsubscribe_link": "Haz clic aquí"
+  },
+  "about": {
+    "hero": {
+      "title": "Construyendo el Futuro Juntos",
+      "subtitle": "Somos una organización dedicada a proteger los valores democráticos y la gobernanza transparente en nuestra sociedad.",
+      "cta_button": "¡Contáctanos!"
+    },
+    "history": {
+      "title": "Nuestra Historia",
+      "paragraph1": "En un mundo donde los pilares democráticos enfrentan desafíos sin precedentes, nace nuestra organización como respuesta a la necesidad urgente de proteger y fortalecer las instituciones que garantizan la libertad, la justicia y la participación ciudadana.",
+      "paragraph2": "Fundada por un grupo de ciudadanos comprometidos con el bien común, nuestra organización surge de la convicción de que la democracia no es solo un sistema de gobierno, sino un modo de vida que debe ser cultivado, defendido y transmitido a las futuras generaciones."
+    },
+    "mission": {
+      "title": "Nuestra Misión",
+      "paragraph1": "Proteger y fortalecer los valores democráticos a través de la educación cívica, la promoción de la participación ciudadana activa y la defensa de las instituciones que garantizan la transparencia, la justicia y los derechos humanos fundamentales.",
+      "paragraph2": "Llevamos esta misión a la práctica a través de equipos colaborativos, con voluntarios que recopilan información en el terreno y programadores que construyen las plataformas para compartirla. Gracias a esta colaboración, ponemos la información a disposición de todos para apoyar la transparencia electoral y la supervisión democrática."
+    },
+    "whatwedo": {
+      "title": "Qué Hacemos",
+      "paragraph1": "Nuestro compromiso con la democracia se materializa a través de acciones concretas. Una de nuestras iniciativas más impactantes es la recopilación y publicación de imágenes de actas de votación.",
+      "paragraph2": "A través de un esfuerzo impulsado por voluntarios, recolectamos fotografías de actas de votación de recintos electorales en todo el país. Estas imágenes se suben a nuestra plataforma, permitiendo al público verificar la autenticidad y transparencia de los resultados electorales.",
+      "paragraph3": "Puedes explorar esta iniciativa en nuestra sección de <b>Verificación de Actas</b>, donde la imagen de cada recinto electoral está disponible para revisión pública."
+    },
+    "vision": {
+      "title": "Nuestra Visión",
+      "paragraph1": "Ser la organización líder en la protección y promoción de los valores democráticos, contribuyendo a la construcción de una sociedad donde cada ciudadano tenga voz, donde la transparencia sea la norma, y donde las instituciones sirvan verdaderamente al pueblo.",
+      "paragraph2": "Visualizamos un futuro donde la democracia no solo sobreviva, sino que prospere, adaptándose a los desafíos del siglo XXI mientras mantiene sus principios fundamentales intactos."
+    },
+    "values": {
+      "title": "Nuestros Valores Fundamentales",
+      "subtitle": "Los principios que guían nuestro trabajo:",
+      "transparency": {
+        "title": "Transparencia",
+        "description": "Creemos en la apertura total de la información pública y en la rendición de cuentas como pilares básicos de la confianza ciudadana."
+      },
+      "participation": {
+        "title": "Participación",
+        "description": "Trabajamos hacia procesos democráticos que acojan y representen a todos los miembros de la sociedad. Animamos a todos los ciudadanos a participar en la vida democrática, sin importar su origen o perspectiva."
+      },
+      "justice": {
+        "title": "Justicia",
+        "description": "Defendemos un sistema judicial independiente y equitativo que proteja los derechos de todos por igual."
+      },
+      "education": {
+        "title": "Educación",
+        "description": "Invertimos en la formación cívica como herramienta fundamental para el fortalecimiento democrático."
+      },
+      "integrity": {
+        "title": "Integridad",
+        "description": "Actuamos con honestidad y coherencia entre nuestros principios y acciones."
+      }
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "subtitle": "Estamos aquí para escucharte y trabajar juntos",
+      "name_placeholder": "Tu nombre completo",
+      "email_placeholder": "Tu correo electrónico",
+      "message_placeholder": "Tu mensaje",
+      "submit_button": "Enviar mensaje",
+      "social_text": "Síguenos en redes sociales:",
+      "success_message": "¡Mensaje enviado exitosamente!"
+    }
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Encuentra respuestas a las preguntas más comunes sobre nuestra plataforma de monitoreo electoral y cómo usar sus funciones.",
+    "search_placeholder": "Buscar preguntas y respuestas...",
+    "all_categories": "Todas las Categorías",
+    "no_results": "No se encontraron preguntas que coincidan con tu búsqueda.",
+    "clear_filters": "Limpiar filtros",
+    "clear_search": "Limpiar búsqueda",
+    "need_help": "¿Aún necesitas ayuda?",
+    "contact_message": "Si no encontraste la respuesta que buscas, no dudes en contactarnos directamente.",
+    "contact_us": "Contáctanos",
+    "categories": {
+      "map": "Mapa",
+      "counter": "Contador Global",
+      "candidates": "Modal de Candidatos",
+      "charts": "Componentes de Gráficos",
+      "general": "Funcionalidad General",
+      "actas": "Revisión de Actas"
+    },
+    "show_less": "Mostrar menos",
+    "show_more": "Mostrar {{count}} preguntas más",
+    "filtered_by": "Filtrado por",
+    "and": "y",
+    "searching_for": "Buscando",
+    "showing_category": "Mostrando",
+    "no_results_title": "No se encontraron resultados",
+    "results_found": "resultados encontrados",
+    "question": "pregunta",
+    "questions": "preguntas"
+  },
+  "faq_content": {
+    "map": {
+      "title": "Mapa",
+      "questions": [
+        {
+          "question": "¿Cómo funciona la visualización del mapa?",
+          "answer": "El mapa muestra resultados electorales en tiempo real en Bolivia. Cada región está coloreada según los porcentajes de votación, y puedes hacer clic en cualquier departamento para ver resultados detallados. El mapa se actualiza automáticamente a medida que llegan nuevos datos."
+        },
+        {
+          "question": "¿Qué datos se muestran en el mapa?",
+          "answer": "El mapa muestra resultados de votación por partido político, total de votos emitidos, porcentajes de participación y datos demográficos por distrito electoral. Puedes alternar entre diferentes capas de datos para ver métricas específicas."
+        },
+        {
+          "question": "¿Cómo interactúo con el mapa?",
+          "answer": "Haz clic en cualquier departamento para acercar y ver resultados detallados. Usa los controles de zoom para navegar y pasa el cursor sobre las regiones para ver estadísticas clave. El botón 'Volver a resultados nacionales' te lleva al resumen general."
+        }
+      ]
+    },
+    "counter": {
+      "title": "Contador Global",
+      "questions": [
+        {
+          "question": "¿Qué representa el contador global?",
+          "answer": "El contador global muestra el número total de votos emitidos a nivel nacional en tiempo real. Incluye votos válidos, nulos y en blanco, proporcionando una visión completa de la participación electoral."
+        },
+        {
+          "question": "¿Cómo se actualiza en tiempo real?",
+          "answer": "El contador se conecta a nuestro flujo de datos en vivo y se actualiza automáticamente a medida que las mesas reportan sus resultados. Las actualizaciones ocurren cada pocos segundos para asegurar la información más reciente."
+        },
+        {
+          "question": "¿Qué métricas muestra?",
+          "answer": "El contador muestra votos totales, votos nulos, votos en blanco y los principales candidatos con sus votos y porcentajes actuales. Esto te da una visión rápida del panorama electoral."
+        }
+      ]
+    },
+    "candidates": {
+      "title": "Modal de Candidatos",
+      "questions": [
+        {
+          "question": "¿Cómo abro el modal de candidatos?",
+          "answer": "Haz clic en el nombre o foto de cualquier candidato en la sección de partidos políticos o listas de candidatos. Se abrirá el modal mostrando información detallada sobre ese candidato."
+        },
+        {
+          "question": "¿Qué información contiene?",
+          "answer": "El modal muestra información personal del candidato, experiencia política, propuestas principales, votos actuales, porcentaje y otros detalles relevantes de su campaña y trayectoria."
+        },
+        {
+          "question": "¿Cómo navego entre candidatos?",
+          "answer": "Usa las flechas en el modal para moverte entre candidatos, o cierra el modal y haz clic en otro nombre para ver su información."
+        }
+      ]
+    },
+    "charts": {
+      "title": "Componentes de Gráficos",
+      "questions": [
+        {
+          "question": "¿Qué tipos de gráficos hay disponibles?",
+          "answer": "Ofrecemos gráficos de barras, pastel y líneas que muestran tendencias de votación, desempeño de partidos, desglose demográfico y comparaciones históricas. Cada gráfico es interactivo y personalizable."
+        },
+        {
+          "question": "¿Cómo interpreto los datos?",
+          "answer": "Los gráficos incluyen etiquetas claras, leyendas y tooltips. Pasa el cursor sobre los puntos de datos para ver valores exactos y usa los controles para filtrar por periodo, región o partido."
+        },
+        {
+          "question": "¿Puedo personalizar las visualizaciones?",
+          "answer": "Sí, puedes cambiar el tipo de gráfico, ajustar rangos de tiempo, filtrar por partidos o regiones específicas y descargar los gráficos como imágenes para tu uso."
+        }
+      ]
+    },
+    "general": {
+      "title": "Funcionalidad General",
+      "questions": [
+        {
+          "question": "¿Cómo navego por la aplicación?",
+          "answer": "Usa el menú de navegación superior para cambiar entre Inicio, Elecciones, Sobre Nosotros y Preguntas Frecuentes. El dashboard principal muestra resultados en tiempo real y las demás páginas brindan contexto adicional."
+        },
+        {
+          "question": "¿Qué navegadores son compatibles?",
+          "answer": "Nuestra aplicación funciona en todos los navegadores modernos como Chrome, Firefox, Safari y Edge. Para la mejor experiencia, recomendamos usar la última versión disponible."
+        },
+        {
+          "question": "¿Cómo reporto problemas?",
+          "answer": "Utiliza el formulario 'Reportar Incidente' disponible en el pie de página para informar cualquier inconveniente. Incluye detalles del problema, tu ubicación y cualquier mensaje de error."
+        },
+        {
+          "question": "¿Los datos son en tiempo real y precisos?",
+          "answer": "Sí, los datos provienen de fuentes oficiales y se actualizan en tiempo real. Sin embargo, incluimos un aviso de que la información proviene de terceros y no nos responsabilizamos por su exactitud."
+        },
+        {
+          "question": "¿Puedo suscribirme a actualizaciones?",
+          "answer": "Sí, puedes suscribirte para recibir alertas sobre cambios importantes en los resultados. Busca el banner de suscripción o usa el modal para registrarte."
+        }
+      ]
+    },
+    "actas": {
+      "title": "Revisión de Actas",
+      "questions": [
+        {
+          "question": "¿Qué es la revisión de actas?",
+          "answer": "La revisión de actas es un proceso fundamental para verificar la transparencia electoral. Permite a los ciudadanos y observadores revisar las actas de escrutinio y cierre de cada mesa de votación para detectar posibles irregularidades o inconsistencias en los resultados."
+        },
+        {
+          "question": "¿Cómo puedo acceder a las actas para revisión?",
+          "answer": "Puedes acceder a las actas a través de nuestra plataforma en la sección 'Revisión de Actas'. Las actas se cargan automáticamente desde las fuentes oficiales y están organizadas por departamento, municipio y mesa de votación para facilitar la búsqueda."
+        },
+        {
+          "question": "¿Qué información contiene cada acta?",
+          "answer": "Cada acta contiene información detallada como: número de mesa, ubicación, total de votos válidos, votos nulos, votos en blanco, resultados por partido político, firmas de autoridades de mesa y observaciones o incidentes reportados durante el proceso electoral."
+        },
+        {
+          "question": "¿Cómo reporto una irregularidad encontrada en un acta?",
+          "answer": "Si encuentras una irregularidad en un acta, puedes reportarla usando el formulario de 'Reportar Incidente' disponible en nuestra plataforma. Incluye el número de mesa, descripción detallada del problema y adjunta evidencia fotográfica si es posible."
+        },
+        {
+          "question": "¿Las actas se actualizan en tiempo real?",
+          "answer": "Sí, las actas se actualizan en tiempo real conforme son procesadas y validadas por las autoridades electorales. Nuestra plataforma sincroniza automáticamente con las fuentes oficiales para mantener la información actualizada."
+        },
+        {
+          "question": "¿Puedo comparar actas entre diferentes mesas?",
+          "answer": "Sí, nuestra plataforma permite comparar actas entre diferentes mesas de votación. Puedes seleccionar múltiples mesas y ver una comparación lado a lado de los resultados, facilitando la detección de patrones o inconsistencias."
+        }
+      ]
+    }
+  },
+  "upcomingElections": {
+    "title": "Próximas Elecciones",
+    "subtitle": "Calendario electoral mundial 2025-2026",
+    "what": "Qué se elige",
+    "system": "Sistema electoral",
+    "main_parties": "Principales partidos",
+    "context": "Contexto",
+    "footer": "Información actualizada sobre procesos electorales mundiales",
+    "costaRica": "Costa Rica",
+    "costaRica_date": "1 febrero 2026",
+    "costaRica_what": "Presidente, dos vicepresidentes y 57 diputados de la Asamblea Legislativa.",
+    "costaRica_system": "Voto popular; necesita al menos 40 % para salir electo en primera ronda, si no se va a segunda (entre los dos más votados)",
+    "costaRica_pln": "Partido Liberación Nacional (PLN)",
+    "costaRica_pln_candidate": "Álvaro Ramos",
+    "costaRica_pusc": "Partido Unidad Social Cristiana (PUSC)",
+    "costaRica_pusc_candidate": "Juan Carlos Hidalgo",
+    "costaRica_psd": "Partido Progreso Social Democrático (PSD)",
+    "costaRica_psd_candidate": "Luis Amador",
+    "costaRica_summary": "Amplia fragmentación partidaria, alta indecisión electoral (≈ 66 % sin candidato definido), temas clave como inseguridad, empleo y desigualdad.",
+
+    "southKorea": "Corea del Sur",
+    "southKorea_date": "3 junio 2025 (elección anticipada)",
+    "southKorea_what": "Presidente (mandato de 5 años, sin reelección directa).",
+    "southKorea_system": "Pluralidad (gana quien tenga más votos)",
+    "southKorea_dp": "Democratic Party (DP)",
+    "southKorea_dp_candidate": "Lee Jae‑Myung (49.4 %), ganador",
+    "southKorea_ppp": "People Power Party (PPP)",
+    "southKorea_ppp_candidate": "Kim Moon‑Soo (41.2 %)",
+    "southKorea_rp": "Reform Party",
+    "southKorea_rp_candidate": "Lee Jun‑Seok (8.3 %)",
+    "southKorea_summary": "Elección adelantada tras destitución del presidente Yoon Suk Yeol. Es una de las pocas elecciones presidenciales interruptas en Corea.",
+
+    "ecuador": "Ecuador",
+    "ecuador_date": "9 febrero y 13 abril 2025",
+    "ecuador_what": "Presidente, vicepresidente y 151 escaños de la Asamblea Nacional.",
+    "ecuador_system": "Dos rondas. Para ganar en primera: >50 % o ≥40 % y 10 puntos de ventaja.",
+    "ecuador_noboa": "Daniel Noboa (Acción Democrática Nacional)",
+    "ecuador_noboa_candidate": "44.17 % (1ra ronda), 55.63 % (2da), ganó",
+    "ecuador_gonzalez": "Luisa González (Citizen Revolution Movement)",
+    "ecuador_gonzalez_candidate": "44 % (1ra), 44.37 % (2da), perdió",
+    "ecuador_summary": "Alta participación (~82 %), contienda reñida que desembocó en un balotaje y ganó Noboa, centrado en atraer a jóvenes.",
+
+    "malawi": "Malawi",
+    "malawi_date": "16 septiembre 2025",
+    "malawi_what": "Presidente, 193 diputados y autoridades locales.",
+    "malawi_system": "Si ningún candidato consigue mayoría, hay segunda vuelta en 30 días.",
+    "malawi_mcp": "Malawi Congress Party (MCP)",
+    "malawi_mcp_candidate": "Lazarus Chakwera (incumbente)",
+    "malawi_dpp": "Democratic Progressive Party (DPP)",
+    "malawi_dpp_candidate": "Peter Mutharika",
+    "malawi_pp": "People Party (PP)",
+    "malawi_pp_candidate": "Joyce Banda",
+    "malawi_summary": "Segunda elección bajo el nuevo estándar del 50+1; retirada de UTM desestabiliza coalición, importancia de coaliciones actuales.",
+
+    "tanzania": "Tanzania",
+    "tanzania_date": "28 octubre 2025",
+    "tanzania_what": "Presidente y Asamblea Nacional.",
+    "tanzania_system": "Pluralidad (\"first-past-the-post\")",
+    "tanzania_ccm": "Chama Cha Mapinduzi (CCM)",
+    "tanzania_ccm_candidate": "Samia Suluhu Hassan (incumbente)",
+    "tanzania_chadema": "Opposition Chadema",
+    "tanzania_chadema_candidate": "descalificado por ley",
+    "tanzania_summary": "CCM domina, oposición debilitada; principal rival inhabilitado por no firmar un código de conducta.",
+
+    "guineaBissau": "Guinea‑Bissau",
+    "guineaBissau_date": "23 noviembre 2025",
+    "guineaBissau_what": "Presidente y 102 asientos de la Asamblea.",
+    "guineaBissau_system": "Dos vueltas",
+    "guineaBissau_paigc": "PAIGC",
+    "guineaBissau_paigc_candidate": "Domingos Simões Pereira",
+    "guineaBissau_madem": "MADEM‑G15",
+    "guineaBissau_madem_candidate": "Braima Camará",
+    "guineaBissau_prs": "PRS",
+    "guineaBissau_prs_candidate": "Partido de Renovación Social",
+    "guineaBissau_summary": "Fuertes tensiones institucionales: la parlamento fue disuelto, hay acusaciones de \"golpe institucional\"; elecciones buscan líderes estables y sin abuso de poder.",
+
+    "chile": "Chile",
+    "chile_date": "16 noviembre 2025",
+    "chile_what": "Presidente, toda la Cámara de Diputados y mitad del Senado.",
+    "chile_system": "Dos vueltas si ningún candidato logra mayoría absoluta",
+    "chile_right": "Coalición de centro-derecha",
+    "chile_right_candidate": "favorita tras desgaste de Boric",
+    "chile_left": "Oposición progresista",
+    "chile_left_candidate": "fragmentada, con candidaturas débiles",
+    "chile_summary": "Elección crítica en contexto de baja aprobación del gobierno actual; reconfiguración política posible."
+  },
+  "election_report": {
+    "title": "Verificación de Actas de Votación",
+    "department": "Departamento",
+    "department_placeholder": "Selecciona o busca un departamento...",
+    "province": "Provincia",
+    "province_placeholder": "Selecciona o busca una provincia...",
+    "municipality": "Municipio",
+    "municipality_placeholder": "Selecciona o busca un municipio...",
+    "clear_filters": "Limpiar filtros",
+    "total_records": "Total de actas",
+    "page": "Página",
+    "of": "de",
+    "showing": "Mostrando",
+    "no_results": "No se encontraron actas para los filtros seleccionados.",
+    "view_full_image": "Ver imagen completa",
+    "view_record": "Ver acta {{mesa}}",
+    "record_image_alt": "Imagen del acta {{mesa}}",
+    "open_image": "Abrir imagen en nueva pestaña",
+    "download_image": "Descargar imagen",
+    "downloading": "Descargando...",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  }
 }
