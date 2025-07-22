@@ -24,7 +24,7 @@ const client_url = process.env.CLIENT_URL || 'http://localhost:3000';
 
 app.use(express.json());
 app.use(cors({
-  origin: [client_url],
+  origin: [client_url,'http://localhost:3000'],
   credentials: true,
 }));
 
@@ -45,7 +45,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: [client_url],
+    origin: [client_url,'http://localhost:3000'],
     methods: ['GET', 'POST'],
     credentials: true
   }

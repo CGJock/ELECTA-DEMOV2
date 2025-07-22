@@ -26,10 +26,7 @@ export async function runMigrations() {
   await insertElection();
   
   await seedFirstElectionRound(1, '2025-08-17');//introduce the election type and election date 
-  
-  
   await insertVotes();
-  
   await setupVotesTrigger(); // ← Este incluiría el NOTIFY de votos
   console.log('Migraciones completas.');
 }

@@ -2,16 +2,49 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
+import socket from '@contexts/context';
 import { useSocketData } from '@contexts/context';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'; 
+
+
+interface PartyData {
+  name: string;
+  abbr: string;
+  count: number;
+  percentage: number;
+} 
+
+interface LocationSummary {
+  locationCode: string;
+  locationName: string;
+  totalVotes: number;
+  partyBreakdown: PartyData[];
+}
 
 const map: React.FC = () => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
   const [mounted, setMounted] = useState(false);
   const geoIdMapRef = useRef<Map<string, string>>(new Map());
-  const { setSelectedLocationCode, selectedLocationCode } = useSocketData();
+  const { setSelectedLocationCode, selectedLocationCode, breakdownData, setbreakdownLocData} = useSocketData();
   const { t } = useTranslation();
+  const [timestamp, setTimestamp] = useState<string | null>(null);
+
+
+  useEffect(() => {
+  const handleSummary = (data: LocationSummary) => {
+    console.log('Recieved data by Location:', data);
+    setbreakdownLocData(data);
+    setTimestamp(new Date().toISOString());
+  };
+
+
+  return () => {
+    socket.off('location-breakdown-summary', handleSummary);
+  };
+}, []);
+
+ 
 
   useEffect(() => {
     setMounted(true);
@@ -37,12 +70,25 @@ const map: React.FC = () => {
       echarts.registerMap('bolivia', geoJson);
 
       if (chartRef.current && isMounted) {
-        chartInstance.current = echarts.init(chartRef.current);
+ 
+ 
+        // if there is an instance, it destroys it
+  const existingInstance = echarts.getInstanceByDom(chartRef.current);
+  if (existingInstance) {
+    echarts.dispose(chartRef.current);
+  }
+
+  chartInstance.current = echarts.init(chartRef.current);
+
+  chartInstance.current.on('click', (params: any) => {
+    const code = params?.data?.code ?? null; 
+    if (code) {
+      socket.emit('subscribe-to-location', code);
+      setSelectedLocationCode(code);
+    }
+  });
+
         
-        chartInstance.current.on('click', (params: any) => {
-          const code = params?.data?.code ?? null; // ✅ Correcto
-          setSelectedLocationCode(typeof code === 'string' ? code : null);
-        });
 
         chartInstance.current.setOption({
           title: {
@@ -139,13 +185,14 @@ const map: React.FC = () => {
           ],
         });
 
-        const handleResize = () => chartInstance.current?.resize();
-        window.addEventListener('resize', handleResize);
+         const handleResize = () => chartInstance.current?.resize();
+            window.addEventListener('resize', handleResize);
 
-        return () => {
-          window.removeEventListener('resize', handleResize);
-          chartInstance.current?.dispose();
-        };
+            return () => {
+              window.removeEventListener('resize', handleResize);
+              chartInstance.current?.dispose();
+              
+            };
       }
     }
 
@@ -172,12 +219,20 @@ const getDepartmentName = (code: string | null): string => {
          {selectedLocationCode !== null && (
           <div className="w-full text-center mt-3" style={{ minHeight: '30px' }}>
             <button
-              onClick={() => setSelectedLocationCode(null)}
+              onClick={() => {
+                  if (selectedLocationCode) {
+                    socket.emit('unsubscribe-location', selectedLocationCode);
+                  }
+                  setSelectedLocationCode(null);
+                  setbreakdownLocData(null); 
+                }}
+              
               className={`text-xs text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1 rounded-full transition duration-200 ${
                 selectedLocationCode !== null ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
             >
     {t('map.return_global')}
+    
   </button>
 </div>
         )}

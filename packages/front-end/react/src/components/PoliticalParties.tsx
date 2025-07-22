@@ -32,18 +32,34 @@ export function PoliticalParties({
     ? breakdownLocData
     : globalSummary;
 
+  console.log(`info para political parties ${JSON.stringify(source?.partyBreakdown)}`)
+
   // Enriquecer partidos con datos actualizados del socket
-  const enrichedParties = parties.map((party) => {
-    const match = source?.partyBreakdown.find((p) => p.name === party.name);
-    return {
-      ...party,
-      percentage: match?.percentage ?? 0,
-      totalVotes: match?.count ?? 0,
-    };
+const enrichedParties = parties.map((party) => {
+  // Usa aliases si existen, si no, usa abbreviation en un array
+  const aliasList = party.aliases && party.aliases.length > 0
+    ? party.aliases
+    : [party.abbreviation];
+
+  // Normaliza aliases para comparación segura
+  const normalizedAliases = aliasList.map(a => a.trim().toLowerCase());
+
+  // Buscar match en source.partyBreakdown
+  const match = source?.partyBreakdown.find(p => {
+    if (!p.abbr) return false;
+    const abbrNormalized = p.abbr.trim().toLowerCase();
+    return normalizedAliases.includes(abbrNormalized);
   });
 
+  return {
+    ...party,
+    count: match?.count ?? 0,
+    percentage: match?.percentage ?? '0.00',
+  };
+});
+
   // Ordenar por total de votos
-  const sortedParties = [...enrichedParties].sort((a, b) => b.totalVotes - a.totalVotes);
+  const sortedParties = [...enrichedParties].sort((a, b) => b.count - a.count);
 
   // Top 3 si está colapsado
   const visibleParties = isExpanded ? sortedParties : sortedParties.slice(0, 3);
@@ -110,7 +126,7 @@ export function PoliticalParties({
 
             {/* Total de votos */}
             <div className="text-right font-medium">
-              {party.totalVotes.toLocaleString('es-ES')}
+              {party.count}
             </div>
           </div>
         ))}
