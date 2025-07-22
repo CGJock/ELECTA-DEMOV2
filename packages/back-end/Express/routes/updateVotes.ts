@@ -12,8 +12,8 @@ interface PartyData {
   votes: number | null;
 }
 
-interface TallyData {
-  verification: string
+interface ballotData {
+  verification: string | number;
   imageUrl: string; 
   project_id: string;
   project_name: string;
@@ -23,7 +23,7 @@ interface TallyData {
 
 //to check aliases in key values
 const fieldAliasMap: Record<string, string> = {
-  "VOTOS VÁLID0S": "validVotes",
+  "VOTOS VÁLIDOS": "validVotes",
   "VOTOS BLANCOS": "blankVotes",
   "VOTOS NULOS": "nullVotes",
   "image_url": "image_url", // por si acaso viene como image_url
@@ -51,8 +51,11 @@ const tallyImageSchema = z.object({
   date_time_complete: cleanDateField('date_time_complete'),
   imageUrl: z.string().url(),
   project_id: z.string(),
-  project_name: z.string()
+  project_name: z.string(),
+
 });
+
+
 
 router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response) => {
 
@@ -85,7 +88,7 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
    const IGNORE_KEYS = [
     'Departamento', 'Provincia', 'Municipio', 'Localidad', 'Recinto',
     'nullVotes', 'blankVotes', 'validVotes',
-    'VOTOS VÁLID0S', 'VOTOS BLANCOS', 'VOTOS NULOS',
+    'VOTOS VÁLIDOS', 'VOTOS BLANCOS', 'VOTOS NULOS',
     'project_id', 'project_name', 'date_start_time', 'date_time_complete',
     'image_url','verification'
   ];
@@ -94,7 +97,7 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
   let tallyImage: z.infer<typeof tallyImageSchema> | null = null;
   let imageUrlFound = '';
 
-  // extracts parties and tally img
+  // extracts the image using its name
   for (const [key, value] of Object.entries(body)) {
   if (key.toLowerCase().includes('_img_url') && typeof value === 'string') {
     imageUrlFound = value;
@@ -106,33 +109,6 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
   if (!imageUrlFound && typeof body.image_url === 'string') {
     imageUrlFound = body.image_url;
   }
-
-    // detects images, firts with _img_url in the name
-   if (
-  imageUrlFound &&
-  typeof body.verification === 'string' &&
-  typeof body.project_id === 'string' &&
-  typeof body.project_name === 'string' &&
-  typeof body.date_start_time === 'string' &&
-  typeof body.date_time_complete === 'string'
-) {
-  try {
-    tallyImage = tallyImageSchema.parse({
-      verification: body.verification,
-      imageUrl: imageUrlFound,
-      project_id: body.project_id,
-      project_name: body.project_name,
-      date_start_time: body.date_start_time,
-      date_time_complete: body.date_time_complete,
-    });
-  } catch (err) {
-    res.status(400).json({
-      error: 'Error al validar los datos de la imagen de boleta.',
-      details: (err as z.ZodError).flatten(),
-    });
-    return;
-  }
-}
 
     // Parse votes per party
     for (const [key, value] of Object.entries(body)) {
@@ -156,14 +132,55 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
 }
 }
 
+    // detects images, first with _img_url in the name
+   if (
+  imageUrlFound &&
+  typeof body.verification === 'string' &&
+  typeof body.project_id === 'string' &&
+  typeof body.project_name === 'string' &&
+  typeof body.date_start_time === 'string' &&
+  typeof body.date_time_complete === 'string'
+  
+) {
+  try {
+    tallyImage = tallyImageSchema.parse({
+      verification: body.verification,
+      imageUrl: imageUrlFound,
+      project_id: body.project_id,
+      project_name: body.project_name,
+      date_start_time: body.date_start_time,
+      date_time_complete: body.date_time_complete,
+
+    });
+  } catch (err) {
+    res.status(400).json({
+      error: 'Error al validar los datos de la imagen de boleta.',
+      details: (err as z.ZodError).flatten(),
+    });
+    return;
+  }
+}
+
+  
+
   const client = await pool.connect();
 
   try {
     await client.query('BEGIN');
 
+    const ballot_exists = await client.query(
+      `SELECT verification_code FROM ballot_tallies WHERE verification_code = $1`,
+      [tallyImage?.verification]
+    )
+
+    if(ballot_exists.rows.length > 0) {
+       res.status(409).json({ error: 'Verification of the document already stored' });
+      return;
+    }
+
     const election_round_id = await getLatestElectionRoundId();
     if (!election_round_id) {
-      throw new Error('No se encontró ninguna ronda electoral activa.');
+      res.status(404).json({error:'There is not active election round'});
     }
 
     const deptResult = await client.query(
@@ -172,17 +189,17 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
     );
 
     if (deptResult.rows.length === 0) {
-      throw new Error(`No se encontró el departamento con nombre '${department}'`);
+      res.status(404).json({error:`Department: '${department}' not found`});
     }
 
     const department_code = deptResult.rows[0].code;
 
     // Insertar votos generales si no existen
-    await client.query(`
-      INSERT INTO votes (election_round_id, valid_votes, blank_votes, null_votes)
-      VALUES ($1, 0, 0, 0)
-      ON CONFLICT (election_round_id) DO NOTHING;
-    `, [election_round_id]);
+    // await client.query(`
+    //   INSERT INTO votes (election_round_id, valid_votes, blank_votes, null_votes)
+    //   VALUES ($1, 0, 0, 0)
+    //   ON CONFLICT (election_round_id) DO NOTHING;
+    // `, [election_round_id]);
 
     await client.query(`
       UPDATE votes
@@ -220,13 +237,6 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
     ON CONFLICT (election_round_id, department_code, party_id)
     DO UPDATE SET votes = department_votes.votes + EXCLUDED.votes;
   `, [election_round_id, department_code, party_id, safeVotes])
-
-      await client.query(`
-        INSERT INTO department_votes (election_round_id, department_code, party_id, votes)
-        VALUES ($1, $2, $3, $4)
-        ON CONFLICT (election_round_id, department_code, party_id)
-        DO UPDATE SET votes = department_votes.votes + EXCLUDED.votes;
-      `, [election_round_id, department_code, party_id, votes]);
     }
 
     // sabes tally update info
@@ -234,8 +244,8 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
       await client.query(`
         INSERT INTO ballot_tallies (
           election_round_id, project_id, project_name,verification_code, department_code, image_url, date_start_time, date_time_complete
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7,$8);
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7,$8)
+        ON CONFLICT (verification_code) DO NOTHING
       `, [
         election_round_id,
         tallyImage.project_id,
@@ -248,10 +258,25 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
       ]);
     }
 
+    if (tallyImage) {
+  for (const { abbr, votes } of partyVotes) {
+    await client.query(
+      `
+        INSERT INTO votes_data_tallies (verification_code, party_name, party_vote_count)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (verification_code, party_name) DO NOTHING
+      `,
+      [tallyImage.verification, abbr, votes]
+    );
+  }
+}
+    
+      
+
     await client.query('COMMIT');
 
     res.status(200).json({
-      message: 'Votos y datos registrados correctamente.',
+      message: 'Data succesfully inserted.',
       election_round_id,
       department,
       parties: partyVotes,

@@ -70,17 +70,29 @@ export async function initTables(): Promise<void> {
       name: 'ballot_tallies',
       sql: `
         CREATE TABLE IF NOT EXISTS ballot_tallies (
-          id SERIAL PRIMARY KEY,
+          id SERIAL UNIQUE,
           project_id TEXT,
           project_name TEXT,
           date_start_time TIMESTAMP,
           date_time_complete TIMESTAMP,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          verification_code NUMERIC(10,3),
+          verification_code NUMERIC(10,3) PRIMARY KEY,
           election_round_id INTEGER NOT NULL REFERENCES election_rounds(id),
           department_code VARCHAR NOT NULL REFERENCES departments(code),
           image_url TEXT NOT NULL
         );
+      `
+    },
+     {
+      name: 'votes_data_tallies',
+      sql: `
+        CREATE TABLE IF NOT EXISTS votes_data_tallies (
+        id SERIAL PRIMARY KEY,
+        verification_code NUMERIC NOT NULL REFERENCES ballot_tallies(verification_code),
+        party_name TEXT DEFAULT 'UNDEFINED',
+        party_vote_count INTEGER DEFAULT NULL,
+        UNIQUE (verification_code, party_name)
+      );
       `
     },
     {
