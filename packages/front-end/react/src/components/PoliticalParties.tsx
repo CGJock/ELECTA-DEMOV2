@@ -32,18 +32,34 @@ export function PoliticalParties({
     ? breakdownLocData
     : globalSummary;
 
+  console.log(`info para political parties ${JSON.stringify(source?.partyBreakdown)}`)
+
   // Enriquecer partidos con datos actualizados del socket
-  const enrichedParties = parties.map((party) => {
-    const match = source?.partyBreakdown?.find((p) => p.name === party.name);
-    return {
-      ...party,
-      percentage: Number(match?.percentage) || 0,
-      totalVotes: Number(match?.count) || 0,
-    };
+const enrichedParties = parties.map((party) => {
+  // Usa aliases si existen, si no, usa abbreviation en un array
+  const aliasList = party.aliases && party.aliases.length > 0
+    ? party.aliases
+    : [party.abbreviation];
+
+  // Normaliza aliases para comparación segura
+  const normalizedAliases = aliasList.map(a => a.trim().toLowerCase());
+
+  // Buscar match en source.partyBreakdown
+  const match = source?.partyBreakdown.find(p => {
+    if (!p.abbr) return false;
+    const abbrNormalized = p.abbr.trim().toLowerCase();
+    return normalizedAliases.includes(abbrNormalized);
   });
 
+  return {
+    ...party,
+    count: match?.count ?? 0,
+    percentage: match?.percentage ?? '0.00',
+  };
+});
+
   // Ordenar por total de votos
-  const sortedParties = [...enrichedParties].sort((a, b) => b.totalVotes - a.totalVotes);
+  const sortedParties = [...enrichedParties].sort((a, b) => b.count - a.count);
 
   // Top 3 si está colapsado
   const visibleParties = isExpanded ? sortedParties : sortedParties.slice(0, 3);
@@ -153,19 +169,13 @@ export function PoliticalParties({
                     </div>
                   </div>
 
-                  {/* Total de votos */}
-                  <div className="text-right">
-                    <div className="font-bold text-white text-lg mb-1 group-hover:text-emerald-100 transition-colors duration-300">
-                      {party.totalVotes.toLocaleString('es-ES')}
-                    </div>
-                    <div className="text-xs text-slate-400 font-medium">
-                      {(party.percentage || 0).toFixed(1)}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            {/* Total de votos */}
+            <div className="text-right font-medium">
+              {party.count}
+            </div>
           </div>
+        ))}
+      </div>
 
           {/* Botón de expandir */}
           {parties.length > 3 && (

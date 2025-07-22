@@ -114,6 +114,7 @@
   "votechart": {
     "results": "Results",
     "national_results": "National Results",
+    "department_results": "Results by department",
     "political_parties": "Political Parties",
     "votes": "Votes",
     "percentage": "Percentage",

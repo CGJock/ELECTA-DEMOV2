@@ -123,7 +123,7 @@ export default function BasicTabs() {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          <PoliticalParties />
+          {<PoliticalParties />}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <VoteChart active={value === 1} />

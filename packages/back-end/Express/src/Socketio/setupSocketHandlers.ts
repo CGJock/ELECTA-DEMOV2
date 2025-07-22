@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import { Pool } from 'pg';
 import { getVotesSummary } from '@fetchers/votesDataFetcher.js';
+import { getTotalSummary} from '@fetchers/breakdownSummary.js'
 import { getLocationSummary } from '@fetchers/locationBreakdownSummary.js';
 import { getLatestVoteData, setLatestVoteData } from '@listeners/voteCache.js';
 
@@ -16,7 +17,7 @@ io.on('connection', (socket) => {
 
     if (!cached) {
       try {
-        cached = await getVotesSummary(db); // obtener dato directo en BD
+        cached = await getTotalSummary(db); // obtener dato directo en BD
         setLatestVoteData(cached);          // guardar en caché
       } catch (e) {
         console.error('Error al obtener datos iniciales:', e);
@@ -51,13 +52,24 @@ io.on('connection', (socket) => {
 
     // Suscripción a un locationId específico
     socket.on('subscribe-to-location', (locationCode: string) => {
+       console.log(`Received subscription for ${locationCode}`);
+       console.log(globalSummaryInterval)
       for (const room of socket.rooms) {
         if (room.startsWith('location-')) {
+          console.log(`leaving room ${locationCode}`)
           socket.leave(room);
         }
       }
       socket.join(`location-${locationCode}`);
       console.log(`Client ${socket.id} se unió a location-${locationCode}`);
+    });
+
+    socket.on('unsubscribe-location', () => {
+      for (const room of socket.rooms) {
+        if (room.startsWith('location-')) {
+          socket.leave(room);
+        }
+      }
     });
 
     // --- Cleanup on disconnect ---

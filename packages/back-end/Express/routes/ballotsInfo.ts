@@ -3,10 +3,10 @@ import pool from '@db/db.js';
 
 const router = Router();
 
-// GET /departments
+// GET tallies
 router.get('/', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM departments ORDER BY code');
+    const result = await pool.query('SELECT * FROM ballot_tallies ORDER BY code');
     res.status(200).json(result.rows);
     console.log(result.rows)
   } catch (error) {

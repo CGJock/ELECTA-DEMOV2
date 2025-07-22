@@ -36,8 +36,10 @@ interface SocketDataContextValue {
   globalSummary: GlobalSummary | null;
   breakdownData: VoteBreakdown | null;
   breakdownLocData: LocationSummary | null;
+  setbreakdownLocData: (data: LocationSummary | null) => void;
   selectedLocationCode: string | null;
   setSelectedLocationCode: (code: string | null) => void;
+  
   timestamp: string | null;
 }
 
@@ -47,6 +49,8 @@ const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000';
 const socket = io(socketUrl, {
     withCredentials: true,
   });
+
+export default socket;
 
 export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [globalSummary, setGlobalSummary] = useState<GlobalSummary | null>(null);
@@ -59,11 +63,12 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   useEffect(() => {
     
 
-    
+    console.log(selectedLocationCode)
 
     // Escuchar resumen en tiempo real desde NOTIFY PostgreSQL
     socket.on('full-vote-data', (data) => {
-      console.log(data)
+      console.log(`fulldata del context, ${data}`)
+      if (!data.error)
       setbreakdownData({
         totalVotes: data.totalVotes,
         nullVotes: data.nullVotes,
@@ -95,15 +100,13 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
     });
 
 
-    socket.emit('get-total-breakdown');
-    socket.emit('get-global-summary');
-    socket.emit('get-location-summary',1)
+  
 
     return () => {
       socket.off('global-vote-summary');
       socket.off('vote-breakdown');
       socket.off('location-breakdown-summary')
-      // socket.off('full-vote-data')
+      socket.off('full-vote-data')
     };
   }, []);
 
@@ -114,7 +117,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   }, [selectedLocationCode]);
 
   return (
-    <SocketDataContext.Provider value={{ globalSummary, breakdownData, breakdownLocData, selectedLocationCode, setSelectedLocationCode, timestamp  }}>
+    <SocketDataContext.Provider value={{ globalSummary, breakdownData, breakdownLocData, setbreakdownLocData, selectedLocationCode, setSelectedLocationCode, timestamp  }}>
       {children}
     </SocketDataContext.Provider>
   );

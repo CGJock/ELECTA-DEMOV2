@@ -23,7 +23,7 @@ export async function getLocationSummary(db: Pool, locationCode: string): Promis
   // Obtener total de votos en la ubicación
   const totalVotesResult = await db.query(
     `SELECT COALESCE(SUM(votes), 0) as count
-     FROM departments_votes
+     FROM department_votes
      WHERE department_code = $1 AND election_round_id = $2`,
     [locationCode, roundId]
   );
@@ -34,7 +34,7 @@ export async function getLocationSummary(db: Pool, locationCode: string): Promis
     `
     SELECT p.name, p.abbr, COALESCE(SUM(dv.votes), 0) as count
     FROM political_parties p
-    LEFT JOIN departments_votes dv
+    LEFT JOIN department_votes dv
       ON p.id = dv.party_id
      AND dv.department_code = $1
      AND dv.election_round_id = $2
