@@ -89,7 +89,7 @@ class SocketService {
       return;
     }
     
-    this.socket.on(event, callback);
+    this.socket.on(event, callback as any);
   }
 
   // Método para dejar de escuchar eventos
@@ -97,7 +97,7 @@ class SocketService {
     if (!this.socket) return;
     
     if (callback) {
-      this.socket.off(event, callback);
+      this.socket.off(event, callback as any);
     } else {
       this.socket.off(event);
     }

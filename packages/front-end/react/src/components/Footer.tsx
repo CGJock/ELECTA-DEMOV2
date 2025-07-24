@@ -2,8 +2,13 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import type { Incident } from '@/types/election';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  onAddIncident: (incident: Omit<Incident, 'id' | 'timestamp'>) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
   const { t } = useTranslation();
   return (
     <footer style={{

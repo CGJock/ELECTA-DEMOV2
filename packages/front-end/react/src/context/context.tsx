@@ -1,6 +1,7 @@
 'use client'
 import { useEffect,useState,useContext,createContext } from "react";
 import io from 'socket.io-client';
+import { processPartyBreakdown } from '@/utils/partyMapper';
 
 interface VoteBreakdown {
   totalVotes: number;
@@ -84,7 +85,14 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
     //socket that listens to the whole data information + individual party data
     socket.on('total-breakdown-summary', (data) => {
       console.log(`total-brakdownsummary`,data)
-      if (!data.error) setGlobalSummary(data);
+      if (!data.error) {
+        // Procesar partyBreakdown para reemplazar nombres "UNDEFINED"
+        const processedData = {
+          ...data,
+          partyBreakdown: processPartyBreakdown(data.partyBreakdown)
+        };
+        setGlobalSummary(processedData);
+      }
       setTimestamp(new Date().toISOString());
     });
 
@@ -95,7 +103,14 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
 
      socket.on('location-breakdown-summary', (data) => {
       console.log(`location-breakdown-summary`,data)
-      if (!data.error) setbreakdownLocData(data);
+      if (!data.error) {
+        // Procesar partyBreakdown para reemplazar nombres "UNDEFINED"
+        const processedData = {
+          ...data,
+          partyBreakdown: processPartyBreakdown(data.partyBreakdown)
+        };
+        setbreakdownLocData(processedData);
+      }
       setTimestamp(new Date().toISOString());
     });
 

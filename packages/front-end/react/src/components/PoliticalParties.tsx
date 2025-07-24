@@ -169,13 +169,14 @@ const enrichedParties = parties.map((party) => {
                     </div>
                   </div>
 
-            {/* Total de votos */}
-            <div className="text-right font-medium">
-              {party.count}
-            </div>
+                  {/* Total de votos */}
+                  <div className="text-right font-medium">
+                    {party.count}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
           {/* Botón de expandir */}
           {parties.length > 3 && (

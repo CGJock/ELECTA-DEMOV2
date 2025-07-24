@@ -5,7 +5,9 @@ import * as echarts from 'echarts';
 import socket from '@contexts/context';
 import { useSocketData } from '@contexts/context';
 import { useTranslation } from 'react-i18next'; 
-
+import { mockIncidents } from '@data/mockIncidents';
+import type { Incident } from '@/types/election';
+import { IncidentsFlag } from '@components/IncidentsFlag';
 
 interface PartyData {
   name: string;
@@ -21,14 +23,20 @@ interface LocationSummary {
   partyBreakdown: PartyData[];
 }
 
-const map: React.FC<MapProps> = ({ incidents = mockIncidents }) => {
+interface MapProps {
+  incidents: Incident[];
+}
+
+const Map: React.FC<MapProps> = ({ incidents }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
   const [mounted, setMounted] = useState(false);
-  const geoIdMapRef = useRef<Map<string, string>>(new Map());
+  const geoIdMapRef = useRef<Map<string, string>>(new globalThis.Map());
   const { setSelectedLocationCode, selectedLocationCode, breakdownData, setbreakdownLocData} = useSocketData();
   const { t } = useTranslation();
   const [timestamp, setTimestamp] = useState<string | null>(null);
+  const [incidentModalOpen, setIncidentModalOpen] = useState(false);
+  const [focusedIncidentId, setFocusedIncidentId] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -50,16 +58,6 @@ const map: React.FC<MapProps> = ({ incidents = mockIncidents }) => {
     setMounted(true);
   }, []);
 
-  // Forzar resize del mapa cuando se monta
-  useEffect(() => {
-    if (mounted && chartInstance.current) {
-      const timer = setTimeout(() => {
-        chartInstance.current?.resize();
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [mounted]);
-
   useEffect(() => {
     if (!mounted) return;
     let isMounted = true;
@@ -68,7 +66,7 @@ const map: React.FC<MapProps> = ({ incidents = mockIncidents }) => {
       const response = await fetch('/data/map/geoData.json');
       const geoJson = await response.json();
 
-      const geoIdMap = new Map<string, string>();
+      const geoIdMap = new globalThis.Map();
       const departmentCentroids: Record<string, [number, number]> = {};
       geoJson.features.forEach((feature: any) => {
         const { name, code } = feature.properties;
@@ -111,14 +109,71 @@ const map: React.FC<MapProps> = ({ incidents = mockIncidents }) => {
   chartInstance.current = echarts.init(chartRef.current);
 
   chartInstance.current.on('click', (params: any) => {
-    const code = params?.data?.code ?? null; 
-    if (code) {
-      socket.emit('subscribe-to-location', code);
-      setSelectedLocationCode(code);
+    // Click en puntos de incidente
+    if (params.seriesType === 'scatter' && params.data.incidentId) {
+      console.log('Click en punto de incidente:', params.data.incidentId);
+      setIncidentModalOpen(true);
+      setFocusedIncidentId(params.data.incidentId);
+    } else {
+      // Click en el mapa (departamento)
+      const code = params?.data?.code ?? null; 
+      if (code) {
+        socket.emit('subscribe-to-location', code);
+        setSelectedLocationCode(code);
+      }
     }
   });
 
-        
+        // --- INCIDENTES ---
+        // Agrupar incidentes por departamento (usando la parte antes del guion en location)
+        const incidentPoints: any[] = [];
+        const departmentIncidentCount: Record<string, number> = {};
+        incidents.forEach((incident) => {
+          const dept = incident.location.es.split(' - ')[0];
+          departmentIncidentCount[dept] = (departmentIncidentCount[dept] || 0) + 1;
+        });
+        // Para distribuir los puntos si hay varios en el mismo departamento
+        const departmentIncidentOffsets: Record<string, number> = {};
+        incidents.forEach((incident) => {
+          const dept = incident.location.es.split(' - ')[0];
+          const centroid = departmentCentroids[dept];
+          if (!centroid) return;
+          const count = departmentIncidentCount[dept];
+          const idx = departmentIncidentOffsets[dept] || 0;
+          // Distribuir en círculo si hay varios
+          let offsetLon = 0, offsetLat = 0;
+          if (count > 1) {
+            const angle = (2 * Math.PI * idx) / count;
+            const radius = 0.3; // grados, ajustar si necesario
+            offsetLon = Math.cos(angle) * radius;
+            offsetLat = Math.sin(angle) * radius;
+          }
+          departmentIncidentOffsets[dept] = idx + 1;
+          incidentPoints.push({
+            name: dept,
+            value: [centroid[0] + offsetLon, centroid[1] + offsetLat],
+            incidentId: incident.id,
+            incident,
+            symbolSize: 8,
+            itemStyle: {
+              color:
+                incident.status === 'stuck'
+                  ? '#ef4444'
+                  : incident.status === 'new'
+                  ? '#2563eb'
+                  : '#22c55e',
+              borderColor: '#fff',
+              borderWidth: 2,
+              shadowBlur: 8,
+              shadowColor:
+                incident.status === 'stuck'
+                  ? '#ef4444'
+                  : incident.status === 'new'
+                  ? '#2563eb'
+                  : '#22c55e',
+            },
+          });
+        });
 
         chartInstance.current.setOption({
           title: {
@@ -252,17 +307,6 @@ const map: React.FC<MapProps> = ({ incidents = mockIncidents }) => {
           ],
         });
 
-        // Click en puntos de incidente
-        chartInstance.current.on('click', (params: any) => {
-          if (params.seriesType === 'scatter' && params.data.incidentId) {
-            console.log('Click en punto rojo:', params.data.incidentId);
-            // TODO: Handle incident click - could open a modal or navigate to incident details
-          } else {
-            const code = params?.data?.code ?? null;
-            setSelectedLocationCode(typeof code === 'string' ? code : null);
-          }
-        });
-
          const handleResize = () => chartInstance.current?.resize();
             window.addEventListener('resize', handleResize);
 
@@ -294,6 +338,19 @@ const getDepartmentName = (code: string | null): string => {
 
   return (
     <div className="flex flex-col items-center mt-6">
+      {/* IncidentsFlag modal controlado desde Map */}
+      <IncidentsFlag
+        key={focusedIncidentId}
+        incidents={incidents}
+        isOpen={incidentModalOpen}
+        focusedIncidentId={focusedIncidentId || undefined}
+        hideButton={incidentModalOpen}
+        onIncidentsChange={() => {}}
+        onClose={() => {
+          setIncidentModalOpen(false);
+          setFocusedIncidentId(null);
+        }}
+      />
          {selectedLocationCode !== null && (
           <div className="w-full text-center mt-3" style={{ minHeight: '30px' }}>
             <button
@@ -335,4 +392,4 @@ const getDepartmentName = (code: string | null): string => {
   );
 };
 
-export default map;
+export default Map;

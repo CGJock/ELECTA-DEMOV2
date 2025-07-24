@@ -1,5 +1,13 @@
 import type { PoliticalParty, ElectionData } from '../types/election'
 
+export interface Subscription {
+  id: string;
+  name: string;
+  email: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export const mockParties: PoliticalParty[] =  [
   {
     id: '1',
@@ -13,9 +21,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '1',
       name: 'Eduardo Castillo',
       photo: '/img/EduardoCastillo.MAS-IPSP.png',
-      fullscreenPhoto: '/img/MAS-IPSP.Full.png',
       age: 45,
-      party: 'MAS-IPSP',
       experience: { 
         es: 'Ex Ministro de Economía y Finanzas Públicas', 
         en: 'Former Minister of Economy and Public Finance' 
@@ -44,9 +50,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '2',
       name: 'Andrónico Rodríguez',
       photo: '/img/AndrónicoRodríguez.AlianzaPopular.png',
-      fullscreenPhoto: '/img/AlianzaPopular.Full.png',
       age: 35,
-      party: 'Alianza Popular',
       experience: { 
         es: 'Ex Senador', 
         en: 'Former Senator' 
@@ -75,9 +79,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '3',
       name: 'Manfred Reyes Villa',
       photo: '/img/ManfredReyesVilla.AlianzaABPSumate.png',
-      fullscreenPhoto: '/img/AutonomiaParaBoliviaSumate.Full.png',
       age: 69,
-      party: 'Autonomía Para Bolivia-Súmate (APB)',
       experience: { 
         es: 'Ex Alcalde de Cochabamba (1993-2000), Ex Prefecto de Cochabamba (2006-2008), Alcalde actual de Cochabamba (2021-presente), Ex Militar', 
         en: 'Former Mayor of Cochabamba (1993-2000), Former Prefect of Cochabamba (2006-2008), Current Mayor of Cochabamba (2021-present), Former Military Officer' 
@@ -112,9 +114,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '4',
       name: 'Jorge Tuto Quiroga',
       photo: '/img/JorgeTutoQuiroga.AlianzaLIBRE.png',
-      fullscreenPhoto: '/img/AlianzaLIBRE.Full.png',
       age: 63,
-      party: 'Alianza LIBRE',
       experience: { 
         es: 'Ex Presidente de Bolivia (2001-2002)', 
         en: 'Former President of Bolivia (2001-2002)' 
@@ -143,9 +143,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '5',
       name: 'Rodrigo Paz Pereira',
       photo: '/img/RodrigoPazPereira.PDC.png',
-      fullscreenPhoto: '/img/PartidoDemócrataCristiano.Full.png',
       age: 52,
-      party: 'PDC',
       experience: { 
         es: 'Ex Senador', 
         en: 'Former Senator' 
@@ -174,9 +172,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '6',
       name: 'Pavel Aracena',
       photo: '/img/PavelAracena.LYP-ADN.png',
-      fullscreenPhoto: '/img/AccionDemocráticaNacionalista.Full.png',
       age: 48,
-      party: 'LYP-ADN',
       experience: { 
         es: 'Ex Diputado', 
         en: 'Former Deputy' 
@@ -206,9 +202,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '7',
       name: 'Jaime Dunn',
       photo: '/img/JaimeDunn.NGP.png',
-      fullscreenPhoto: '/img/NuevaGeneraciónPatriótica.Full.png',
       age: 55,
-      party: 'NGP',
       experience: { 
         es: 'Ex Ministro', 
         en: 'Former Minister' 
@@ -229,6 +223,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '8',
     name: 'La Fuerza del Pueblo',
     abbreviation: 'FP',
+    aliases: ['FP', 'Fuerza del Pueblo'],
     color: '#9B59B6',
     votes: 0,
     percentage: 0,
@@ -236,9 +231,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '8',
       name: 'Max Jhonny Fernández Saucedo',
       photo: '/img/JhonnyFernandez.FP.png',
-      fullscreenPhoto: '/img/LaFuerzadelPueblo.Full.png',
       age: 60,
-      party: 'La Fuerza del Pueblo',
       experience: { 
         es: 'Alcalde de Santa Cruz de la Sierra (1995-2000, 2021-presente), Concejal Municipal (1989-1991, 2015-2020), Candidato presidencial 2002, Jefe Nacional de UCS desde 1996', 
         en: 'Mayor of Santa Cruz de la Sierra (1995-2000, 2021-present), Municipal Councilor (1989-1991, 2015-2020), Presidential candidate 2002, National UCS Leader since 1996' 
@@ -264,6 +257,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '9',
     name: 'Movimiento de Renovación Nacional',
     abbreviation: 'MORENA',
+    aliases: ['MORENA', 'Movimiento de Renovación Nacional'],
     color: '#E67E22',
     votes: 0,
     percentage: 0,
@@ -271,9 +265,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '9',
       name: 'Mónica Eva Copa Murga',
       photo: '/img/EvaCopa.Morena.png',
-      fullscreenPhoto: '/img/MovimientodeRenovaciónNacional.Full.PNG',
       age: 37,
-      party: 'Movimiento de Renovación Nacional (MORENA)',
       experience: { 
         es: 'Alcaldesa de El Alto (2021-presente), Presidenta del Senado de Bolivia (2019-2020), Senadora por La Paz (2015-2020), Ex dirigente universitaria FUL El Alto', 
         en: 'Mayor of El Alto (2021-present), President of the Senate of Bolivia (2019-2020), Senator for La Paz (2015-2020), Former university leader FUL El Alto' 
@@ -299,6 +291,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '10',
     name: 'Frente de Unidad Nacional',
     abbreviation: 'UN',
+    aliases: ['UN', 'Frente de Unidad Nacional'],
     color: '#1ABC9C',
     votes: 0,
     percentage: 0,
@@ -306,9 +299,7 @@ export const mockParties: PoliticalParty[] =  [
       id: '10',
       name: 'Samuel Doria Medina Auza',
       photo: '/img/SamuelDoriaMedina.BloqueDeUnidad.png',
-      fullscreenPhoto: '/img/BloquedeUnidad.Full.png',
       age: 66,
-      party: 'Frente de Unidad Nacional',
       experience: { 
         es: 'Presidente del Frente de Unidad Nacional (2003-2021), Ministro de Planificación y Coordinación (1991-1993), Ex Presidente de SOBOCE (1987-2014), Candidato presidencial 2005, 2009, 2014', 
         en: 'President of the National Unity Front (2003-2021), Minister of Planning and Coordination (1991-1993), Former President of SOBOCE (1987-2014), Presidential candidate 2005, 2009, 2014' 

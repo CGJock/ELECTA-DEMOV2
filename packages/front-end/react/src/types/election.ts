@@ -11,9 +11,7 @@ export interface Candidate {
   id: string
   name: string
   photo: string
-  fullscreenPhoto?: string
   age: number
-  party: string
   experience: { es: string; en: string }
   education: { es: string; en: string }
   proposals: { es: string; en: string }[]
