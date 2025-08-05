@@ -45,7 +45,7 @@ interface SocketDataContextValue {
 
 const SocketDataContext = createContext<SocketDataContextValue | undefined>(undefined);
 
-const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000';
+const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 const socket = io(socketUrl, {
     withCredentials: true,
   });
@@ -53,60 +53,98 @@ const socket = io(socketUrl, {
 export default socket;
 
 export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-  const [globalSummary, setGlobalSummary] = useState<GlobalSummary | null>(null);
+  const [globalSummary, setglobalSummary] = useState<GlobalSummary | null>(null);
   const [breakdownData, setbreakdownData] = useState<VoteBreakdown | null>(null);
   const [breakdownLocData, setbreakdownLocData] = useState<LocationSummary | null>(null);
   const [selectedLocationCode, setSelectedLocationCode] = useState<string | null>(null);
-  const [timestamp, setTimestamp] = useState<string | null>(null); //se gurdara el timestamp para acreditar los datos
+  const [timestamp, setTimestamp] = useState<string | null>(null); //timestamp to check data consistency
   
+  
+  //   useEffect(() => {
+  // socket.emit('get-total-breakdown');
+ 
+  // }, []);
 
-  useEffect(() => {
+  // useEffect(() => {
     
 
-    console.log(selectedLocationCode)
+  //   console.log(selectedLocationCode)
 
-    // Escuchar resumen en tiempo real desde NOTIFY PostgreSQL
-    socket.on('full-vote-data', (data) => {
-      console.log(`fulldata del context, ${data}`)
-      if (!data.error)
-      setbreakdownData({
-        totalVotes: data.totalVotes,
-        nullVotes: data.nullVotes,
-        nullPercent: data.nullPercentage,
-        blankVotes: data.blankVotes,
-        blankPercent: data.blankPercentage,
-        validVotes: data.validVotes,
-        validPercent: data.validPercentage,
-      });
-      setTimestamp(new Date().toISOString());
-    });
+  //   // Escuchar resumen en tiempo real desde NOTIFY PostgreSQL
+  //   socket.on('full-vote-data', (data) => {
+  //     console.log('full-vote-data-context',data)
+  //     if (!data.error)
+  //     setbreakdownData(data);
+  //   console.log('vote-data-contexto',breakdownData)
+  //     setTimestamp(new Date().toISOString());
+      
+  //   });
 
-    //socket that listens to the whole data information + individual party data
-    socket.on('total-breakdown-summary', (data) => {
-      console.log(`total-brakdownsummary`,data)
-      if (!data.error) setGlobalSummary(data);
-      setTimestamp(new Date().toISOString());
-    });
+  //   //socket that listens to the whole data information + individual party data
+  //   socket.on('total-breakdown-summary', (data) => {
+  //     console.log(`total-brakdownsummary`,data)
+  //     if (!data.error) setglobalSummary(data);
+  //     setTimestamp(new Date().toISOString());
+  //   });
 
-    // socket.on('total-breakdown-summary', (data) => {
-    //   console.log(`total-brakdown-summary`,data)
-    //   if (!data.error) setbreakdownData(data);
-    // });
-
-     socket.on('location-breakdown-summary', (data) => {
-      console.log(`location-breakdown-summary`,data)
-      if (!data.error) setbreakdownLocData(data);
-      setTimestamp(new Date().toISOString());
-    });
+  //    socket.on('location-breakdown-summary', (data) => {
+  //     if (!data.error) setbreakdownLocData(data);
+  //     setTimestamp(new Date().toISOString());
+  //   });
 
 
   
 
+  //   return () => {
+  //     socket.off('global-vote-summary');
+  //     socket.off('total-breakdown-summary');
+  //     socket.off('location-breakdown-summary')
+  //     socket.off('full-vote-data')
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    // Regsiter listeners before emitting
+
+    //show information related to plain votes
+    function handleFullVoteData(data: VoteBreakdown) {
+      if (!('error' in data)) {
+        setbreakdownData(data);
+        setTimestamp(new Date().toISOString());
+      }
+    }
+
+    //show information reltaed to partydatabreakdown
+    function handleTotalBreakdownSummary(data: GlobalSummary) {
+      if (!('error' in data)) {
+        setglobalSummary(data);
+        setTimestamp(new Date().toISOString());
+      }
+    }
+
+    //show information reltaed to partydatabreakdown by location
+    function handleLocationBreakdownSummary(data: LocationSummary) {
+      if (!('error' in data)) {
+        setbreakdownLocData(data);
+        setTimestamp(new Date().toISOString());
+      }
+    }
+
+    socket.on('full-vote-data', handleFullVoteData);
+    socket.on('total-breakdown-summary', handleTotalBreakdownSummary);
+    socket.on('location-breakdown-summary', handleLocationBreakdownSummary);
+    socket.on('initial-vote-summary', (data) => {
+    setglobalSummary(data);
+  });
+
+    // emits the request after the listeners
+    // socket.emit('get-total-breakdown');
+
+    // Limpieza al desmontar
     return () => {
-      socket.off('global-vote-summary');
-      socket.off('vote-breakdown');
-      socket.off('location-breakdown-summary')
-      socket.off('full-vote-data')
+      socket.off('full-vote-data', handleFullVoteData);
+      socket.off('total-breakdown-summary', handleTotalBreakdownSummary);
+      socket.off('location-breakdown-summary', handleLocationBreakdownSummary);
     };
   }, []);
 
