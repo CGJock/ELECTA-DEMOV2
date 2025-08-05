@@ -1,82 +1,83 @@
 import { Server } from 'socket.io';
 import { Pool } from 'pg';
+import { sendGlobalSummary } from './global.js';
 import { getVotesSummary } from '@fetchers/votesDataFetcher.js';
-import { getTotalSummary} from '@fetchers/breakdownSummary.js'
 import { getLocationSummary } from '@fetchers/locationBreakdownSummary.js';
-import { getLatestVoteData, setLatestVoteData } from '@listeners/voteCache.js';
+import { getTotalSummary } from '@fetchers/breakdownSummary.js'; 
+import redisClient from '@db/redis.js';
 
 export function setupSocketHandlers(io: Server, db: Pool) {
-io.on('connection', (socket) => {
-  console.log(`Cliente conectado: ${socket.id}`);
+io.on('connection', async(socket) => {
+  console.log(`Socketio client conected: ${socket.id}`);
+    
+   // get the latest data for the global counter component
+  try {
+      const raw = await redisClient.get('latest:vote:data');
+      if (raw) {
+        const data = JSON.parse(raw);
+        console.log('getting latestvotedata from redis', JSON.stringify(data))
+       socket.emit('full-vote-data', data);
+      } else {
+        const fallbackdata = await getVotesSummary(db)//votes summary is the function to get the plain without party information
 
-  let globalSummaryInterval: NodeJS.Timeout | null = null;
-  let locationSummaryInterval: NodeJS.Timeout | null = null;
-
-  const handleInitialData = async () => {
-    let cached = getLatestVoteData();
-
-    if (!cached) {
-      try {
-        cached = await getTotalSummary(db); // obtener dato directo en BD
-        setLatestVoteData(cached);          // guardar en caché
-      } catch (e) {
-        console.error('Error al obtener datos iniciales:', e);
+        await redisClient.set('latest:vote:data', JSON.stringify(fallbackdata), 'EX', 600);
+        console.log(' getting fallback from db',fallbackdata)
+        socket.emit('full-vote-data',fallbackdata)
       }
+    } catch (error) {
+      console.error('Error leyendo de Redis al conectar cliente:', error);
     }
 
-    if (cached) {
-      socket.emit('full-vote-data', cached);
-    }
-  };
+    
 
-  // Llamar a la función async separada
-  handleInitialData();
 
-    // --- Global summary ---
-    socket.on('get-total-breakdown', async () => {
-      const sendGlobalSummary = async () => {
-        try {
-          const data = await getVotesSummary(db);
-          socket.emit('total-breakdown-summary', data);
-        } catch {
-          socket.emit('total-breakdown-summary', { error: 'Failed to fetch total summary' });
-        }
-      };
-
-      await sendGlobalSummary();
-
-      if (!globalSummaryInterval) {
-        globalSummaryInterval = setInterval(sendGlobalSummary, 30000); // cada 10s
+    //checks last data for parties to initialize the component 
+    try{
+    const lastSummary = await getTotalSummary(db);
+      if (lastSummary) {
+        socket.emit('initial-vote-summary',lastSummary);
       }
-    });
+    } catch (error) {
+      console.error('error getting last summary:', error);
+    }
+
+    //Global summary
+   socket.on('get-total-breakdown', async () => {
+    await sendGlobalSummary(io, db);
+  });
+
 
     // Suscripción a un locationId específico
-    socket.on('subscribe-to-location', (locationCode: string) => {
-       console.log(`Received subscription for ${locationCode}`);
-       console.log(globalSummaryInterval)
-      for (const room of socket.rooms) {
-        if (room.startsWith('location-')) {
-          console.log(`leaving room ${locationCode}`)
-          socket.leave(room);
+    socket.on('subscribe-to-location', async (locationCode: string) => {
+      const room = `location-${locationCode}`;
+      socket.join(room);
+      
+      try {
+        const redisKey = `location-${locationCode}`;
+        const cached = await redisClient.get(redisKey);
+
+        if (cached) {
+          console.log(`Sending cached data for ${room} on subscribe`);
+          socket.emit('location-breakdown-summary', JSON.parse(cached));
+        } else {
+          const data = await getLocationSummary(db, locationCode);
+          socket.emit('location-breakdown-summary', data);
+
+          // Guardar en Redis con TTL
+          await redisClient.set(redisKey, JSON.stringify(data), 'EX', 60);
         }
+      } catch (err) {
+        console.error(`Error sending data for ${room}:`, err);
+        socket.emit('location-breakdown-summary', {
+          error: 'Failed to fetch location summary',
+        });
       }
-      socket.join(`location-${locationCode}`);
-      console.log(`Client ${socket.id} se unió a location-${locationCode}`);
     });
 
-    socket.on('unsubscribe-location', () => {
-      for (const room of socket.rooms) {
-        if (room.startsWith('location-')) {
-          socket.leave(room);
-        }
-      }
-    });
-
-    // --- Cleanup on disconnect ---
+    // disconnect users
     socket.on('disconnect', () => {
       console.log(`Disconnected Client: ${socket.id}`);
-      if (globalSummaryInterval) clearInterval(globalSummaryInterval);
-      if (locationSummaryInterval) clearInterval(locationSummaryInterval);
+      
     });
   });
 }

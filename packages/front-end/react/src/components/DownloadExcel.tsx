@@ -27,8 +27,8 @@ const DownloadExcel: React.FC = () => {
     if (!currentSummary || !currentSummary.partyBreakdown.length) return;
 
     // Hoja 1: Resumen por partido
-    const resumenPartidos = currentSummary.partyBreakdown.map(({ name, count, percentage }) => ({
-      [t('excel.party')]: name,
+    const resumenPartidos = currentSummary.partyBreakdown.map(({ abbr, count, percentage }) => ({
+      [t('excel.party')]: abbr,
       [t('excel.votes')]: count,
       [t('excel.percentage')]: `${percentage}%`,
     }));

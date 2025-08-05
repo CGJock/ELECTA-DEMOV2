@@ -1,11 +1,12 @@
 import { Pool } from 'pg';
 import { getLatestElectionRoundId } from '@utils/getLastRound.js';
+import redisClient from '@db/redis.js';
 
 export interface PartySummary {
   name: string;
   abbr: string;
   count: number;
-  percentage: string;
+  percentage: number;
 }
 
 export interface GlobalSummary {
@@ -16,6 +17,12 @@ export interface GlobalSummary {
 }
 
 export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
+
+  const cached = await redisClient.get('total:summary');
+  if (cached) {
+    return JSON.parse(cached) as GlobalSummary;
+  }
+
   const roundId = await getLatestElectionRoundId();
   if (!roundId) throw new Error('No election round found.');
 
@@ -34,14 +41,7 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
   );
   const vote_data = resultVotes.rows[0]
 
-  // Votos nulos y en blanco (asumiendo una fila por ronda en la tabla `votes`)
-  // const resultSpecialVotes = await db.query(
-  //   `SELECT COALESCE(blank_votes, 0) AS blank, COALESCE(null_votes, 0) AS null
-  //    FROM votes
-  //    WHERE election_round_id = $1
-  //    LIMIT 1`,
-  //   [roundId]
-  // );
+ 
   const totalVotes = vote_data.totalVotes
   const blankVotes = vote_data.blank_votes
   const nullVotes = vote_data.null_votes
@@ -50,7 +50,7 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
   const resultBreakdown = await db.query(
     `
     SELECT p.name, p.abbr, COALESCE(SUM(dv.votes), 0) as count
-    FROM political_parties p
+      FROM political_parties p
     LEFT JOIN department_votes dv
       ON p.id = dv.party_id AND dv.election_round_id = $1
     GROUP BY p.id
@@ -59,17 +59,18 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
     [roundId]
   );
 
-  const partyBreakdown: PartySummary[] = resultBreakdown.rows.map((party) => ({
+  const summary: GlobalSummary = {
+  totalVotes: Number(vote_data.totalVotes),
+  blankVotes: Number(vote_data.blank_votes),
+  nullVotes: Number(vote_data.null_votes),
+  partyBreakdown: resultBreakdown.rows.map((party) => ({
     name: party.name,
     abbr: party.abbr,
     count: Number(party.count),
-    percentage: totalVotes ? ((Number(party.count) / totalVotes) * 100).toFixed(2) : '0.00',
-  }));
+    percentage: totalVotes ? Number(((Number(party.count) / totalVotes) * 100).toFixed(2)) : 0,
+  }))
+};
 
-  return {
-    totalVotes,
-    blankVotes,
-    nullVotes,
-    partyBreakdown,
+  await redisClient.set('total:summary', JSON.stringify(summary), 'EX', 600);
+  return summary
   };
-}

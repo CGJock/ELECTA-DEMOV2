@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import { getLatestElectionRoundId } from '@utils/getLastRound.js';
+import redisClient from '@db/redis.js';
 
 export interface PartySummary {
   name: string;
@@ -17,10 +18,17 @@ export interface LocationSummary {
 
 export async function getLocationSummary(db: Pool, locationCode: string): Promise<LocationSummary> {
 
+  const Key = `location:summary:${locationCode}`;
+
+  const cached = await redisClient.get(Key);
+  if (cached) {
+    return JSON.parse(cached) as LocationSummary;
+  }
+
   const roundId = await getLatestElectionRoundId();
   if (!roundId) throw new Error('No election round available');
 
-  // Obtener total de votos en la ubicación
+  // get total votes by location
   const totalVotesResult = await db.query(
     `SELECT COALESCE(SUM(votes), 0) as count
      FROM department_votes
@@ -29,7 +37,7 @@ export async function getLocationSummary(db: Pool, locationCode: string): Promis
   );
   const totalVotes = Number(totalVotesResult.rows[0].count);
 
-  // Votos por partido
+  // Votes per party
   const votesPerPartyResult = await db.query(
     `
     SELECT p.name, p.abbr, COALESCE(SUM(dv.votes), 0) as count
@@ -51,17 +59,22 @@ export async function getLocationSummary(db: Pool, locationCode: string): Promis
     percentage: totalVotes ? ((Number(party.count) / totalVotes) * 100).toFixed(2) : '0.00'
   }));
 
-  // Obtener nombre del departamento
+  // gets department name
   const locationNameResult = await db.query(
     `SELECT name FROM departments WHERE code = $1`,
     [locationCode]
   );
   const locationName = locationNameResult.rows[0]?.name || `ID ${locationCode}`;
 
-  return {
+  const summary: LocationSummary = {
     locationCode,
     locationName,
     totalVotes,
     partyBreakdown
   };
+
+  // saves in redis for 10 minutes
+  await redisClient.set(Key, JSON.stringify(summary), 'EX', 600);
+
+  return summary;
 }

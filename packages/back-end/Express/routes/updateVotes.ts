@@ -59,9 +59,16 @@ const tallyImageSchema = z.object({
 
 router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response) => {
 
-  // mormalize keys
+  const rawBody = req.body.ballot_value;
+
+  if (!rawBody || typeof rawBody !== 'object') {
+    res.status(400).json({ error: 'Invalid or missing "ballot_value" in request body.' });
+    return;
+  }
+
+  // mormalize body
   const normalizedBody: Record<string, any> = {};
-  for (const [key, value] of Object.entries(req.body)) {
+  for (const [key, value] of Object.entries(rawBody)) {
     const trimmedKey = key.trim();
     const mappedKey = fieldAliasMap[trimmedKey] || trimmedKey;
     normalizedBody[mappedKey] = value;
@@ -70,9 +77,9 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
      // validate json squema
   const parseResult = voteSchema.safeParse(normalizedBody);
   if (!parseResult.success) {
-    res.status(400).json({ errors: parseResult.error.flatten() });
-    return;
-  }
+  res.status(400).json({ errors: parseResult.error.flatten() });
+  return;
+}
 
  
   
@@ -92,6 +99,8 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
     'project_id', 'project_name', 'date_start_time', 'date_time_complete',
     'image_url','verification'
   ];
+
+  
 
   const partyVotes: PartyData[] = [];
   let tallyImage: z.infer<typeof tallyImageSchema> | null = null;

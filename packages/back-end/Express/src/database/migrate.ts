@@ -15,18 +15,34 @@ import  { seedSecondElectionRound } from '@db/seeding/seedSecondRound.js'
  
 export async function runMigrations() {
   console.log('Iniciando migraciones...');
-  // await ensureDatabase();
+
+  console.log('➤ initTables()');
   await initTables();
+  
+  console.log('➤ seedDepartments()');
   await seedDepartments();
+  
+  console.log('➤ seedProvinces()');
   await seedProvinces();
+  
+  console.log('➤ seedMunicipalities()');
   await seedMunicipalities();
   
-  
+  console.log('➤ seedElectionTypes()');
   await seedElectionTypes();
+  
+  console.log('➤ insertElection()');
   await insertElection();
   
-  await seedFirstElectionRound(1, '2025-08-17');//introduce the election type and election date 
+  console.log('➤ seedFirstElectionRound()');
+  await seedFirstElectionRound(1, '2025-08-17');
+
+  console.log('➤ insertVotes()');
   await insertVotes();
-  await setupVotesTrigger(); // ← Este incluiría el NOTIFY de votos
-  console.log('Migraciones completas.');
+
+  console.log('➤ setupVotesTrigger()');
+  await setupVotesTrigger();
+
+  console.log('✅ Migraciones completas.');
 }
+

@@ -2,20 +2,32 @@ import { z } from 'zod';
 
 //function that deletes letters and spacers from a string
 export const cleanNumberField = (fieldName: string) =>
-  z.string().transform((val, ctx) => {
-    const cleaned = val.replace(/[^\d]/g, ''); // elimina todo menos dígitos
-    const num = Number(cleaned);
+  z.preprocess(
+    (val) => {
+      if (typeof val === 'number') {
+        return val === -1 ? 0 : val;
+      }
 
-    if (isNaN(num)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Field '${fieldName}' has to be a valid digit. Value recieved: '${val}'`,
-      });
-      return z.NEVER;
+      if (typeof val === 'string') {
+        const trimmed = val.trim();
+
+        if (trimmed === '-1') return 0;
+
+        const cleaned = trimmed.replace(/[^\d]/g, '');
+        const num = Number(cleaned);
+
+        return isNaN(num) ? undefined : num;
+      }
+
+      return undefined;
+    },
+    z.number()
+  ).refine(
+    (num) => typeof num === 'number' && !isNaN(num),
+    {
+      message: `Field '${fieldName}' must be a valid number.`,
     }
-
-    return num;
-  });
+  );
 
 
 //function that formats a date
