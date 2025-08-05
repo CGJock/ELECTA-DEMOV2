@@ -4,8 +4,9 @@ import { useSocketData } from '@contexts/context';
 import { useTranslation } from 'react-i18next';
 
 const VoteBreakdownComponent: React.FC = () => {
-  const { breakdownData,timestamp } = useSocketData();
+  const { breakdownData, timestamp } = useSocketData();
   const { t } = useTranslation();
+  console.log('data del conunter',breakdownData)
 
   
 

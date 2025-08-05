@@ -24,8 +24,8 @@ export interface PoliticalParty {
   abbreviation: string
   aliases: string[];
   color: string
-  votes: number
-  percentage: number | string
+  votes?: number
+  percentage?: number 
   candidate: Candidate
 }
 

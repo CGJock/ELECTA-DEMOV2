@@ -29,13 +29,15 @@ interface VoteChartProps {
 
 export default function VoteChart({ active }: VoteChartProps) {
 
-  const { globalSummary, breakdownLocData, setbreakdownLocData, selectedLocationCode, timestamp } = useSocketData();
+  
+
+  const { globalSummary, breakdownLocData,  selectedLocationCode, timestamp } = useSocketData();
 
   const { t } = useTranslation();
 
 
   const currentSummary = selectedLocationCode
-  ? breakdownLocData || globalSummary // Usa breakdownLocData si existe, o globalSummary como fallback
+  ? breakdownLocData  // Usa breakdownLocData si existe, o globalSummary como fallback
   : globalSummary;
 
   console.log(`data actual ${currentSummary?.partyBreakdown}`)
@@ -54,7 +56,6 @@ export default function VoteChart({ active }: VoteChartProps) {
     })).sort((a, b) => b.percentage - a.percentage)
   : [];
 
-   console.log(`data ${data}`)
 
   function generateTicks(max: number, step: number): number[] {
   const ticks = [];
@@ -75,6 +76,13 @@ const tickValues = generateTicks(totalVotes, 50000);
     }
   }, [active]);
 
+    if (!currentSummary || !Array.isArray(currentSummary.partyBreakdown)) {
+  return (
+    <div className="w-full h-96 flex items-center justify-center text-gray-500">
+      Cargando datos de votación...
+    </div>
+  );
+}
   return (
     <div className="w-full h-96 min-w-[300px] min-h-[300px]  rounded-md flex flex-col p-2">
       <div className="text-center text-base font-semibold text-gray-700 mb-1 select-none">
