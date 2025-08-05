@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { AlertTriangle, MapPin, CheckCircle, XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Incident } from '@/types/election';
+import { emailService } from '@/services/emailService';
 import { volunteerEmails } from '@data/mockIncidents';
 
 interface IncidentFormProps {
@@ -62,7 +63,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
     },
   });
 
-  const onFormSubmit = (data: any) => {
+  const onFormSubmit = async (data: any) => {
     setEmailError(null);
     if (!volunteerEmails.includes(data.email)) {
       setEmailError(t("incidents.invalid_email") || "Correo electrónico inválido: solo voluntarios pueden reportar.");
@@ -78,6 +79,17 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
       location,
       status: data.status,
     };
+    
+    // Enviar email de reporte usando Resend
+    await emailService.sendIncidentReportEmail({
+      email: data.email,
+      name: data.email, // Usar email como nombre para voluntarios
+      incidentType: data.status,
+      description: data.description,
+      location: `${data.department} - ${data.zone}`.trim(),
+      timestamp: new Date().toISOString(),
+    });
+    
     onSubmit(incident);
     reset();
   };

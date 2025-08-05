@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { removeSubscription, validateEmail, validateName, sanitize } from '@/lib/subscriptionService';
+import { subscriptionService } from '@/lib/subscriptionService';
 import { useTranslation } from 'react-i18next';
 import ReactDOM from 'react-dom';
 
@@ -47,25 +47,25 @@ const UnsubscribeModal: React.FC<UnsubscribeModalProps> = ({ open, onClose }) =>
     setError(null);
     setSuccess(false);
     if (loading) return;
-    const n = sanitize(name);
-    const eMail = sanitize(email);
-    if (!validateName(n)) {
+    const n = name.trim();
+    const eMail = email.trim();
+    if (!n || n.length < 2) {
       setError(t('subscription.invalid_name'));
       nameInputRef.current?.focus();
       return;
     }
-    if (!validateEmail(eMail)) {
+    if (!eMail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(eMail)) {
       setError(t('subscription.invalid_email'));
       return;
     }
     setLoading(true);
-    const res = await removeSubscription(n, eMail);
+    const res = await subscriptionService.unsubscribeUser(eMail);
     setLoading(false);
     if (res.success) {
       setSuccess(true);
       setTimeout(() => onClose(), 2000);
     } else {
-      setError(t('subscription.unsubscribe_error'));
+      setError(res.error || t('subscription.unsubscribe_error'));
     }
   };
 

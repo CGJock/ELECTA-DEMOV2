@@ -15,7 +15,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@emailjs/browser": "^4.4.1",
+
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.2",
@@ -33,6 +33,7 @@
     "react-i18next": "^15.5.3",
     "react-select": "^5.10.2",
     "recharts": "^2.15.3",
+    "resend": "^4.8.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "swiper": "^11.2.10",

@@ -147,64 +147,68 @@
   },
   "about": {
     "hero": {
-      "title": "Construyendo el Futuro Juntos",
-      "subtitle": "Somos una organización dedicada a proteger los valores democráticos y la gobernanza transparente en nuestra sociedad.",
-      "cta_button": "¡Contáctanos!"
+      "title": "Sobre Electa Bolivia",
+      "subtitle": "Plataforma líder en transparencia electoral y visualización de datos en tiempo real para Bolivia",
+      "cta_button": "Contáctanos"
     },
     "history": {
       "title": "Nuestra Historia",
-      "paragraph1": "En un mundo donde los pilares democráticos enfrentan desafíos sin precedentes, nace nuestra organización como respuesta a la necesidad urgente de proteger y fortalecer las instituciones que garantizan la libertad, la justicia y la participación ciudadana.",
-      "paragraph2": "Fundada por un grupo de ciudadanos comprometidos con el bien común, nuestra organización surge de la convicción de que la democracia no es solo un sistema de gobierno, sino un modo de vida que debe ser cultivado, defendido y transmitido a las futuras generaciones."
+      "paragraph1": "Electa Bolivia nació de la necesidad de proporcionar información electoral transparente y accesible para todos los bolivianos. Nuestra plataforma se ha convertido en la referencia principal para el seguimiento de elecciones en tiempo real, ofreciendo datos precisos y análisis detallados.",
+      "paragraph2": "Desde nuestros inicios, nos hemos comprometido con la transparencia y la participación ciudadana, creando herramientas que empoderan a los votantes con información confiable y actualizada."
     },
     "mission": {
       "title": "Nuestra Misión",
-      "paragraph1": "Proteger y fortalecer los valores democráticos a través de la educación cívica, la promoción de la participación ciudadana activa y la defensa de las instituciones que garantizan la transparencia, la justicia y los derechos humanos fundamentales.",
-      "paragraph2": "Llevamos esta misión a la práctica a través de equipos colaborativos, con voluntarios que recopilan información en el terreno y programadores que construyen las plataformas para compartirla. Gracias a esta colaboración, ponemos la información a disposición de todos para apoyar la transparencia electoral y la supervisión democrática."
-    },
-    "whatwedo": {
-      "title": "Qué Hacemos",
-      "paragraph1": "Nuestro compromiso con la democracia se materializa a través de acciones concretas. Una de nuestras iniciativas más impactantes es la recopilación y publicación de imágenes de actas de votación.",
-      "paragraph2": "A través de un esfuerzo impulsado por voluntarios, recolectamos fotografías de actas de votación de recintos electorales en todo el país. Estas imágenes se suben a nuestra plataforma, permitiendo al público verificar la autenticidad y transparencia de los resultados electorales.",
-      "paragraph3": "Puedes explorar esta iniciativa en nuestra sección de <b>Verificación de Actas</b>, donde la imagen de cada recinto electoral está disponible para revisión pública."
+      "paragraph1": "Proporcionar información electoral transparente, precisa y accesible para todos los bolivianos, facilitando la participación ciudadana y fortaleciendo la democracia.",
+      "paragraph2": "Crear una plataforma tecnológica que sirva como puente entre los ciudadanos y los procesos electorales, promoviendo la transparencia y la confianza en el sistema democrático."
     },
     "vision": {
       "title": "Nuestra Visión",
-      "paragraph1": "Ser la organización líder en la protección y promoción de los valores democráticos, contribuyendo a la construcción de una sociedad donde cada ciudadano tenga voz, donde la transparencia sea la norma, y donde las instituciones sirvan verdaderamente al pueblo.",
-      "paragraph2": "Visualizamos un futuro donde la democracia no solo sobreviva, sino que prospere, adaptándose a los desafíos del siglo XXI mientras mantiene sus principios fundamentales intactos."
+      "paragraph1": "Ser la plataforma líder en América Latina para la visualización y análisis de datos electorales, contribuyendo al fortalecimiento de la democracia digital.",
+      "paragraph2": "Expandir nuestro alcance para incluir más países de la región, creando una red de transparencia electoral que beneficie a toda Latinoamérica."
+    },
+    "whatwedo": {
+      "title": "¿Qué Hacemos?",
+      "paragraph1": "Desarrollamos y mantenemos plataformas tecnológicas avanzadas para el monitoreo electoral en tiempo real, proporcionando datos precisos y análisis detallados de los procesos electorales.",
+      "paragraph2": "Ofrecemos herramientas de visualización interactiva que permiten a los usuarios explorar y entender los resultados electorales de manera intuitiva y accesible.",
+      "paragraph3": "Promovemos la transparencia electoral a través de la publicación de datos abiertos y la creación de reportes detallados que facilitan el análisis y la investigación."
     },
     "values": {
-      "title": "Nuestros Valores Fundamentales",
-      "subtitle": "Los principios que guían nuestro trabajo:",
+      "title": "Nuestros Valores",
+      "subtitle": "Los principios que guían nuestro trabajo y compromiso con la democracia",
       "transparency": {
         "title": "Transparencia",
-        "description": "Creemos en la apertura total de la información pública y en la rendición de cuentas como pilares básicos de la confianza ciudadana."
+        "description": "Compromiso total con la transparencia en todos nuestros procesos y datos, asegurando que la información sea accesible y verificable."
       },
       "participation": {
         "title": "Participación",
-        "description": "Trabajamos hacia procesos democráticos que acojan y representen a todos los miembros de la sociedad. Animamos a todos los ciudadanos a participar en la vida democrática, sin importar su origen o perspectiva."
+        "description": "Fomentamos la participación ciudadana activa en los procesos democráticos, proporcionando herramientas que empoderan a los votantes."
       },
       "justice": {
         "title": "Justicia",
-        "description": "Defendemos un sistema judicial independiente y equitativo que proteja los derechos de todos por igual."
+        "description": "Promovemos la justicia electoral a través de la equidad en el acceso a la información y la igualdad de oportunidades para todos los ciudadanos."
       },
       "education": {
         "title": "Educación",
-        "description": "Invertimos en la formación cívica como herramienta fundamental para el fortalecimiento democrático."
+        "description": "Educamos a la ciudadanía sobre los procesos electorales y la importancia de la participación democrática."
       },
       "integrity": {
         "title": "Integridad",
-        "description": "Actuamos con honestidad y coherencia entre nuestros principios y acciones."
+        "description": "Mantenemos los más altos estándares de integridad en el manejo de datos y la presentación de información electoral."
       }
     },
     "contact": {
       "title": "Contáctanos",
-      "subtitle": "Estamos aquí para escucharte y trabajar juntos",
+      "subtitle": "¿Tienes preguntas o sugerencias? Nos encantaría escucharte",
       "name_placeholder": "Tu nombre completo",
-      "email_placeholder": "Tu correo electrónico",
-      "message_placeholder": "Tu mensaje",
-      "submit_button": "Enviar mensaje",
-      "social_text": "Síguenos en redes sociales:",
-      "success_message": "¡Mensaje enviado exitosamente!"
+      "email_placeholder": "tu-email@ejemplo.com",
+      "message_placeholder": "Escribe tu mensaje aquí...",
+      "submit_button": "Enviar Mensaje",
+      "sending": "Enviando...",
+      "success_message": "¡Mensaje enviado exitosamente! Te responderemos pronto.",
+      "error_message": "Error al enviar el mensaje. Por favor intenta de nuevo.",
+      "validation_error": "Por favor completa todos los campos",
+      "email_error": "Por favor ingresa un email válido",
+      "social_text": "Síguenos en nuestras redes sociales"
     }
   },
   "faq": {

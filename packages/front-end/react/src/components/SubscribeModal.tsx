@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { addSubscription, validateEmail, validateName, sanitize } from '@/lib/subscriptionService';
+import { subscriptionService } from '@/lib/subscriptionService';
 import { useTranslation } from 'react-i18next';
 import ReactDOM from 'react-dom';
 
@@ -48,21 +48,21 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ open, onClose }) => {
     setSuccess(false);
     if (loading) return;
     
-    const n = sanitize(name);
-    const eMail = sanitize(email);
+    const n = name.trim();
+    const eMail = email.trim();
     
-    if (!validateName(n)) {
+    if (!n || n.length < 2) {
       setError(t('subscription.invalid_name', { defaultValue: 'Nombre inválido' }));
       nameInputRef.current?.focus();
       return;
     }
-    if (!validateEmail(eMail)) {
+    if (!eMail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(eMail)) {
       setError(t('subscription.invalid_email', { defaultValue: 'Email inválido' }));
       return;
     }
     
     setLoading(true);
-    const res = await addSubscription(n, eMail);
+    const res = await subscriptionService.subscribeUser(eMail, n);
     setLoading(false);
     
     if (res.success) {

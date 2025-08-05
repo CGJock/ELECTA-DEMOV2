@@ -1,11 +1,22 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { emailService } from '@/services/emailService';
 
 const AboutUs: React.FC = () => {
   const { t } = useTranslation();
   const contactRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
 
   useEffect(() => {
     setMounted(true);
@@ -13,6 +24,65 @@ const AboutUs: React.FC = () => {
 
   const scrollToContact = () => {
     contactRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validación básica
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setSubmitStatus({
+        type: 'error',
+        message: t('about.contact.validation_error') || 'Por favor completa todos los campos'
+      });
+      return;
+    }
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setSubmitStatus({
+        type: 'error',
+        message: t('about.contact.email_error') || 'Por favor ingresa un email válido'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: '' });
+
+    try {
+      const result = await emailService.sendContactEmail(formData);
+      
+      if (result.success) {
+        setSubmitStatus({
+          type: 'success',
+          message: t('about.contact.success_message') || '¡Mensaje enviado exitosamente! Te responderemos pronto.'
+        });
+        // Limpiar formulario
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setSubmitStatus({
+          type: 'error',
+          message: result.error || t('about.contact.error_message') || 'Error al enviar el mensaje. Por favor intenta de nuevo.'
+        });
+      }
+    } catch (error) {
+      setSubmitStatus({
+        type: 'error',
+        message: t('about.contact.error_message') || 'Error al enviar el mensaje. Por favor intenta de nuevo.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const values = [
@@ -207,9 +277,6 @@ const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      {/* Llamada a la Acción */}
-      {/* (CTA section removed as requested) */}
-
       {/* Contacto */}
       <section 
         ref={contactRef} 
@@ -226,14 +293,27 @@ const AboutUs: React.FC = () => {
           </div>
           
           <div className="bg-slate-700/50 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-slate-600/50">
-            <div className="space-y-6">
+            {submitStatus.type && (
+              <div className={`mb-6 p-4 rounded-lg ${
+                submitStatus.type === 'success' 
+                  ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-300' 
+                  : 'bg-red-500/20 border border-red-500/30 text-red-300'
+              }`}>
+                {submitStatus.message}
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <input
                   type="text"
                   name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
                   placeholder={t('about.contact.name_placeholder')}
                   maxLength={50}
-                  className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
               
@@ -241,29 +321,46 @@ const AboutUs: React.FC = () => {
                 <input
                   type="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   placeholder={t('about.contact.email_placeholder')}
                   maxLength={80}
-                  className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
               
               <div>
                 <textarea
                   name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
                   placeholder={t('about.contact.message_placeholder')}
                   maxLength={500}
                   rows={4}
-                  className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200 resize-none"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
               
               <button
-                onClick={() => alert(t('about.contact.success_message'))}
-                className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {t('about.contact.submit_button')}
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {t('about.contact.sending') || 'Enviando...'}
+                  </span>
+                ) : (
+                  t('about.contact.submit_button')
+                )}
               </button>
-            </div>
+            </form>
             
             <div className="mt-8 pt-8 border-t border-slate-600">
               <p className="text-slate-300 mb-4 text-center">
