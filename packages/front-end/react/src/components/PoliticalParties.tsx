@@ -13,6 +13,8 @@ interface PoliticalPartiesProps {
   onPartiesChange?: (parties: PoliticalParty[]) => void
 }
 
+
+
 export function PoliticalParties({
   parties: initialParties = mockParties,
   onPartiesChange,
@@ -24,42 +26,44 @@ export function PoliticalParties({
   const { t } = useTranslation();
   const { selectedLocationCode, globalSummary, breakdownLocData } = useSocketData();
 
+   if (!globalSummary && !breakdownLocData) {
+    return <div className="text-white p-4">{t('loading')}...</div>;
+  }
+
   // Base de partidos (estructura estática con nombres, fotos, etc.)
   const parties = initialParties;
 
   // Fuente dinámica de votos y porcentajes
-  const source = selectedLocationCode && breakdownLocData
-    ? breakdownLocData
-    : globalSummary;
+  // Fuente dinámica de votos y porcentajes
+  const sourcePartyBreakdown = selectedLocationCode && breakdownLocData
+    ? breakdownLocData?.partyBreakdown
+    : globalSummary?.partyBreakdown;
 
-  console.log(`info para political parties ${JSON.stringify(source?.partyBreakdown)}`)
+  console.log('datadelasparties',sourcePartyBreakdown)
 
-  // Enriquecer partidos con datos actualizados del socket
-const enrichedParties = parties.map((party) => {
-  // Usa aliases si existen, si no, usa abbreviation en un array
-  const aliasList = party.aliases && party.aliases.length > 0
-    ? party.aliases
-    : [party.abbreviation];
+  // Enriquecer partidos con datos del backend
+  const enrichedParties = parties.map((party) => {
+  const aliases = party.aliases?.length ? party.aliases : [party.abbreviation];
+  const normalizedAliases = aliases.map(a => a.trim().toLowerCase());
 
-  // Normaliza aliases para comparación segura
-  const normalizedAliases = aliasList.map(a => a.trim().toLowerCase());
-
-  // Buscar match en source.partyBreakdown
-  const match = source?.partyBreakdown.find(p => {
-    if (!p.abbr) return false;
-    const abbrNormalized = p.abbr.trim().toLowerCase();
-    return normalizedAliases.includes(abbrNormalized);
+  const match = sourcePartyBreakdown?.find(p => {
+    const abbr = p.abbr?.trim().toLowerCase();
+    return normalizedAliases.includes(abbr);
   });
 
   return {
     ...party,
-    count: match?.count ?? 0,
-    percentage: match?.percentage ?? '0.00',
+    count: match?.count, // Mantener undefined si no hay data aún
+    percentage: match?.percentage,
   };
 });
 
   // Ordenar por total de votos
-  const sortedParties = [...enrichedParties].sort((a, b) => b.count - a.count);
+  const sortedParties = [...enrichedParties].sort((a, b) => {
+  const countA = typeof a.count === 'number' ? a.count : -1;
+  const countB = typeof b.count === 'number' ? b.count : -1;
+  return countB - countA;
+});
 
   // Top 3 si está colapsado
   const visibleParties = isExpanded ? sortedParties : sortedParties.slice(0, 3);
@@ -169,14 +173,13 @@ const enrichedParties = parties.map((party) => {
                     </div>
                   </div>
 
-                  {/* Total de votos */}
-                  <div className="text-right font-medium">
-                    {party.count}
-                  </div>
-                </div>
-              </div>
-            ))}
+            {/* Total de votos */}
+            <div className="text-right font-medium">
+               {typeof party.count === 'number' ? party.count.toLocaleString('es-US') : 'Cargando datos'}
+            </div>
           </div>
+        ))}
+      </div>
 
           {/* Botón de expandir */}
           {parties.length > 3 && (
