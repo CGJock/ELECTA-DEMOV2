@@ -11,6 +11,8 @@ import  redisClient from '@db/redis.js'
 
 import depRouter from '@routes/departments.js';
 import voteRouter from '@routes/updateVotes.js';
+import getmailsRouter from '@routes/getMails.js';
+import postmailsRouter from '@routes/postEmail.js';
 import { runMigrations } from '@db/migrate.js';
 import { listenToVotesChanges } from '@listeners/listenVotes.js';
 import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
@@ -45,6 +47,8 @@ async function main() {
   // Routes
   app.use('/api/departments', depRouter);
   app.use('/api/votes', voteRouter);
+  app.use('/api/get-emails', getmailsRouter);
+  app.use('/api/post-emails', postmailsRouter)
 
   // Connect Redis using ioredis
   // const redisClient = new Redis(redis_url, {
