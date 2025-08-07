@@ -1,10 +1,11 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { AlertTriangle, MapPin, CheckCircle, XCircle } from "lucide-react";
+import { AlertTriangle, MapPin, CheckCircle, XCircle, Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Incident } from '@/types/election';
 import { emailService } from '@/services/emailService';
 import { volunteerEmails } from '@data/mockIncidents';
+import { useTranslationService } from '@/hooks/useTranslationService';
 
 interface IncidentFormProps {
   onSubmit: (incident: Omit<Incident, "id" | "timestamp">) => void;
@@ -26,6 +27,10 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
   const [emailError, setEmailError] = React.useState<string | null>(null);
   const [departments, setDepartments] = React.useState<string[]>([]);
   const [loadingDepartments, setLoadingDepartments] = React.useState(true);
+  const [isAutoTranslating, setIsAutoTranslating] = React.useState(false);
+
+  // Hook para el servicio de traducción
+  const { translateText, isTranslating, isConfigured, error: translationError } = useTranslationService();
 
   React.useEffect(() => {
     fetch("/data/map/geoData.json")
@@ -43,6 +48,8 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
     handleSubmit,
     control,
     reset,
+    watch,
+    setValue,
     formState: { errors, isValid, isSubmitting },
   } = useForm<{
     title: string;
@@ -63,19 +70,84 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
     },
   });
 
+  // Observar cambios en los campos para traducción automática
+  const watchedTitle = watch("title");
+  const watchedDescription = watch("description");
+
+  // Función para traducir automáticamente cuando se detecta texto en español
+  const handleAutoTranslate = React.useCallback(async (field: 'title' | 'description', value: string) => {
+    if (!isConfigured || !value || value.trim() === '' || isTranslating) {
+      return;
+    }
+
+    // Detectar si el texto está en español (heurística simple)
+    const spanishWords = ['el', 'la', 'los', 'las', 'de', 'del', 'en', 'con', 'por', 'para', 'sin', 'sobre', 'entre', 'hacia', 'desde', 'hasta', 'durante', 'mediante', 'según', 'contra'];
+    const hasSpanishWords = spanishWords.some(word => 
+      value.toLowerCase().includes(` ${word} `) || 
+      value.toLowerCase().startsWith(`${word} `) || 
+      value.toLowerCase().endsWith(` ${word}`)
+    );
+
+    if (hasSpanishWords && value.length > 10) {
+      setIsAutoTranslating(true);
+      try {
+        const translatedText = await translateText(value, 'en');
+        if (translatedText !== value) {
+          // Solo actualizar si la traducción es diferente al texto original
+          setValue(field, translatedText, { shouldValidate: true });
+        }
+      } catch (error) {
+        console.error('Error en traducción automática:', error);
+      } finally {
+        setIsAutoTranslating(false);
+      }
+    }
+  }, [isConfigured, isTranslating, translateText, setValue]);
+
+  // Efecto para traducción automática
+  React.useEffect(() => {
+    if (watchedTitle && watchedTitle.length > 10) {
+      handleAutoTranslate('title', watchedTitle);
+    }
+  }, [watchedTitle, handleAutoTranslate]);
+
+  React.useEffect(() => {
+    if (watchedDescription && watchedDescription.length > 20) {
+      handleAutoTranslate('description', watchedDescription);
+    }
+  }, [watchedDescription, handleAutoTranslate]);
+
   const onFormSubmit = async (data: any) => {
     setEmailError(null);
     if (!volunteerEmails.includes(data.email)) {
       setEmailError(t("incidents.invalid_email") || "Correo electrónico inválido: solo voluntarios pueden reportar.");
       return;
     }
+
+    // Traducir automáticamente si no está configurado el servicio
+    let translatedTitle = data.title;
+    let translatedDescription = data.description;
+
+    if (isConfigured) {
+      try {
+        translatedTitle = await translateText(data.title, 'en');
+        translatedDescription = await translateText(data.description, 'en');
+      } catch (error) {
+        console.error('Error al traducir incidente:', error);
+        // Usar el texto original si falla la traducción
+        translatedTitle = data.title;
+        translatedDescription = data.description;
+      }
+    }
+
     const location = {
       es: `${data.department} - ${data.zone}`.trim(),
       en: `${data.department} - ${data.zone}`.trim(),
     };
+
     const incident: Omit<Incident, "id" | "timestamp"> = {
-      title: { es: data.title, en: data.title },
-      description: { es: data.description, en: data.description },
+      title: { es: data.title, en: translatedTitle },
+      description: { es: data.description, en: translatedDescription },
       location,
       status: data.status,
     };
@@ -103,11 +175,23 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
       <h2 className="text-base font-bold text-white mb-3 flex items-center gap-2">
         <AlertTriangle className="text-yellow-400" size={18} />
         {t("incidents.form_title") || "Reportar incidente"}
+        {isConfigured && (
+          <Languages className="text-cyan-400" size={16} title="Traducción automática habilitada" />
+        )}
       </h2>
+
+      {/* Mostrar error de traducción si existe */}
+      {translationError && (
+        <div className="mb-2 p-2 bg-red-900/20 border border-red-400 rounded text-red-400 text-xs">
+          Error de traducción: {translationError}
+        </div>
+      )}
+
       {/* Título */}
       <div className="mb-2">
         <label htmlFor="title" className="block text-xs font-medium text-gray-200 mb-1">
           {t("incidents.title") || "Título"} <span className="text-red-400">*</span>
+          {isAutoTranslating && <span className="text-cyan-400 ml-1">(Traduciendo...)</span>}
         </label>
         <input
           id="title"
@@ -115,13 +199,16 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
           className={`w-full px-2 py-1 rounded bg-[#1E293B] border focus:outline-none focus:ring-2 focus:ring-[#10B981] text-white text-sm ${errors.title ? "border-red-400" : "border-[#374151]"}`}
           aria-invalid={!!errors.title}
           aria-required="true"
+          placeholder={isConfigured ? "Escribe en español (se traducirá automáticamente)" : "Título del incidente"}
         />
         {errors.title && <span className="text-red-400 text-xs mt-1 flex items-center gap-1"><XCircle size={12} />{errors.title.message}</span>}
       </div>
+
       {/* Descripción */}
       <div className="mb-2">
         <label htmlFor="description" className="block text-xs font-medium text-gray-200 mb-1">
           {t("incidents.description") || "Descripción"} <span className="text-red-400">*</span>
+          {isAutoTranslating && <span className="text-cyan-400 ml-1">(Traduciendo...)</span>}
         </label>
         <textarea
           id="description"
@@ -130,6 +217,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
           aria-invalid={!!errors.description}
           aria-required="true"
           rows={2}
+          placeholder={isConfigured ? "Describe en español (se traducirá automáticamente)" : "Descripción del incidente"}
         />
         {errors.description && <span className="text-red-400 text-xs mt-1 flex items-center gap-1"><XCircle size={12} />{errors.description.message}</span>}
       </div>

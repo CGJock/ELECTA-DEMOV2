@@ -73,7 +73,7 @@ const FullscreenWrapper: React.FC<FullscreenWrapperProps> = ({ children }) => {
         flexDirection: 'column',
         alignItems: 'center',
         padding: isFullscreen ? '3rem' : '2rem 1.5rem',
-        marginTop: isFullscreen ? '0' : '2.5rem',
+        marginTop: isFullscreen ? '0' : '0rem', // Removido el marginTop para alinear mejor
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         background: isFullscreen 
           ? 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)' 

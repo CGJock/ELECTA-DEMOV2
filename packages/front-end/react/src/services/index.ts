@@ -2,6 +2,7 @@
 export { apiService } from './apiService';
 export { socketService } from './socketService';
 export { dataService } from './dataService';
+export { translationService } from './translationService';
 
 // Exportar tipos
 export type {

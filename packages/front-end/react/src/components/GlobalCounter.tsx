@@ -23,7 +23,7 @@ const VoteBreakdownComponent: React.FC = () => {
       flexDirection: 'column',
       alignItems: 'center',
       padding: '1.2rem 1rem 1.2rem 1rem',
-      marginTop: '2rem',
+      marginTop: '0rem', // Removido el marginTop para alinear mejor
       fontFamily: 'Inter, sans-serif',
       background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
       borderRadius: '18px',

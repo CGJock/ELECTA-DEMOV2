@@ -1,9 +1,10 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { mockParties } from '@data/mockData';
 import { mockIncidents } from '@data/mockIncidents';
+import { X, TrendingUp, AlertTriangle, Users, MapPin, Calendar } from 'lucide-react';
 
 interface FirstRoundSummaryModalProps {
   isOpen: boolean;
@@ -152,237 +153,351 @@ const FirstRoundSummaryModal: React.FC<FirstRoundSummaryModalProps> = ({
     }
   };
 
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 rounded-t-2xl">
-          <div className="flex justify-between items-center">
-            <div>
-              <h2 className="text-2xl font-bold">Resumen Primera Ronda</h2>
-              <p className="text-blue-100">Elecciones Presidenciales - 17 de agosto 2025</p>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-white/80 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-            >
-              ×
-            </button>
-          </div>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {/* Contenedor principal con glassmorphism */}
+      <div className="relative max-w-6xl w-full max-h-[90vh] overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl">
+        
+        {/* Efectos de fondo animados */}
+        <div className="absolute inset-0">
+          {/* Gradiente animado de fondo */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-600/20 animate-pulse"></div>
+          
+          {/* Efectos de luz */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          
+          {/* Patrón geométrico sutil */}
+          <div className="absolute inset-0 opacity-5" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+            backgroundSize: '24px 24px'
+          }}></div>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Candidatos para segunda ronda */}
-          <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Candidatos para Segunda Ronda</h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {firstRoundResults.slice(0, 2).map((candidate, index) => (
-                <div key={candidate.id} className="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-shadow">
-                  <div className="flex items-center space-x-4">
-                                          <div className="relative w-16 h-16">
-                        <Image
-                          src={candidate.photo}
-                          alt={candidate.name}
-                          fill
-                          sizes="64px"
-                          className="object-cover rounded-full"
-                        />
-                      </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-lg text-gray-800">{candidate.name}</h4>
-                      <p className="text-sm text-gray-600">{candidate.party}</p>
-                      <div className="flex items-center space-x-2 mt-2">
-                        <div 
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: candidate.color }}
-                        ></div>
-                        <span className="text-sm font-medium">{candidate.partyAbbr}</span>
-                      </div>
+        <div className="relative z-10 h-full flex flex-col">
+          {/* Header elegante */}
+          <div className="relative p-8 md:p-12 border-b border-white/10">
+            {/* Efecto de gradiente en el header */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-600/20"></div>
+            
+            <div className="relative z-10">
+              <div className="flex justify-between items-start">
+                <div className="space-y-4">
+                  {/* Título con efectos */}
+                  <div className="inline-flex items-center gap-3 mb-4">
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-white/60"></div>
+                    <div className="px-4 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                      <span className="text-white/90 text-sm font-medium tracking-wider uppercase">
+                        Bolivia 2025
+                      </span>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-800">{candidate.percentage}%</div>
-                      <div className="text-sm text-gray-600">{formatNumber(candidate.votes)} votos</div>
-                    </div>
+                    <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-white/60"></div>
                   </div>
+                  
+                  <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white mb-2 tracking-tight">
+                    PRIMERA RONDA
+                  </h1>
+                  <p className="text-white/70 text-lg font-light">
+                    Elección Presidencial - 17 de agosto 2025
+                  </p>
                 </div>
-              ))}
+                
+                {/* Botón de cerrar */}
+                <button
+                  onClick={onClose}
+                  className="group relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:bg-white/20 hover:scale-110"
+                >
+                  <X className="w-6 h-6 text-white/80 group-hover:text-white transition-colors" />
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Tabla de resultados completos */}
-          <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Resultados Completos</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-200 rounded-lg overflow-hidden">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Candidato</th>
-                    <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Partido</th>
-                    <th className="border border-gray-200 px-4 py-3 text-right text-sm font-medium text-gray-700">Votos</th>
-                    <th className="border border-gray-200 px-4 py-3 text-right text-sm font-medium text-gray-700">Porcentaje</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {firstRoundResults.map((candidate, index) => (
-                    <tr 
-                      key={candidate.id} 
-                      className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} ${
-                        candidate.disqualified ? 'opacity-50 bg-gray-100' : ''
-                      }`}
-                    >
-                      <td className="border border-gray-200 px-4 py-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="relative w-8 h-8">
+          {/* Contenido scrollable */}
+          <div className="flex-1 overflow-y-auto p-8 md:p-12 space-y-8">
+            
+            {/* Candidatos para segunda ronda */}
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200 mb-2">
+                  Candidatos para Segunda Ronda
+                </h2>
+                <p className="text-white/60 text-sm">Los dos candidatos con mayor votación</p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {firstRoundResults.slice(0, 2).map((candidate, index) => (
+                  <div key={candidate.id} className="group relative">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                    
+                    <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:border-white/20 transition-all duration-300 transform hover:-translate-y-1">
+                      <div className="flex items-center space-x-4">
+                        {/* Foto del candidato */}
+                        <div className="relative w-20 h-20">
+                          <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-pulse"></div>
+                          <div className="absolute inset-2 rounded-full overflow-hidden">
                             <Image
                               src={candidate.photo}
                               alt={candidate.name}
                               fill
-                              sizes="32px"
-                              className={`object-cover rounded-full ${
-                                candidate.disqualified ? 'grayscale' : ''
-                              }`}
+                              className="object-cover"
                             />
                           </div>
-                          <div>
-                            <span className={`font-medium ${candidate.disqualified ? 'text-gray-500' : 'text-gray-800'}`}>
-                              {candidate.name}
-                            </span>
-                            {candidate.disqualified && (
-                              <div className="text-xs text-red-600 font-medium">DESCALIFICADO</div>
-                            )}
+                        </div>
+                        
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white mb-1">{candidate.name}</h3>
+                          <p className="text-sm text-white/70 mb-2">{candidate.party}</p>
+                          <div className="flex items-center space-x-2">
+                            <div 
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: candidate.color }}
+                            ></div>
+                            <span className="text-sm font-medium text-white/90">{candidate.partyAbbr}</span>
                           </div>
                         </div>
-                      </td>
-                      <td className="border border-gray-200 px-4 py-3">
-                        <div className="flex items-center space-x-2">
-                          <div 
-                            className={`w-3 h-3 rounded-full ${
-                              candidate.disqualified ? 'opacity-50' : ''
-                            }`}
-                            style={{ backgroundColor: candidate.color }}
-                          ></div>
-                          <span className={`text-sm ${candidate.disqualified ? 'text-gray-500' : 'text-gray-700'}`}>
-                            {candidate.partyAbbr}
-                          </span>
+                        
+                        <div className="text-right">
+                          <div className="text-3xl font-black text-white mb-1">{candidate.percentage}%</div>
+                          <div className="text-sm text-white/60">{formatNumber(candidate.votes)} votos</div>
                         </div>
-                      </td>
-                      <td className={`border border-gray-200 px-4 py-3 text-right font-medium ${
-                        candidate.disqualified ? 'text-gray-500' : 'text-gray-800'
-                      }`}>
-                        {formatNumber(candidate.votes)}
-                      </td>
-                      <td className={`border border-gray-200 px-4 py-3 text-right font-bold ${
-                        candidate.disqualified ? 'text-gray-500' : 'text-gray-800'
-                      }`}>
-                        {candidate.percentage}%
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Resumen de incidentes */}
-          <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Resumen de Incidentes</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h4 className="font-bold text-red-800 mb-2">Incidentes Reportados</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-red-700">Total:</span>
-                    <span className="font-bold text-red-800">{mockIncidents.length}</span>
+            {/* Resultados completos */}
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200 mb-2">
+                  Resultados Completos
+                </h2>
+                <p className="text-white/60 text-sm">Todos los candidatos y sus resultados</p>
+              </div>
+              
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-white/10 border-b border-white/10">
+                        <th className="px-6 py-4 text-left text-sm font-medium text-white/90">Candidato</th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-white/90">Partido</th>
+                        <th className="px-6 py-4 text-right text-sm font-medium text-white/90">Votos</th>
+                        <th className="px-6 py-4 text-right text-sm font-medium text-white/90">Porcentaje</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {firstRoundResults.map((candidate, index) => (
+                        <tr 
+                          key={candidate.id} 
+                          className={`border-b border-white/5 hover:bg-white/5 transition-colors ${
+                            candidate.disqualified ? 'opacity-50' : ''
+                          }`}
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center space-x-3">
+                              <div className="relative w-10 h-10">
+                                <Image
+                                  src={candidate.photo}
+                                  alt={candidate.name}
+                                  fill
+                                  className={`object-cover rounded-full ${
+                                    candidate.disqualified ? 'grayscale' : ''
+                                  }`}
+                                />
+                              </div>
+                              <div>
+                                <span className={`font-medium ${candidate.disqualified ? 'text-white/50' : 'text-white'}`}>
+                                  {candidate.name}
+                                </span>
+                                {candidate.disqualified && (
+                                  <div className="text-xs text-red-400 font-medium">DESCALIFICADO</div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center space-x-2">
+                              <div 
+                                className={`w-3 h-3 rounded-full ${
+                                  candidate.disqualified ? 'opacity-50' : ''
+                                }`}
+                                style={{ backgroundColor: candidate.color }}
+                              ></div>
+                              <span className={`text-sm ${candidate.disqualified ? 'text-white/50' : 'text-white/90'}`}>
+                                {candidate.partyAbbr}
+                              </span>
+                            </div>
+                          </td>
+                          <td className={`px-6 py-4 text-right font-medium ${
+                            candidate.disqualified ? 'text-white/50' : 'text-white'
+                          }`}>
+                            {formatNumber(candidate.votes)}
+                          </td>
+                          <td className={`px-6 py-4 text-right font-bold ${
+                            candidate.disqualified ? 'text-white/50' : 'text-white'
+                          }`}>
+                            {candidate.percentage}%
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Estadísticas y incidentes */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Resumen de incidentes */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200 mb-2">
+                    Resumen de Incidentes
+                  </h3>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                    <div className="flex items-center space-x-3">
+                      <AlertTriangle className="w-5 h-5 text-red-400" />
+                      <span className="text-white font-medium">Total Incidentes</span>
+                    </div>
+                    <span className="text-2xl font-bold text-red-400">{mockIncidents.length}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-red-700">Resueltos:</span>
-                    <span className="font-bold text-green-600">
-                      {mockIncidents.filter(i => i.status === 'resolved').length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-red-700">Pendientes:</span>
-                    <span className="font-bold text-orange-600">
-                      {mockIncidents.filter(i => i.status === 'new').length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-red-700">Atascados:</span>
-                    <span className="font-bold text-red-600">
-                      {mockIncidents.filter(i => i.status === 'stuck').length}
-                    </span>
+                  
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                      <div className="text-lg font-bold text-green-400">
+                        {mockIncidents.filter(i => i.status === 'resolved').length}
+                      </div>
+                      <div className="text-xs text-white/70">Resueltos</div>
+                    </div>
+                    <div className="text-center p-3 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                      <div className="text-lg font-bold text-orange-400">
+                        {mockIncidents.filter(i => i.status === 'new').length}
+                      </div>
+                      <div className="text-xs text-white/70">Pendientes</div>
+                    </div>
+                    <div className="text-center p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                      <div className="text-lg font-bold text-red-400">
+                        {mockIncidents.filter(i => i.status === 'stuck').length}
+                      </div>
+                      <div className="text-xs text-white/70">Atascados</div>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-bold text-blue-800 mb-2">Estadísticas Generales</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-blue-700">Total de votos:</span>
-                    <span className="font-bold text-blue-800">{formatNumber(6300000)}</span>
+              {/* Estadísticas generales */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200 mb-2">
+                    Estadísticas Generales
+                  </h3>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                    <div className="flex items-center space-x-3">
+                      <Users className="w-5 h-5 text-blue-400" />
+                      <span className="text-white font-medium">Total de Votos</span>
+                    </div>
+                    <span className="text-2xl font-bold text-blue-400">{formatNumber(6300000)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-blue-700">Participación:</span>
-                    <span className="font-bold text-blue-800">78.5%</span>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                      <div className="text-lg font-bold text-blue-400">78.5%</div>
+                      <div className="text-xs text-white/70">Participación</div>
+                    </div>
+                    <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                      <div className="text-lg font-bold text-blue-400">45,230</div>
+                      <div className="text-xs text-white/70">Mesas</div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-blue-700">Mesas habilitadas:</span>
-                    <span className="font-bold text-blue-800">45,230</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-blue-700">Departamentos:</span>
-                    <span className="font-bold text-blue-800">9</span>
-                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Incidentes principales */}
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200 mb-2">
+                  Incidentes Principales
+                </h3>
+              </div>
+              
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
+                <div className="space-y-3 max-h-60 overflow-y-auto">
+                  {mockIncidents.slice(0, 5).map((incident) => (
+                    <div key={incident.id} className="p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-white mb-1">{incident.title.es}</h4>
+                          <p className="text-sm text-white/70 mb-2">{incident.description.es}</p>
+                          <div className="flex items-center space-x-2 text-xs text-white/50">
+                            <MapPin className="w-3 h-3" />
+                            <span>{incident.location.es}</span>
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <span 
+                            className="px-3 py-1 text-xs font-medium rounded-full"
+                            style={{
+                              backgroundColor: getStatusColor(incident.status) + '20',
+                              color: getStatusColor(incident.status)
+                            }}
+                          >
+                            {getStatusText(incident.status)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Lista de incidentes principales */}
-          <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Incidentes Principales</h3>
-            <div className="space-y-3 max-h-60 overflow-y-auto">
-              {mockIncidents.slice(0, 5).map((incident) => (
-                <div key={incident.id} className="border border-gray-200 rounded-lg p-3">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-800">{incident.title.es}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{incident.description.es}</p>
-                      <p className="text-xs text-gray-500 mt-1">{incident.location.es}</p>
-                    </div>
-                    <div className="ml-4">
-                      <span 
-                        className="px-2 py-1 text-xs font-medium rounded-full"
-                        style={{
-                          backgroundColor: getStatusColor(incident.status) + '20',
-                          color: getStatusColor(incident.status)
-                        }}
-                      >
-                        {getStatusText(incident.status)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          {/* Footer */}
+          <div className="relative p-8 border-t border-white/10">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2 text-white/60">
+                <Calendar className="w-4 h-4" />
+                <span className="text-sm">Segunda ronda programada para el 20 de octubre de 2025</span>
+              </div>
+              <button
+                onClick={onClose}
+                className="group relative inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-xl border border-white/20 hover:border-white/40 transition-all duration-500 text-sm font-medium text-white/90 hover:text-white overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-400/10 to-blue-500/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                <span className="relative z-10">Cerrar</span>
+              </button>
             </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="bg-gray-50 px-6 py-4 rounded-b-2xl">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">
-              Segunda ronda programada para el 20 de octubre de 2025
-            </p>
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Cerrar
-            </button>
           </div>
         </div>
       </div>

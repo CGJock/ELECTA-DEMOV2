@@ -1,10 +1,12 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { AlertTriangle, X, Clock, MapPin } from "lucide-react"
+import { AlertTriangle, X, Clock, MapPin, Settings, Languages } from "lucide-react"
 import type { Incident } from '@/types/election';
 import { mockIncidents } from '@data/mockIncidents';
 import { useTranslation } from 'react-i18next'
+import TranslationConfig from './TranslationConfig';
+import { useTranslationService } from '@/hooks/useTranslationService';
 
 interface IncidentsFlagProps {
   incidents?: Incident[]
@@ -43,7 +45,11 @@ export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onI
   const [isOpen, setIsOpen] = useState(false)
   const [incidents, setIncidents] = useState<Incident[]>(initialIncidents)
   const [mounted, setMounted] = useState(false)
+  const [showTranslationConfig, setShowTranslationConfig] = useState(false)
   const { t, i18n } = useTranslation();
+
+  // Hook para el servicio de traducción
+  const { isConfigured: isTranslationConfigured } = useTranslationService();
 
   // Nuevo: refs para incidentes
   const incidentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -243,21 +249,48 @@ export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onI
               }}>
                 <AlertTriangle style={{ color: '#10B981' }} size={20} />
                 <span>{t('incidents.reports')}</span>
+                {isTranslationConfigured && (
+                  <Languages 
+                    className="text-cyan-400" 
+                    size={16} 
+                  />
+                )}
               </h3>
-              <button 
-                onClick={handleClose} 
-                style={{
-                  color: '#64748B',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'color 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#64748B'}
-              >
-                <X size={20} />
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                {/* Botón de configuración de traducción */}
+                <button
+                  onClick={() => setShowTranslationConfig(true)}
+                  style={{
+                    color: '#64748B',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'color 0.3s ease',
+                    padding: '0.25rem',
+                    borderRadius: '0.25rem'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#22D3EE'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#64748B'}
+                  title="Configurar traducción automática"
+                >
+                  <Settings size={16} />
+                </button>
+                {/* Botón de cerrar */}
+                <button 
+                  onClick={handleClose} 
+                  style={{
+                    color: '#64748B',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'color 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#64748B'}
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             <div style={{
@@ -340,6 +373,12 @@ export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onI
           </div>
         </div>
       )}
+
+      {/* Modal de configuración de traducción */}
+      <TranslationConfig 
+        isOpen={showTranslationConfig} 
+        onClose={() => setShowTranslationConfig(false)} 
+      />
     </>
   )
 } 

@@ -17,12 +17,15 @@ export const simulateWinnerData = (type: 'first-round-majority' | 'first-round-d
     if (typeof window !== 'undefined') {
       (window as any).mockWinnerData = null;
     }
+    // Disparar evento para limpiar el banner
+    window.dispatchEvent(new CustomEvent('winnerDataChanged'));
     return;
   }
 
   const baseData = {
     totalVotes: 3000000,
-    partyBreakdown: []
+    partyBreakdown: [],
+    winnerType: type // Agregar el tipo al objeto
   };
 
   switch (type) {
@@ -101,11 +104,11 @@ const ElectionPhaseDebugger: React.FC = () => {
   const [showDebugger, setShowDebugger] = useState(false);
   const [forceRefresh, setForceRefresh] = useState(0);
 
-  // Solo mostrar en desarrollo (comentado temporalmente para debug)
-  // if (process.env.NODE_ENV !== 'development') {
-  //   console.log('[ElectionPhaseDebugger] Not in development mode, returning null');
-  //   return null;
-  // }
+  // Solo mostrar en desarrollo
+  if (process.env.NODE_ENV !== 'development') {
+    console.log('[ElectionPhaseDebugger] Not in development mode, returning null');
+    return null;
+  }
 
   // Escuchar cambios de fase forzados
   useEffect(() => {
@@ -134,10 +137,11 @@ const ElectionPhaseDebugger: React.FC = () => {
       fontSize: '12px',
       fontFamily: 'monospace',
       maxWidth: '320px',
-      border: '1px solid #333'
+      border: '1px solid #333',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <strong>Election Phase Debugger</strong>
+        <strong>🔧 Election Phase Debugger</strong>
         <button
           onClick={() => setShowDebugger(!showDebugger)}
           style={{
@@ -248,11 +252,11 @@ const ElectionPhaseDebugger: React.FC = () => {
             <strong>🏆 Test WinnerBanner:</strong>
           </div>
           <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                                               <button
-                        onClick={() => {
-                          handleForcePhase('post-first-round');
-                          simulateWinnerData('first-round-majority');
-                        }}
+            <button
+              onClick={() => {
+                handleForcePhase('post-first-round');
+                simulateWinnerData('first-round-majority');
+              }}
               style={{
                 background: '#F59E0B',
                 color: 'white',
@@ -265,11 +269,11 @@ const ElectionPhaseDebugger: React.FC = () => {
             >
               First Round Winner (&gt;50%)
             </button>
-                                               <button
-                        onClick={() => {
-                          handleForcePhase('post-first-round');
-                          simulateWinnerData('first-round-difference');
-                        }}
+            <button
+              onClick={() => {
+                handleForcePhase('post-first-round');
+                simulateWinnerData('first-round-difference');
+              }}
               style={{
                 background: '#8B5CF6',
                 color: 'white',

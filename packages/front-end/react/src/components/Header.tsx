@@ -35,7 +35,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Subtle top border accent */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 via-blue-500 to-emerald-400"></div>
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 via-slate-500 to-cyan-400"></div>
 
         <div className="relative z-10">
           <div className="max-w-7xl mx-auto px-6">
@@ -51,16 +51,16 @@ const Header: React.FC = () => {
                     src="/img/Logo-trans.png"
                     alt="Electa Logo"
                     fill
-                    className="object-contain transition-all duration-300 group-hover:drop-shadow-lg group-hover:drop-shadow-emerald-500/20"
+                    className="object-contain transition-all duration-300 group-hover:drop-shadow-lg group-hover:drop-shadow-cyan-400/20"
                     priority
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
               </div>
               {/* Título centrado, más grande */}
               <div className="flex-1 flex justify-center items-center min-w-0">
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight truncate text-center">
-                  <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-cyan-300 to-slate-400 bg-clip-text text-transparent">
                     ELECTA
                   </span>
                 </h1>
@@ -75,20 +75,20 @@ const Header: React.FC = () => {
                       src="/img/Logo-trans.png"
                       alt="Electa Logo"
                       fill
-                      className="object-contain transition-all duration-300 group-hover:drop-shadow-lg group-hover:drop-shadow-emerald-500/20"
+                      className="object-contain transition-all duration-300 group-hover:drop-shadow-lg group-hover:drop-shadow-cyan-400/20"
                       priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
                   <h1 className="text-3xl font-bold text-white mb-1 relative text-center">
-                    <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent relative group">
+                    <span className="bg-gradient-to-r from-cyan-300 to-slate-400 bg-clip-text text-transparent relative group">
                       ELECTA
                     </span>
                   </h1>
                 </div>
                 {/* Botón hamburguesa solo en mobile, a la derecha */}
                 <button
-                  className="md:hidden absolute right-2 top-2 p-2 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                  className="md:hidden absolute right-2 top-2 p-2 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
                   onClick={() => setMobileMenuOpen(true)}
                   aria-label="Abrir menú"
                 >
@@ -111,41 +111,41 @@ const Header: React.FC = () => {
                 <Link
                   key={key}
                   href="/about"
-                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
+                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
                 >
                   <span className="relative z-10">{t(`nav.${key}`)}</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-500 transition-all duration-300 group-hover:w-3/4"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-cyan-300 to-slate-400 transition-all duration-300 group-hover:w-3/4"></div>
                 </Link>
               ) : key === 'elections' ? (
                 <Link
                   key={key}
                   href="/elections"
-                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
+                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
                 >
                   <span className="relative z-10">{t(`nav.${key}`)}</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-500 transition-all duration-300 group-hover:w-3/4"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-cyan-300 to-slate-400 transition-all duration-300 group-hover:w-3/4"></div>
                 </Link>
               ) : key === 'faq' ? (
                 <Link
                   key={key}
                   href="/faq"
-                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
+                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
                 >
                   <span className="relative z-10">{t(`nav.${key}`)}</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-500 transition-all duration-300 group-hover:w-3/4"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-cyan-300 to-slate-400 transition-all duration-300 group-hover:w-3/4"></div>
                 </Link>
               ) : (
                 <Link
                   key={key}
                   href="/"
-                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
+                  className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
                 >
                   <span className="relative z-10">{t(`nav.${key}`)}</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-500 transition-all duration-300 group-hover:w-3/4"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-cyan-300 to-slate-400 transition-all duration-300 group-hover:w-3/4"></div>
                 </Link>
               )
             ))}
@@ -158,7 +158,7 @@ const Header: React.FC = () => {
         <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex justify-end md:hidden" onClick={() => setMobileMenuOpen(false)}>
           <div className="w-64 bg-slate-900 h-full shadow-lg p-6 flex flex-col gap-6 relative animate-slide-in-right" onClick={e => e.stopPropagation()}>
             <button
-              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
               onClick={() => setMobileMenuOpen(false)}
               aria-label="Cerrar menú"
             >
