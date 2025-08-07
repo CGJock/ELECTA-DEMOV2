@@ -41,7 +41,7 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
 
   useEffect(() => {
   const handleSummary = (data: LocationSummary) => {
-    console.log('Recieved data by Location:', data);
+    console.log('Received data by Location:', data);
     setbreakdownLocData(data);
     setTimestamp(new Date().toISOString());
   };
@@ -73,7 +73,7 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
         if (name && code !== undefined) {
           geoIdMap.set(name, code);
           
-          // Calcular centroides para incidentes
+          // Calculate centroids for incidents
           function extractCoords(coords: any): [number, number][] {
             if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
               return [[coords[0], coords[1]]];
@@ -100,7 +100,7 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
       if (chartRef.current && isMounted) {
  
  
-        // if there is an instance, it destroys it
+        // if there is an instance, destroy it
   const existingInstance = echarts.getInstanceByDom(chartRef.current);
   if (existingInstance) {
     echarts.dispose(chartRef.current);
@@ -109,13 +109,13 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
   chartInstance.current = echarts.init(chartRef.current);
 
   chartInstance.current.on('click', (params: any) => {
-    // Click en puntos de incidente
+    // Click on incident points
     if (params.seriesType === 'scatter' && params.data.incidentId) {
-      console.log('Click en punto de incidente:', params.data.incidentId);
+      console.log('Click on incident point:', params.data.incidentId);
       setIncidentModalOpen(true);
       setFocusedIncidentId(params.data.incidentId);
     } else {
-      // Click en el mapa (departamento)
+      // Click on map (department)
       const code = params?.data?.code ?? null; 
       if (code) {
         socket.emit('subscribe-to-location', code);
@@ -124,15 +124,15 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
     }
   });
 
-        // --- INCIDENTES ---
-        // Agrupar incidentes por departamento (usando la parte antes del guion en location)
+        // --- INCIDENTS ---
+        // Group incidents by department (using the part before the dash in location)
         const incidentPoints: any[] = [];
         const departmentIncidentCount: Record<string, number> = {};
         incidents.forEach((incident) => {
           const dept = incident.location.es.split(' - ')[0];
           departmentIncidentCount[dept] = (departmentIncidentCount[dept] || 0) + 1;
         });
-        // Para distribuir los puntos si hay varios en el mismo departamento
+        // To distribute points if there are several in the same department
         const departmentIncidentOffsets: Record<string, number> = {};
         incidents.forEach((incident) => {
           const dept = incident.location.es.split(' - ')[0];
@@ -140,11 +140,11 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
           if (!centroid) return;
           const count = departmentIncidentCount[dept];
           const idx = departmentIncidentOffsets[dept] || 0;
-          // Distribuir en círculo si hay varios
+          // Distribute in circle if there are several
           let offsetLon = 0, offsetLat = 0;
           if (count > 1) {
             const angle = (2 * Math.PI * idx) / count;
-            const radius = 0.3; // grados, ajustar si necesario
+            const radius = 0.3; // degrees, adjust if necessary
             offsetLon = Math.cos(angle) * radius;
             offsetLat = Math.sin(angle) * radius;
           }
@@ -267,7 +267,7 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
                 },
               },
             },
-            // --- PUNTOS DE INCIDENTES ---
+            // --- INCIDENT POINTS ---
             {
               name: 'Incidents',
               type: 'scatter',
@@ -338,7 +338,7 @@ const getDepartmentName = (code: string | null): string => {
 
   return (
     <div className="flex flex-col items-center mt-6">
-      {/* IncidentsFlag modal controlado desde Map */}
+      {/* IncidentsFlag modal controlled from Map */}
       <IncidentsFlag
         key={focusedIncidentId}
         incidents={incidents}

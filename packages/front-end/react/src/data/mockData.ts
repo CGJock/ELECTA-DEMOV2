@@ -1,13 +1,5 @@
 import type { PoliticalParty, ElectionData } from '../types/election'
 
-export interface Subscription {
-  id: string;
-  name: string;
-  email: string;
-  isActive: boolean;
-  createdAt: string;
-}
-
 export const mockParties: PoliticalParty[] =  [
   {
     id: '1',
@@ -261,6 +253,7 @@ export const mockParties: PoliticalParty[] =  [
     color: '#E67E22',
     votes: 0,
     percentage: 0,
+    withdrawalType: 'withdrawn',
     candidate: {
       id: '9',
       name: 'Mónica Eva Copa Murga',

@@ -1,8 +1,8 @@
-// Hooks personalizados para usar los servicios de datos
+// Custom hooks to use data services
 import { useState, useEffect, useCallback } from 'react';
 import { dataService, type Department, type VoteSummary, type GlobalSummary, type LocationSummary } from './dataService';
 
-// Hook para obtener departamentos
+// Hook to get departments
 export function useDepartments() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ export function useDepartments() {
   return { departments, loading, error, refetch: fetchDepartments };
 }
 
-// Hook para obtener breakdown de votos
+// Hook to get vote breakdown
 export function useVoteBreakdown() {
   const [voteBreakdown, setVoteBreakdown] = useState<VoteSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ export function useVoteBreakdown() {
   return { voteBreakdown, loading, error };
 }
 
-// Hook para obtener resumen global
+// Hook to get global summary
 export function useGlobalSummary() {
   const [globalSummary, setGlobalSummary] = useState<GlobalSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,7 @@ export function useGlobalSummary() {
   return { globalSummary, loading, error };
 }
 
-// Hook para obtener resumen por ubicación
+// Hook to get location summary
 export function useLocationSummary(locationId: string) {
   const [locationSummary, setLocationSummary] = useState<LocationSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,7 +100,7 @@ export function useLocationSummary(locationId: string) {
   return { locationSummary, loading, error };
 }
 
-// Hook para obtener propuestas de candidato
+// Hook to get candidate proposals
 export function useCandidateProposals(candidateId: string, language: string = 'es') {
   const [proposals, setProposals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -130,7 +130,7 @@ export function useCandidateProposals(candidateId: string, language: string = 'e
   return { proposals, loading, error };
 }
 
-// Hook para obtener partidos y candidatos
+// Hook to get parties and candidates
 export function usePartiesCandidates() {
   const [partiesCandidates, setPartiesCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -152,7 +152,7 @@ export function usePartiesCandidates() {
   return { partiesCandidates, loading, error };
 }
 
-// Hook para obtener datos completos de departamento
+// Hook to get complete department data
 export function useDepartmentCompleteData(departmentCode: string) {
   const [departmentData, setDepartmentData] = useState<{
     department: Department | null;
@@ -187,7 +187,7 @@ export function useDepartmentCompleteData(departmentCode: string) {
   return { departmentData, loading, error, refetch: fetchData };
 }
 
-// Hook para verificar estado del WebSocket
+// Hook to check WebSocket status
 export function useSocketStatus() {
   const [isConnected, setIsConnected] = useState(dataService.isSocketConnected());
   const [socketId, setSocketId] = useState<string | undefined>(dataService.getSocketId());
@@ -198,7 +198,7 @@ export function useSocketStatus() {
       setSocketId(dataService.getSocketId());
     };
 
-    // Verificar cada segundo
+    // Check every second
     const interval = setInterval(checkConnection, 1000);
 
     return () => clearInterval(interval);

@@ -1,7 +1,10 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
+import { useSocketData } from '@contexts/context';
+import { useElectionPhase } from '@/hooks/useElectionPhase';
+import { mockParties } from '@data/mockData';
 import FirstRoundSummaryModal from './FirstRoundSummaryModal';
 
 interface SecondRoundCandidate {
@@ -26,8 +29,52 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { globalSummary } = useSocketData();
+  const { isSecondRound, isPostFirstRound } = useElectionPhase();
 
-  const defaultCandidates: SecondRoundCandidate[] = [
+  // Logic to automatically select the top 2 candidates
+  const automaticCandidates = useMemo(() => {
+    if (!globalSummary?.partyBreakdown || globalSummary.partyBreakdown.length < 2) {
+      return null;
+    }
+
+    // Sort by votes descending and take the top 2
+    const sortedCandidates = [...globalSummary.partyBreakdown]
+      .filter(party => party.count > 0)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 2);
+
+    if (sortedCandidates.length < 2) {
+      return null;
+    }
+
+    // Map to SecondRoundCandidate structure
+    return sortedCandidates.map((candidate, index) => {
+      // Find party data in mockParties to get photo and color
+      const findCandidateData = (partyName: string) => {
+        return mockParties.find((party) => 
+          party.name.toLowerCase().includes(partyName.toLowerCase()) ||
+          party.candidate.name.toLowerCase().includes(partyName.toLowerCase())
+        );
+      };
+
+      const partyData = findCandidateData(candidate.name);
+      
+      return {
+        id: `candidate-${index + 1}`,
+        name: partyData?.candidate.name || candidate.name,
+        party: partyData?.name || candidate.name,
+        partyAbbr: partyData?.abbreviation || candidate.abbr,
+        photo: partyData?.candidate.photo || `/img/${candidate.abbr}.png`,
+        votes: candidate.count,
+        percentage: typeof candidate.percentage === 'string' ? parseFloat(candidate.percentage) : candidate.percentage,
+        color: partyData?.color || (index === 0 ? '#FF6B35' : '#4A90E2')
+      };
+    });
+  }, [globalSummary]);
+
+  // Use automatic candidates if available, otherwise use provided or default ones
+  const displayCandidates = candidates || automaticCandidates || [
     {
       id: 'sergio-doria',
       name: 'Sergio Doria',
@@ -50,9 +97,14 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
     }
   ];
 
-  const displayCandidates = candidates || defaultCandidates;
+  // Show banner if visible and we are in the correct phase
+  if (!isVisible || (!isSecondRound && !isPostFirstRound)) {
+    return null;
+  }
 
-  if (!isVisible) return null;
+  // Log temporal para debug
+  console.log('SecondRoundBanner - Rendering in phase:', isSecondRound ? 'second-round' : 'post-first-round');
+  console.log('SecondRoundBanner - Candidates:', displayCandidates);
 
   const formatNumber = (num: number): string => {
     return num.toLocaleString('es-BO');
@@ -87,20 +139,20 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
               <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-white/60"></div>
               <div className="px-4 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
                 <span className="text-white/90 text-sm font-medium tracking-wider uppercase">
-                  Bolivia 2025
+                  {t('secondRound.bolivia_2025')}
                 </span>
               </div>
               <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-white/60"></div>
             </div>
             
             <h1 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white mb-2 tracking-tight">
-              SEGUNDA RONDA
+              {t('secondRound.title')}
             </h1>
             <p className="text-white/70 text-lg md:text-xl font-light mb-2">
-              Elección Presidencial Definitiva
+              {t('secondRound.definitive_election')}
             </p>
             <p className="text-white/60 text-base font-medium">
-              20 de octubre del 2025
+              {t('secondRound.date')}
             </p>
           </div>
 
@@ -109,14 +161,14 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
             
             {/* Candidato 1 */}
             <div className="group relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-emerald-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
               
               <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:border-white/20 transition-all duration-300 transform hover:-translate-y-1">
                 {/* Foto del candidato */}
                 <div className="relative mx-auto mb-6">
                   <div className="relative w-32 h-32 mx-auto">
                     {/* Anillo animado */}
-                    <div className="absolute inset-0 rounded-full border-4 border-gradient-to-r from-orange-400 to-red-400 animate-spin-slow"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-gradient-to-r from-blue-400 to-emerald-400 animate-spin-slow"></div>
                     <div 
                       className="absolute inset-2 rounded-full border-2 animate-reverse-spin"
                       style={{ borderColor: displayCandidates[0].color }}
@@ -162,7 +214,7 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
                       {displayCandidates[0].percentage}%
                     </div>
                     <div className="text-xs text-white/60">
-                      {formatNumber(displayCandidates[0].votes)} votos
+                      {formatNumber(displayCandidates[0].votes)} {t('secondRound.votes')}
                     </div>
                   </div>
                 </div>
@@ -185,24 +237,24 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
               </div>
               
               <div className="text-center">
-                <p className="text-sm font-medium text-white/80 mb-1">Enfrentamiento Final</p>
+                <p className="text-sm font-medium text-white/80 mb-1">{t('secondRound.final_confrontation')}</p>
                 <div className="flex items-center gap-2 text-xs text-white/60">
                   <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                  <span>En vivo</span>
+                  <span>{t('secondRound.live_status')}</span>
                 </div>
               </div>
             </div>
 
             {/* Candidato 2 */}
             <div className="group relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
               
               <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:border-white/20 transition-all duration-300 transform hover:-translate-y-1">
                 {/* Foto del candidato */}
                 <div className="relative mx-auto mb-6">
                   <div className="relative w-32 h-32 mx-auto">
                     {/* Anillo animado */}
-                    <div className="absolute inset-0 rounded-full border-4 border-gradient-to-r from-yellow-400 to-orange-400 animate-spin-slow"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-gradient-to-r from-emerald-400 to-blue-400 animate-spin-slow"></div>
                     <div 
                       className="absolute inset-2 rounded-full border-2 animate-reverse-spin"
                       style={{ borderColor: displayCandidates[1].color }}
@@ -248,7 +300,7 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
                       {displayCandidates[1].percentage}%
                     </div>
                     <div className="text-xs text-white/60">
-                      {formatNumber(displayCandidates[1].votes)} votos
+                      {formatNumber(displayCandidates[1].votes)} {t('secondRound.votes')}
                     </div>
                   </div>
                 </div>
@@ -266,7 +318,7 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-400/10 to-blue-500/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
               
               {/* Contenido del link */}
-              <span className="relative z-10">Resumen de la primera ronda</span>
+              <span className="relative z-10">{t('secondRound.first_round_summary')}</span>
               <span className="relative z-10 transform group-hover:translate-x-1 transition-transform duration-300">→</span>
             </button>
           </div>

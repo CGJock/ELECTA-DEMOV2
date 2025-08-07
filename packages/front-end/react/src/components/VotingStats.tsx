@@ -1,12 +1,12 @@
 import React from 'react';
-// Importar el hook personalizado para datos en tiempo real
+// Import custom hook for real-time data
 import { useVoteBreakdown } from '../services/useDataService';
 
 const VotingStats: React.FC = () => {
-  // Usar el hook para obtener datos en tiempo real
+  // Use hook to get real-time data
   const { voteBreakdown, loading, error } = useVoteBreakdown();
 
-  // Código original comentado - datos hardcodeados
+  // Original commented code - hardcoded data
   /*
   const stats = {
     totalVotes: 2847592,
@@ -29,7 +29,7 @@ const VotingStats: React.FC = () => {
     return num.toLocaleString();
   };
 
-  // Mostrar loading mientras se cargan los datos
+  // Show loading while data is being loaded
   if (loading) {
     return (
       <div className="relative backdrop-blur-xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 rounded-2xl border border-slate-600/30 shadow-2xl overflow-hidden">
@@ -45,14 +45,14 @@ const VotingStats: React.FC = () => {
             </div>
           </div>
           <div className="text-center text-slate-300 font-medium">
-            Cargando datos en tiempo real...
+            Loading real-time data...
           </div>
         </div>
       </div>
     );
   }
 
-  // Mostrar error si hay algún problema
+  // Show error if there's a problem
   if (error) {
     return (
       <div className="relative backdrop-blur-xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 rounded-2xl border border-slate-600/30 shadow-2xl overflow-hidden">
@@ -68,14 +68,14 @@ const VotingStats: React.FC = () => {
             </div>
           </div>
           <div className="text-center text-red-300 font-medium">
-            Error al cargar datos: {error}
+            Error loading data: {error}
           </div>
         </div>
       </div>
     );
   }
 
-  // Usar datos reales si están disponibles, sino mostrar mensaje
+  // Use real data if available, otherwise show message
   if (!voteBreakdown) {
     return (
       <div className="relative backdrop-blur-xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 rounded-2xl border border-slate-600/30 shadow-2xl overflow-hidden">
@@ -91,7 +91,7 @@ const VotingStats: React.FC = () => {
             </div>
           </div>
           <div className="text-center text-slate-300 font-medium">
-            No hay datos disponibles en este momento
+            No data available at this time
           </div>
         </div>
       </div>
@@ -100,13 +100,13 @@ const VotingStats: React.FC = () => {
 
   return (
     <div className="relative backdrop-blur-xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 rounded-2xl border border-slate-600/30 shadow-2xl overflow-hidden w-full max-w-2xl mx-auto">
-      {/* Efectos de fondo decorativos */}
+      {/* Decorative background effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-indigo-600/5 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/80 via-indigo-500/80 to-purple-500/80" />
       
-      {/* Contenido principal */}
+      {/* Main content */}
       <div className="relative z-10 p-10">
-        {/* Título con icono */}
+        {/* Title with icon */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center px-8 py-4 rounded-full bg-gradient-to-r from-slate-700/50 to-slate-600/50 border border-slate-500/30 backdrop-blur-sm">
             <div className="w-4 h-4 rounded-full bg-emerald-400 mr-4 animate-pulse" />
@@ -117,7 +117,7 @@ const VotingStats: React.FC = () => {
         </div>
         
         <div className="space-y-8">
-          {/* Total Votes - Destacado */}
+          {/* Total Votes - Highlighted */}
           <div className="relative overflow-hidden rounded-xl border border-slate-600/30 p-8 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-sm">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
             <div className="relative z-10">

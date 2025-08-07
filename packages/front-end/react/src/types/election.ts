@@ -34,6 +34,7 @@ export interface PoliticalParty {
   candidate: Candidate
   disqualified?: boolean
   disqualifiedReason?: string
+  withdrawalType?: 'disqualified' | 'withdrawn'
 }
 
 export interface ElectionData {

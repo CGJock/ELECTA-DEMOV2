@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next';
 const VoteBreakdownComponent: React.FC = () => {
   const { breakdownData, timestamp } = useSocketData();
   const { t } = useTranslation();
-  console.log('data del conunter',breakdownData)
+  console.log('counter data', breakdownData)
 
   
 
   if (!breakdownData) return <div>{t('counter.loading')}</div>;
   const green = '#22c55e';
 
-  // Solo mostrar el hint si existe traducción válida
+  // Only show hint if valid translation exists
   const totalVotesHint = t('counter.total_votes_hint');
   const showHint = totalVotesHint && totalVotesHint !== 'counter.total_votes_hint';
 
@@ -69,10 +69,10 @@ const VoteBreakdownComponent: React.FC = () => {
         <div style={{
           background: 'rgba(255,255,255,0.04)',
           borderRadius: '10px',
-          padding: '0.5rem 1.1rem', // menos alto
+          padding: '0.5rem 1.1rem', // shorter height
           minWidth: '120px',
           boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-          // border: '1px solid #475569', // quitar borde
+          // border: '1px solid #475569', // remove border
           textAlign: 'center',
         }}>
           <div style={{ fontSize: '1.1rem', fontWeight: 600, color: '#f87171' }}>{breakdownData.nullVotes.toLocaleString('es-US')}</div>
@@ -83,10 +83,10 @@ const VoteBreakdownComponent: React.FC = () => {
         <div style={{
           background: 'rgba(255,255,255,0.04)',
           borderRadius: '10px',
-          padding: '0.5rem 1.1rem', // menos alto
+          padding: '0.5rem 1.1rem', // shorter height
           minWidth: '120px',
           boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-          // border: '1px solid #475569', // quitar borde
+          // border: '1px solid #475569', // remove border
           textAlign: 'center',
         }}>
           <div style={{ fontSize: '1.1rem', fontWeight: 600, color: '#38bdf8' }}>{breakdownData.blankVotes.toLocaleString('es-ES')}</div>

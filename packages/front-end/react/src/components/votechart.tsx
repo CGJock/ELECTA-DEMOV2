@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { useSocketData } from '@/context/context';
 import { useTranslation } from 'react-i18next';
+import { useElectionPhase } from '@/hooks/useElectionPhase';
 
 type VoteData = {
   name: string;
@@ -29,26 +30,41 @@ interface VoteChartProps {
 export default function VoteChart({ active }: VoteChartProps) {
   const { globalSummary, breakdownLocData, selectedLocationCode, timestamp } = useSocketData();
   const { t } = useTranslation();
+  const { isSecondRound } = useElectionPhase();
 
   const currentSummary = selectedLocationCode
     ? breakdownLocData
     : globalSummary;
 
-  console.log(`data actual ${currentSummary?.partyBreakdown}`)
-  console.log(`breadownlocdata ${breakdownLocData}`)
+  console.log(`current data ${currentSummary?.partyBreakdown}`)
+  console.log(`breakdown location data ${breakdownLocData}`)
 
   const totalVotes = currentSummary?.totalVotes || 0;
   console.log(selectedLocationCode)
 
-  const data: VoteData[] = Array.isArray(currentSummary?.partyBreakdown)
-    ? currentSummary!.partyBreakdown.map((party) => ({
-        name: party.name,
-        abbr: party.abbr,
-        votes: party.count,
-        totalVotes,
-        percentage: Number(party.percentage),
-      })).sort((a, b) => b.percentage - a.percentage)
-    : [];
+  // Filter data based on election phase
+  let filteredData: VoteData[] = [];
+  
+  if (Array.isArray(currentSummary?.partyBreakdown)) {
+    let partyData = currentSummary!.partyBreakdown.map((party) => ({
+      name: party.name,
+      abbr: party.abbr,
+      votes: party.count,
+      totalVotes,
+      percentage: Number(party.percentage),
+    }));
+
+    if (isSecondRound) {
+      // In second round, show only the two candidates with most votes
+      // Sort by votes and take the first two
+      filteredData = partyData
+        .sort((a, b) => b.votes - a.votes)
+        .slice(0, 2);
+    } else {
+      // In first round, show all sorted by percentage
+      filteredData = partyData.sort((a, b) => b.percentage - a.percentage);
+    }
+  }
 
   function generateTicks(max: number, step: number): number[] {
     const ticks = [];
@@ -63,8 +79,8 @@ export default function VoteChart({ active }: VoteChartProps) {
 
   const tickValues = generateTicks(totalVotes, 50000);
 
-  // Calcular altura dinámica basada en número de partidos
-  const dynamicHeight = Math.max(300, data.length * 50 + 100);
+  // Calculate dynamic height based on number of parties
+  const dynamicHeight = Math.max(300, filteredData.length * 50 + 100);
 
   useEffect(() => {
     if (active) {
@@ -80,12 +96,30 @@ export default function VoteChart({ active }: VoteChartProps) {
     );
   }
 
+  // If we are in second round and don't have enough data, show message
+  if (isSecondRound && filteredData.length < 2) {
+    return (
+      <div className="w-full h-96 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg font-semibold text-gray-700 mb-2">
+            {t('secondRound.title')}
+          </div>
+          <div className="text-gray-500">
+            Waiting for first round results to determine candidates advancing to second round.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full rounded-md flex flex-col p-2" style={{ height: `${dynamicHeight}px` }}>
       <div className="text-center text-base font-semibold text-gray-700 mb-1 select-none">
         {selectedLocationCode === null
-          ? t('votechart.national_results')
-          : `${t('votechart.department_results')} - ${breakdownLocData?.locationName ?? ''}`}
+          ? isSecondRound 
+            ? t('secondRound.title') 
+            : t('votechart.national_results')
+          : `${isSecondRound ? t('secondRound.title') : t('votechart.department_results')} - ${breakdownLocData?.locationName ?? ''}`}
       </div>
 
       <div className="flex flex-1">
@@ -98,14 +132,14 @@ export default function VoteChart({ active }: VoteChartProps) {
             userSelect: 'none',
           }}
         >
-          <label>{t('votechart.political_parties')}</label>
+          <label>{isSecondRound ? t('secondRound.subtitle') : t('votechart.political_parties')}</label>
         </div>
 
         <div className="flex-1">
-          {data.length > 0 && (
+          {filteredData.length > 0 && (
             <ResponsiveContainer width="100%" height="100%" key={totalVotes}>
               <BarChart
-                data={data}
+                data={filteredData}
                 layout="vertical"
                 margin={{ top: 20, right: 80, left: 70, bottom: 5 }} // Más espacio a la derecha para los %
                 barCategoryGap="10%" // Espacio entre barras
@@ -134,7 +168,7 @@ export default function VoteChart({ active }: VoteChartProps) {
                   contentStyle={{
                     backgroundColor: '#1F2937',
                     borderRadius: 8,
-                    borderColor: '#374151',
+                    border: '1px solid #374151',
                     boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
                   }}
                   labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '8px' }}
@@ -147,30 +181,39 @@ export default function VoteChart({ active }: VoteChartProps) {
                           <div>{value.toLocaleString()} {t('votechart.votes')}</div>
                           <div>{props.payload.percentage}%</div>
                         </>,
-                        ''
+                        'votes'
                       ];
                     }
                     return [value, name];
                   }}
-                  labelFormatter={(label) => ''}
                 />
-                <Bar 
-                  dataKey="votes" 
+                <Bar
+                  dataKey="votes"
                   fill="#3B82F6"
-                  radius={[0, 4, 4, 0]} // Bordes redondeados
+                  radius={[0, 4, 4, 0]}
+                  animationDuration={1000}
+                  animationBegin={0}
                 >
                   <LabelList
-                    dataKey="percentage"
+                    dataKey="votes"
                     position="right"
-                    dx={5} // Cambié la posición
-                    dy={0}
-                    formatter={(val: number) => `${val}%`}
-                    style={{ 
-                      fill: '#10B981', 
-                      fontWeight: 'bold', 
+                    formatter={(value: number) => value.toLocaleString()}
+                    style={{
                       fontSize: '11px',
-                      textAnchor: 'start'
+                      fill: '#6B7280',
+                      fontWeight: 'bold'
                     }}
+                  />
+                  <LabelList
+                    dataKey="percentage"
+                    position="insideRight"
+                    formatter={(value: number) => `${value.toFixed(1)}%`}
+                    style={{
+                      fontSize: '10px',
+                      fill: 'white',
+                      fontWeight: 'bold'
+                    }}
+                    offset={30}
                   />
                 </Bar>
               </BarChart>
@@ -179,15 +222,8 @@ export default function VoteChart({ active }: VoteChartProps) {
         </div>
       </div>
 
-      <div className="text-center mt-2 text-sm text-gray-600 select-none">
-        <label>{t('votechart.total_votes')}</label>
-        {timestamp && (
-          <div className="text-center mt-1 text-xs text-gray-500 select-none italic">
-            {t('votechart.timestamp', {
-              date: new Date(timestamp).toLocaleString()
-            })}
-          </div>
-        )}
+      {/* Excel download button */}
+      <div className="mt-4 flex justify-center">
         <DownloadExcel />
       </div>
     </div>

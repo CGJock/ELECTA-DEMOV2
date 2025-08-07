@@ -9,23 +9,21 @@ interface SubscribeModalProps {
 }
 
 const SubscribeModal: React.FC<SubscribeModalProps> = ({ open, onClose }) => {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const nameInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
     if (open) {
-      setName('');
       setEmail('');
       setError(null);
       setSuccess(false);
       setLoading(false);
-      setTimeout(() => nameInputRef.current?.focus(), 200);
+      setTimeout(() => emailInputRef.current?.focus(), 200);
     }
   }, [open]);
 
@@ -48,21 +46,15 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ open, onClose }) => {
     setSuccess(false);
     if (loading) return;
     
-    const n = name.trim();
     const eMail = email.trim();
     
-    if (!n || n.length < 2) {
-      setError(t('subscription.invalid_name', { defaultValue: 'Nombre inválido' }));
-      nameInputRef.current?.focus();
-      return;
-    }
     if (!eMail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(eMail)) {
       setError(t('subscription.invalid_email', { defaultValue: 'Email inválido' }));
       return;
     }
     
     setLoading(true);
-    const res = await subscriptionService.subscribeUser(eMail, n);
+    const res = await subscriptionService.subscribeUser(eMail);
     setLoading(false);
     
     if (res.success) {
@@ -85,7 +77,7 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ open, onClose }) => {
       className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
     >
       <div
-        className="relative w-full max-w-md mx-2 p-6 min-h-[340px] bg-gradient-to-br from-[#0F172A] to-[#1E293B] rounded-lg border border-[#374151] shadow-lg"
+        className="relative w-full max-w-md mx-2 p-6 min-h-[280px] bg-gradient-to-br from-[#0F172A] to-[#1E293B] rounded-lg border border-[#374151] shadow-lg"
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -101,29 +93,11 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ open, onClose }) => {
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div>
-            <label htmlFor="subscribe-name" className="block text-xs font-medium text-gray-200 mb-1">
-              {t('subscription.name_label', { defaultValue: 'Nombre' })}
-            </label>
-            <input
-              ref={nameInputRef}
-              id="subscribe-name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              placeholder={t('subscription.name_placeholder', { defaultValue: 'Tu nombre completo' })}
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className={`w-full px-2 py-1 rounded bg-[#1E293B] border focus:outline-none focus:ring-2 focus:ring-[#10B981] text-white text-sm ${error && error === t('subscription.invalid_name', { defaultValue: 'Nombre inválido' }) ? 'border-red-400' : 'border-[#374151]'}`}
-              required
-              aria-required="true"
-              maxLength={50}
-            />
-          </div>
-          <div>
             <label htmlFor="subscribe-email" className="block text-xs font-medium text-gray-200 mb-1">
               {t('subscription.email_label', { defaultValue: 'Email' })}
             </label>
             <input
+              ref={emailInputRef}
               id="subscribe-email"
               name="email"
               type="email"

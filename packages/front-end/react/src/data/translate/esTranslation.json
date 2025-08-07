@@ -28,7 +28,8 @@
     "votes": "Votos",
     "ver_mas": "Ver más",
     "ver_menos": "Ver menos",
-    "disqualified_disclaimer": "Candidato descalificado por el TSE por presentar solvencia fiscal fuera de plazo."
+    "disqualified_disclaimer": "Candidato descalificado por el TSE por presentar solvencia fiscal fuera de plazo.",
+    "withdrawn_disclaimer": "Candidato retirado de la contienda electoral."
   },
   "footer": {
     "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para Bolivia.",
@@ -61,7 +62,13 @@
     "subtitle": "Elecciones Presidenciales Bolivia 2025",
     "votes": "Votos",
     "percentage": "Porcentaje",
-    "live": "Resultados en tiempo real"
+    "live": "Resultados en tiempo real",
+    "definitive_election": "Elección Presidencial Definitiva",
+    "date": "20 de octubre del 2025",
+    "final_confrontation": "Enfrentamiento Final",
+    "live_status": "En vivo",
+    "first_round_summary": "Resumen de la primera ronda",
+    "bolivia_2025": "Bolivia 2025"
   },
   "incidents": {
     "form_title": "Reportar incidente",

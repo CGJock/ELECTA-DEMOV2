@@ -9,7 +9,6 @@ export interface EmailData {
 
 export interface SubscriptionEmailData {
   email: string;
-  name?: string;
   language?: 'es' | 'en';
 }
 
@@ -22,12 +21,8 @@ export interface IncidentEmailData {
   timestamp: string;
 }
 
-export interface WinnerNotificationData {
+export interface GenericNotificationData {
   email: string;
-  name?: string;
-  winnerName: string;
-  winnerParty: string;
-  percentage: number;
   language?: 'es' | 'en';
 }
 
@@ -76,8 +71,8 @@ class EmailService {
     return this.callEmailAPI('incident', data);
   }
 
-  async sendWinnerNotificationEmail(data: WinnerNotificationData): Promise<{ success: boolean; error?: string }> {
-    return this.callEmailAPI('winner', data);
+  async sendGenericNotificationEmail(data: GenericNotificationData): Promise<{ success: boolean; error?: string }> {
+    return this.callEmailAPI('notification', data);
   }
 
   async sendContactEmail(data: ContactEmailData): Promise<{ success: boolean; error?: string }> {

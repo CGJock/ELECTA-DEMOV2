@@ -46,7 +46,7 @@ interface SocketDataContextValue {
 
 const SocketDataContext = createContext<SocketDataContextValue | undefined>(undefined);
 
-const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000';
 const socket = io(socketUrl, {
     withCredentials: true,
   });
@@ -58,7 +58,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   const [breakdownData, setbreakdownData] = useState<VoteBreakdown | null>(null);
   const [breakdownLocData, setbreakdownLocData] = useState<LocationSummary | null>(null);
   const [selectedLocationCode, setSelectedLocationCode] = useState<string | null>(null);
-  const [timestamp, setTimestamp] = useState<string | null>(null); //timestamp to check data consistency
+  const [timestamp, setTimestamp] = useState<string | null>(null); // timestamp to check data consistency
   
   
   //   useEffect(() => {
@@ -107,7 +107,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   useEffect(() => {
     // Regsiter listeners before emitting
 
-    //show information related to plain votes
+    // Show information related to plain votes
     function handleFullVoteData(data: VoteBreakdown) {
       if (!('error' in data)) {
         setbreakdownData(data);
@@ -115,7 +115,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
       }
     }
 
-    //show information reltaed to partydatabreakdown
+    // Show information related to party data breakdown
     function handleTotalBreakdownSummary(data: GlobalSummary) {
       if (!('error' in data)) {
         setglobalSummary(data);
@@ -123,7 +123,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
       }
     }
 
-    //show information reltaed to partydatabreakdown by location
+    // Show information related to party data breakdown by location
     function handleLocationBreakdownSummary(data: LocationSummary) {
       if (!('error' in data)) {
         setbreakdownLocData(data);
@@ -138,10 +138,10 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
     setglobalSummary(data);
   });
 
-    // emits the request after the listeners
+    // Emit the request after the listeners
     // socket.emit('get-total-breakdown');
 
-    // Limpieza al desmontar
+    // Cleanup on unmount
     return () => {
       socket.off('full-vote-data', handleFullVoteData);
       socket.off('total-breakdown-summary', handleTotalBreakdownSummary);

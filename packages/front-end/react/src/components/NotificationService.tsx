@@ -1,15 +1,10 @@
 "use client";
 import React, { useEffect, useRef } from 'react';
 import { useSocketData } from '@contexts/context';
-import { emailService } from '@/services/emailService';
 import { subscriptionService } from '@/lib/subscriptionService';
 
-const DEBOUNCE_MS = 5 * 60 * 1000; // 5 minutos
-
-// Utilidad de logging profesional
-function logNotification(action: string, details: any) {
-  console.log(`[NotificationService][${action}]`, details);
-}
+const DEBOUNCE_MS = 15 * 60 * 1000; // 15 minutos
+const MIN_VOTE_PERCENTAGE = 25; // Mínimo 25% de votos contados para enviar notificaciones
 
 // Utilidad para debouncing de eventos
 function useDebouncedEvent(key: string, ms: number) {
@@ -25,71 +20,64 @@ function useDebouncedEvent(key: string, ms: number) {
 }
 
 /**
- * NotificationService: Componente plug-and-play para notificaciones electorales
- * Se monta en background, detecta eventos y envía correos automáticamente usando Resend
+ * NotificationService: Componente simplificado para notificaciones electorales
+ * Se monta en background, detecta eventos y envía correos genéricos
  */
 const NotificationService: React.FC = () => {
   const { globalSummary } = useSocketData();
-  const prevTop3 = useRef<string[]>([]);
-  const prevWinners = useRef<string[]>([]);
-  const prevOver40 = useRef<string | null>(null);
+  const prevDataHash = useRef<string>('');
 
-  // Debouncers para cada evento
-  const canSendOver40 = useDebouncedEvent('over40', DEBOUNCE_MS);
-  const canSendTop3 = useDebouncedEvent('top3', DEBOUNCE_MS);
-  const canSendWinners = useDebouncedEvent('winners', DEBOUNCE_MS);
+  // Debouncer para eventos
+  const canSendNotification = useDebouncedEvent('generic', DEBOUNCE_MS);
 
   // Al inicio del componente, log para saber que está montado
-  console.log('[NotificationService] Componente montado con Resend');
+  console.log('[NotificationService] Componente montado - Sistema simplificado');
 
   useEffect(() => {
     if (!globalSummary || !globalSummary.partyBreakdown) {
       return;
     }
 
-    const sorted = [...globalSummary.partyBreakdown].sort((a, b) => b.percentage - a.percentage);
-    const top3 = sorted.slice(0, 3).map(p => p.name);
-    const winner = sorted[0]?.percentage >= 40 ? sorted[0].name : null;
-    const winners = sorted.filter(p => p.percentage >= 40).map(p => p.name);
+    // Calcular el total de votos contados
+    const totalVotesCounted = globalSummary.partyBreakdown.reduce((sum, party) => {
+      const percentage = typeof party.percentage === 'string' ? parseFloat(party.percentage) : party.percentage;
+      return sum + (isNaN(percentage) ? 0 : percentage);
+    }, 0);
 
-    console.log('[NotificationService] Datos para eventos:', { top3, winner, winners });
+    // Validar que el cálculo sea correcto
+    if (isNaN(totalVotesCounted) || totalVotesCounted <= 0) {
+      console.warn('[NotificationService] Cálculo de votos inválido:', { 
+        totalVotesCounted, 
+        partyBreakdown: globalSummary.partyBreakdown 
+      });
+      return;
+    }
 
-    // Evento 1: Candidato supera 40%
-    if (winner && prevOver40.current !== winner && canSendOver40()) {
-      prevOver40.current = winner;
-      const candidate = sorted[0].name;
-      const percentage = sorted[0].percentage;
+    // Solo enviar notificaciones si se han contado al menos 25% de los votos
+    if (totalVotesCounted < MIN_VOTE_PERCENTAGE) {
+      console.log(`[NotificationService] Votos insuficientes (${totalVotesCounted.toFixed(1)}%). Mínimo requerido: ${MIN_VOTE_PERCENTAGE}%`);
+      return;
+    }
+
+    // Crear un hash simple de los datos para detectar cambios
+    const dataHash = JSON.stringify(globalSummary.partyBreakdown.slice(0, 3).map(p => ({ name: p.name, percentage: p.percentage })));
+
+    // Detectar si hay cambios significativos
+    if (dataHash !== prevDataHash.current && canSendNotification()) {
+      prevDataHash.current = dataHash;
       
-      // Enviar notificación usando Resend (solo si está configurado)
+      console.log('[NotificationService] Cambio detectado, enviando notificación genérica:', {
+        totalVotesCounted,
+        top3: globalSummary.partyBreakdown.slice(0, 3).map(p => ({ name: p.name, percentage: p.percentage }))
+      });
+      
       try {
-        subscriptionService.sendWinnerNotification(candidate, 'Partido', percentage);
-        logNotification('over40', { candidate, percentage });
+        subscriptionService.sendGenericNotification();
+        console.log('[NotificationService] Notificación genérica enviada exitosamente');
       } catch (error) {
-        console.warn('[NotificationService] Error sending winner notification:', error);
+        console.warn('[NotificationService] Error sending generic notification:', error);
       }
     }
-
-    // Evento 2: Cambio en el TOP 3
-    if (prevTop3.current.length && top3.join() !== prevTop3.current.join() && canSendTop3()) {
-      logNotification('top3', { old: prevTop3.current, new: top3 });
-      // Aquí podrías implementar notificación específica para cambios en TOP 3
-    }
-    prevTop3.current = top3;
-
-    // Evento 3: Ganadores oficiales
-    if (winners.length && winners.join() !== prevWinners.current.join() && canSendWinners()) {
-      const winner = winners[0];
-      const winnerData = sorted.find(p => p.name === winner);
-      if (winnerData) {
-        try {
-          subscriptionService.sendWinnerNotification(winner, 'Partido', winnerData.percentage);
-          logNotification('winners', { winners, results: winnerData });
-        } catch (error) {
-          console.warn('[NotificationService] Error sending winner notification:', error);
-        }
-      }
-    }
-    prevWinners.current = winners;
   }, [globalSummary]);
 
   return null; // No renderiza nada

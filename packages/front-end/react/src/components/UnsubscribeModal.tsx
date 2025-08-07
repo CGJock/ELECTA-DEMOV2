@@ -9,23 +9,21 @@ interface UnsubscribeModalProps {
 }
 
 const UnsubscribeModal: React.FC<UnsubscribeModalProps> = ({ open, onClose }) => {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const nameInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
     if (open) {
-      setName('');
       setEmail('');
       setError(null);
       setSuccess(false);
       setLoading(false);
-      setTimeout(() => nameInputRef.current?.focus(), 200);
+      setTimeout(() => emailInputRef.current?.focus(), 200);
     }
   }, [open]);
 
@@ -47,13 +45,7 @@ const UnsubscribeModal: React.FC<UnsubscribeModalProps> = ({ open, onClose }) =>
     setError(null);
     setSuccess(false);
     if (loading) return;
-    const n = name.trim();
     const eMail = email.trim();
-    if (!n || n.length < 2) {
-      setError(t('subscription.invalid_name'));
-      nameInputRef.current?.focus();
-      return;
-    }
     if (!eMail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(eMail)) {
       setError(t('subscription.invalid_email'));
       return;
@@ -81,7 +73,7 @@ const UnsubscribeModal: React.FC<UnsubscribeModalProps> = ({ open, onClose }) =>
       className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
     >
       <div
-        className="relative w-full max-w-md mx-2 p-6 min-h-[340px] bg-gradient-to-br from-[#0F172A] to-[#1E293B] rounded-lg border border-[#374151] shadow-lg"
+        className="relative w-full max-w-md mx-2 p-6 min-h-[280px] bg-gradient-to-br from-[#0F172A] to-[#1E293B] rounded-lg border border-[#374151] shadow-lg"
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -97,29 +89,11 @@ const UnsubscribeModal: React.FC<UnsubscribeModalProps> = ({ open, onClose }) =>
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div>
-            <label htmlFor="unsubscribe-name" className="block text-xs font-medium text-gray-200 mb-1">
-              {t('subscription.name_label')}
-            </label>
-            <input
-              ref={nameInputRef}
-              id="unsubscribe-name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              placeholder={t('subscription.name_placeholder')}
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className={`w-full px-2 py-1 rounded bg-[#1E293B] border focus:outline-none focus:ring-2 focus:ring-[#10B981] text-white text-sm ${error && error === t('subscription.invalid_name') ? 'border-red-400' : 'border-[#374151]'}`}
-              required
-              aria-required="true"
-              maxLength={50}
-            />
-          </div>
-          <div>
             <label htmlFor="unsubscribe-email" className="block text-xs font-medium text-gray-200 mb-1">
               {t('subscription.email_label')}
             </label>
             <input
+              ref={emailInputRef}
               id="unsubscribe-email"
               name="email"
               type="email"

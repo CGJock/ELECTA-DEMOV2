@@ -177,7 +177,7 @@ const FirstRoundSummaryModal: React.FC<FirstRoundSummaryModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       {/* Contenedor principal con glassmorphism */}
-      <div className="relative max-w-6xl w-full max-h-[90vh] overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl">
+      <div className="relative max-w-6xl w-full h-[90vh] flex flex-col rounded-3xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden">
         
         {/* Efectos de fondo animados */}
         <div className="absolute inset-0">
@@ -197,14 +197,13 @@ const FirstRoundSummaryModal: React.FC<FirstRoundSummaryModalProps> = ({
 
         <div className="relative z-10 h-full flex flex-col">
           {/* Header elegante */}
-          <div className="relative p-8 md:p-12 border-b border-white/10">
+          <div className="relative p-8 md:p-12 border-b border-white/10 flex-shrink-0">
             {/* Efecto de gradiente en el header */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-600/20"></div>
             
             <div className="relative z-10">
               <div className="flex justify-between items-start">
-                <div className="space-y-4">
-                  {/* Título con efectos */}
+                <div className="flex-1 text-center">
                   <div className="inline-flex items-center gap-3 mb-4">
                     <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-white/60"></div>
                     <div className="px-4 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
@@ -226,7 +225,7 @@ const FirstRoundSummaryModal: React.FC<FirstRoundSummaryModalProps> = ({
                 {/* Botón de cerrar */}
                 <button
                   onClick={onClose}
-                  className="group relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:bg-white/20 hover:scale-110"
+                  className="group relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:bg-white/20 hover:scale-110 flex-shrink-0 ml-4"
                 >
                   <X className="w-6 h-6 text-white/80 group-hover:text-white transition-colors" />
                 </button>
@@ -484,7 +483,7 @@ const FirstRoundSummaryModal: React.FC<FirstRoundSummaryModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="relative p-8 border-t border-white/10">
+          <div className="relative p-8 border-t border-white/10 flex-shrink-0">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2 text-white/60">
                 <Calendar className="w-4 h-4" />

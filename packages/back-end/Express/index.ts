@@ -11,11 +11,13 @@ import  redisClient from '@db/redis.js'
 
 import depRouter from '@routes/departments.js';
 import voteRouter from '@routes/updateVotes.js';
+import getMailsRouter from '@routes/getMails.js';
+import postEmailRouter from '@routes/postEmail.js';
 import { runMigrations } from '@db/migrate.js';
 import { listenToVotesChanges } from '@listeners/listenVotes.js';
 import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
 import { startSummaryIntervals, stopSummaryIntervals } from '@utils/intervalManager.js';
-import { createAdapter } from '@socket.io/redis-streams-adapter';
+// import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { Pool } from 'pg';
 
 dotenv.config();
@@ -45,6 +47,8 @@ async function main() {
   // Routes
   app.use('/api/departments', depRouter);
   app.use('/api/votes', voteRouter);
+  app.use('/api/mails', getMailsRouter);
+  app.use('/api/email', postEmailRouter);
 
   // Connect Redis using ioredis
   // const redisClient = new Redis(redis_url, {
@@ -67,7 +71,7 @@ async function main() {
   });
 
   // Use the redis-streams-adapter
-  io.adapter(createAdapter(redisClient));
+  // io.adapter(createAdapter(redisClient));
 
   // Custom handlers
   startSummaryIntervals(io,pool)//starts server intervals

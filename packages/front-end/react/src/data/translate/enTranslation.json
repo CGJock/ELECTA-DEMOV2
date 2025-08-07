@@ -28,7 +28,8 @@
     "votes": "Votes",
     "ver_mas": "See more",
     "ver_menos": "See less",
-    "disqualified_disclaimer": "Candidate disqualified by the TSE for submitting tax solvency late."
+    "disqualified_disclaimer": "Candidate disqualified by the TSE for submitting tax solvency late.",
+    "withdrawn_disclaimer": "Candidate withdrawn from the electoral race."
   },
   "footer": {
     "company_desc": "Professional platform for electoral monitoring and data visualization for Bolivia.",
@@ -61,7 +62,13 @@
     "subtitle": "Bolivia Presidential Elections 2025",
     "votes": "Votes",
     "percentage": "Percentage",
-    "live": "Live Results"
+    "live": "Live Results",
+    "definitive_election": "Definitive Presidential Election",
+    "date": "October 20, 2025",
+    "final_confrontation": "Final Confrontation",
+    "live_status": "Live",
+    "first_round_summary": "First round summary",
+    "bolivia_2025": "Bolivia 2025"
   },
   "incidents": {
     "form_title": "Report Incident",
