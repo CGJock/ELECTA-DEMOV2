@@ -19,7 +19,7 @@ const SubscriptionBanner: React.FC<SubscriptionBannerProps> = () => {
         left: 0,
         right: 0,
         background: '#1E293B',
-        color: '#22D3EE', // Cambiado de #10B981 (emerald) a #22D3EE (cyan-400)
+        color: '#10B981', // Cambiado de #22D3EE (cyan-400) a #10B981 (emerald-500)
         boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
         padding: '0.5rem 0',
         display: 'flex',
@@ -46,9 +46,9 @@ const SubscriptionBanner: React.FC<SubscriptionBannerProps> = () => {
         <button
           onClick={() => setShowModal(true)}
           style={{
-            background: 'rgba(34, 211, 238, 0.1)', // Cambiado de rgba(16, 185, 129, 0.1) a rgba(34, 211, 238, 0.1)
-            color: '#22D3EE', // Cambiado de #10B981 a #22D3EE
-            border: '1px solid rgba(34, 211, 238, 0.3)', // Cambiado de rgba(16, 185, 129, 0.3) a rgba(34, 211, 238, 0.3)
+            background: 'rgba(16, 185, 129, 0.1)', // Cambiado de rgba(34, 211, 238, 0.1) a rgba(16, 185, 129, 0.1)
+            color: '#10B981', // Cambiado de #22D3EE a #10B981
+            border: '1px solid rgba(16, 185, 129, 0.3)', // Cambiado de rgba(34, 211, 238, 0.3) a rgba(16, 185, 129, 0.3)
             borderRadius: '6px',
             padding: '0.25rem 0.8rem',
             fontWeight: '500',
@@ -60,14 +60,14 @@ const SubscriptionBanner: React.FC<SubscriptionBannerProps> = () => {
             whiteSpace: 'nowrap',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(34, 211, 238, 0.2)'; // Cambiado de rgba(16, 185, 129, 0.2) a rgba(34, 211, 238, 0.2)
-            e.currentTarget.style.borderColor = 'rgba(34, 211, 238, 0.5)'; // Cambiado de rgba(16, 185, 129, 0.5) a rgba(34, 211, 238, 0.5)
-            e.currentTarget.style.color = '#67E8F9'; // Cambiado de #34D399 a #67E8F9 (cyan-300)
+            e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'; // Cambiado de rgba(34, 211, 238, 0.2) a rgba(16, 185, 129, 0.2)
+            e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.5)'; // Cambiado de rgba(34, 211, 238, 0.5) a rgba(16, 185, 129, 0.5)
+            e.currentTarget.style.color = '#34D399'; // Cambiado de #67E8F9 a #34D399 (emerald-400)
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(34, 211, 238, 0.1)'; // Cambiado de rgba(16, 185, 129, 0.1) a rgba(34, 211, 238, 0.1)
-            e.currentTarget.style.borderColor = 'rgba(34, 211, 238, 0.3)'; // Cambiado de rgba(16, 185, 129, 0.3) a rgba(34, 211, 238, 0.3)
-            e.currentTarget.style.color = '#22D3EE'; // Cambiado de #10B981 a #22D3EE
+            e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'; // Cambiado de rgba(34, 211, 238, 0.1) a rgba(16, 185, 129, 0.1)
+            e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)'; // Cambiado de rgba(34, 211, 238, 0.3) a rgba(16, 185, 129, 0.3)
+            e.currentTarget.style.color = '#10B981'; // Cambiado de #22D3EE a #10B981
           }}
         >
           Subscribe

@@ -6,11 +6,9 @@ import { mockIncidents } from '@data/mockIncidents';
 import IncidentForm from '@components/IncidentForm';
 import { IncidentsFlag } from '@components/IncidentsFlag';
 import type { Incident } from '@/types/election';
-import { useElectionPhase } from '@/hooks/useElectionPhase';
-import FirstRoundResultsBanner from '@/components/FirstRoundResultsBanner';
+// Eliminado useElectionPhase y FirstRoundResultsBanner
 import SecondRoundBanner from '@/components/SecondRoundBanner';
 import WinnerBanner from '@/components/WinnerBanner';
-import ElectionPhaseDebugger from '@/components/ElectionPhaseDebugger';
 
 // Componentes
 import { Suspense } from 'react';
@@ -63,7 +61,6 @@ export default function Page() {
   const [incidents, setIncidents] = useState(mockIncidents);
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<'map' | 'stats'>('map');
-  const { isSecondRound, isPostFirstRound, isPostSecondRound, isPreElection } = useElectionPhase();
   const winnerData = useWinnerData();
 
   // Función para agregar un incidente
@@ -86,7 +83,7 @@ export default function Page() {
     photo: `/img/${winnerData.partyBreakdown[0].abbr}.png`
   } : undefined;
 
-  // Determinar el tipo de ganador basado en la fase actual y el porcentaje
+  // Determinar el tipo de ganador (fases eliminadas)
   const getWinnerType = () => {
     if (!winner) return 'second-round';
     
@@ -95,31 +92,14 @@ export default function Page() {
       return winnerData.winnerType;
     }
     
-    // Si estamos en segunda vuelta o post-segunda vuelta, siempre mostrar como second-round
-    if (isSecondRound || isPostSecondRound) {
-      return 'second-round';
-    }
-    
-    // Si estamos en post-primera vuelta, determinar por porcentaje
-    if (isPostFirstRound) {
-      if (winner.percentage >= 50) {
-        return 'first-round-majority';
-      }
-      if (winner.percentage >= 40) {
-        return 'first-round-difference';
-      }
-    }
-    
     // Por defecto
     return 'second-round';
   };
 
   return (
     <>
-      {/* Panel de incidentes - Solo visible en pre-elección y segunda vuelta */}
-      {(isPreElection || isSecondRound) && (
-        <IncidentsFlag incidents={incidents} />
-      )}
+      {/* Panel de incidentes - Siempre visible (fases eliminadas) */}
+      <IncidentsFlag incidents={incidents} />
 
       <Suspense fallback={<div>Loading translations...</div>}>
       <div style={{
@@ -148,8 +128,8 @@ export default function Page() {
             />
           )}
 
-          {/* FASE 1: Pre-Elección */}
-          {isPreElection && !hasWinner && (
+          {/* Contenido principal (fases eliminadas) */}
+          {!hasWinner && (
             <>
               {/* Global Counter Section */}
               <div style={{
@@ -170,7 +150,7 @@ export default function Page() {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  transform: 'translateX(70px)' // Mover 70px hacia la derecha (20px + 50px)
+                  transform: 'translateX(55px)' // Mover 55px hacia la derecha (70px - 15px = 55px)
                 }}>
                   <FullscreenWrapper>
                     <GlobalCounter />
@@ -285,156 +265,10 @@ export default function Page() {
               )}
             </>
           )}
-
-          {/* FASE 2: Post-Primera Vuelta */}
-          {isPostFirstRound && !hasWinner && (
-            <>
-              {/* Second Round Banner */}
-              <div style={{ padding: '1rem 2rem' }}>
-                <SecondRoundBanner isVisible={true} />
-              </div>
-            </>
-          )}
-
-          {/* FASE 3: Segunda Vuelta */}
-          {isSecondRound && !hasWinner && (
-            <>
-              {/* First Round Results Banner */}
-              <FirstRoundResultsBanner isVisible={true} />
-
-              {/* Global Counter Section */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginBottom: '1.5rem'
-              }}>
-                <FullscreenWrapper>
-                  <GlobalCounter />
-                </FullscreenWrapper>
-              </div>
-
-              {/* Separator */}
-              <div style={{
-                height: '2px',
-                background: 'linear-gradient(90deg, transparent 0%, #374151 50%, transparent 100%)',
-                margin: '1.5rem 0',
-                borderRadius: '1px'
-              }} />
-
-              {/* Map and Stats Section */}
-              {isMobile ? (
-                <div style={{ width: '100%', maxWidth: 600, margin: '0 auto', background: 'rgba(30,41,59,0.7)', borderRadius: 16, boxShadow: '0 4px 24px rgba(16,185,129,0.08)', padding: '0.5rem 0.5rem 1.5rem 0.5rem', marginBottom: 24 }}>
-                  {/* Tabs */}
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 0, borderRadius: 12, overflow: 'hidden', marginBottom: 18, background: 'rgba(15,23,42,0.7)', border: '1px solid #374151' }}>
-                    <button
-                      onClick={() => setActiveTab('map')}
-                      style={{
-                        flex: 1,
-                        padding: '0.7rem 0',
-                        background: activeTab === 'map' ? 'rgba(16,185,129,0.13)' : 'transparent',
-                        color: activeTab === 'map' ? '#10B981' : '#cbd5e1',
-                        fontWeight: 700,
-                        fontSize: '1.08rem',
-                        border: 'none',
-                        outline: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                      }}
-                    >
-                      Mapa
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('stats')}
-                      style={{
-                        flex: 1,
-                        padding: '0.7rem 0',
-                        background: activeTab === 'stats' ? 'rgba(16,185,129,0.13)' : 'transparent',
-                        color: activeTab === 'stats' ? '#10B981' : '#cbd5e1',
-                        fontWeight: 700,
-                        fontSize: '1.08rem',
-                        border: 'none',
-                        outline: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                      }}
-                    >
-                      Resultados
-                    </button>
-                  </div>
-                  <div style={{ minHeight: 420 }}>
-                    {activeTab === 'map' && (
-                      <div style={{ width: '100%', minHeight: 420 }}>
-                        <Map2 incidents={incidents} />
-                      </div>
-                    )}
-                    {activeTab === 'stats' && (
-                      <div style={{ width: '100%', minHeight: 420 }}>
-                        <StatsContainer />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '2rem',
-                  alignItems: 'start',
-                  justifyItems: 'center',
-                  maxWidth: '1400px',
-                  width: '100%',
-                  margin: '0 auto',
-                  padding: '1rem',
-                }}>
-                  {/* Map Section */}
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                    height: '100%',
-                    width: 'calc(100% - 120px)',
-                    minHeight: '450px',
-                    marginTop: '70px',
-                  }}>
-                    <Map2 incidents={incidents} />
-                  </div>
-
-                  {/* Stats Section */}
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                    height: '100%',
-                    width: 'calc(100% - 50px)',
-                    minHeight: '450px',
-                  }}>
-                    <div style={{ width: '100%' }}>
-                      <StatsContainer />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Second Round Banner al final */}
-              <div 
-                data-second-round-banner
-                style={{ 
-                  width: '100%', 
-                  maxWidth: '900px', 
-                  margin: '2rem auto 0 auto', 
-                  padding: '0 1rem' 
-                }}
-              >
-                <SecondRoundBanner isVisible={true} />
-              </div>
-            </>
-          )}
         </div>
         
-        {/* Línea divisoria moderna - Solo visible en fases que muestran contenido principal */}
-        {((isPreElection || isSecondRound) || isPostFirstRound) && !hasWinner && (
+        {/* Línea divisoria moderna (fases eliminadas) */}
+        {!hasWinner && (
           <div style={{
             height: '3px',
             background: 'linear-gradient(90deg, transparent 0%, #818cf8 50%, transparent 100%)',
@@ -446,10 +280,25 @@ export default function Page() {
           }} />
         )}
         
-        {/* ElectionReportTable - Solo visible en post-primera vuelta y post-segunda vuelta */}
-        {(isPostFirstRound || isPostSecondRound) && !hasWinner && (
+        {/* ElectionReportTable (fases eliminadas) */}
+        {!hasWinner && (
           <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto', padding: '0 1rem' }}>
             <ElectionReportTable />
+          </div>
+        )}
+
+        {/* Second Round Banner al final (conservado) */}
+        {!hasWinner && (
+          <div 
+            data-second-round-banner
+            style={{ 
+              width: '100%', 
+              maxWidth: '900px', 
+              margin: '2rem auto 0 auto', 
+              padding: '0 1rem' 
+            }}
+          >
+            <SecondRoundBanner isVisible={true} />
           </div>
         )}
       </div>
@@ -458,8 +307,7 @@ export default function Page() {
       {/* Footer con el formulario de incidentes oculto en modal - Siempre visible */}
       <FooterWrapper onAddIncident={handleAddIncident} />
       
-      {/* Election Phase Debugger - Solo en desarrollo */}
-      <ElectionPhaseDebugger />
+      {/* Election Phase Debugger eliminado */}
     </>
   );
 }

@@ -102,9 +102,7 @@ const SecondRoundBanner: React.FC<SecondRoundBannerProps> = ({
     return null;
   }
 
-  // Log temporal para debug
-  console.log('SecondRoundBanner - Rendering in phase:', isSecondRound ? 'second-round' : 'post-first-round');
-  console.log('SecondRoundBanner - Candidates:', displayCandidates);
+ 
 
   const formatNumber = (num: number): string => {
     return num.toLocaleString('es-BO');

@@ -13,7 +13,6 @@ import {
 } from 'recharts';
 import { useSocketData } from '@/context/context';
 import { useTranslation } from 'react-i18next';
-import { useElectionPhase } from '@/hooks/useElectionPhase';
 
 type VoteData = {
   name: string;
@@ -30,7 +29,6 @@ interface VoteChartProps {
 export default function VoteChart({ active }: VoteChartProps) {
   const { globalSummary, breakdownLocData, selectedLocationCode, timestamp } = useSocketData();
   const { t } = useTranslation();
-  const { isSecondRound } = useElectionPhase();
 
   const currentSummary = selectedLocationCode
     ? breakdownLocData
@@ -42,7 +40,7 @@ export default function VoteChart({ active }: VoteChartProps) {
   const totalVotes = currentSummary?.totalVotes || 0;
   console.log(selectedLocationCode)
 
-  // Filter data based on election phase
+  // Filter data (fases eliminadas)
   let filteredData: VoteData[] = [];
   
   if (Array.isArray(currentSummary?.partyBreakdown)) {
@@ -54,16 +52,8 @@ export default function VoteChart({ active }: VoteChartProps) {
       percentage: Number(party.percentage),
     }));
 
-    if (isSecondRound) {
-      // In second round, show only the two candidates with most votes
-      // Sort by votes and take the first two
-      filteredData = partyData
-        .sort((a, b) => b.votes - a.votes)
-        .slice(0, 2);
-    } else {
-      // In first round, show all sorted by percentage
-      filteredData = partyData.sort((a, b) => b.percentage - a.percentage);
-    }
+    // Mostrar siempre todos ordenados por porcentaje
+    filteredData = partyData.sort((a, b) => b.percentage - a.percentage);
   }
 
   function generateTicks(max: number, step: number): number[] {
@@ -96,30 +86,14 @@ export default function VoteChart({ active }: VoteChartProps) {
     );
   }
 
-  // If we are in second round and don't have enough data, show message
-  if (isSecondRound && filteredData.length < 2) {
-    return (
-      <div className="w-full h-96 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-lg font-semibold text-gray-700 mb-2">
-            {t('secondRound.title')}
-          </div>
-          <div className="text-gray-500">
-            Waiting for first round results to determine candidates advancing to second round.
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Mensaje especial de segunda vuelta eliminado
 
   return (
     <div className="w-full rounded-md flex flex-col p-2" style={{ height: `${dynamicHeight}px` }}>
       <div className="text-center text-base font-semibold text-gray-700 mb-1 select-none">
         {selectedLocationCode === null
-          ? isSecondRound 
-            ? t('secondRound.title') 
-            : t('votechart.national_results')
-          : `${isSecondRound ? t('secondRound.title') : t('votechart.department_results')} - ${breakdownLocData?.locationName ?? ''}`}
+          ? t('votechart.national_results')
+          : `${t('votechart.department_results')} - ${breakdownLocData?.locationName ?? ''}`}
       </div>
 
       <div className="flex flex-1">
@@ -132,7 +106,7 @@ export default function VoteChart({ active }: VoteChartProps) {
             userSelect: 'none',
           }}
         >
-          <label>{isSecondRound ? t('secondRound.subtitle') : t('votechart.political_parties')}</label>
+          <label>{t('votechart.political_parties')}</label>
         </div>
 
         <div className="flex-1">

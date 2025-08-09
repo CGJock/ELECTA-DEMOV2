@@ -7,7 +7,6 @@ import { mockParties } from '@data/mockData';
 import { useTranslation } from 'react-i18next';
 import { useSocketData } from '@contexts/context';
 import { CandidateModal } from '@components/CandidateModal';
-import { useElectionPhase } from '@/hooks/useElectionPhase';
 
 interface PoliticalPartiesProps {
   parties?: PoliticalParty[];
@@ -24,7 +23,6 @@ export function PoliticalParties({
 
   const { t } = useTranslation();
   const { selectedLocationCode, globalSummary, breakdownLocData } = useSocketData();
-  const { isSecondRound } = useElectionPhase();
 
   // Party base (static structure with names, photos, etc.)
   const parties = initialParties;
@@ -60,21 +58,8 @@ const enrichedParties = parties.map((party) => {
   };
 });
 
-  // Filter parties based on election phase
-  let filteredParties = enrichedParties;
-  
-  if (isSecondRound) {
-    // In second round, show only the two candidates with most votes
-    // Exclude disqualified and withdrawn candidates
-    const eligibleParties = enrichedParties.filter(party => 
-      !party.disqualified && !party.withdrawalType
-    );
-    
-    // Sort by votes and take the first two
-    filteredParties = eligibleParties
-      .sort((a, b) => (b.count || 0) - (a.count || 0))
-      .slice(0, 2);
-  }
+  // Filter parties (fases eliminadas)
+  const filteredParties = enrichedParties;
 
   // Sort parties by votes
   const sortedParties = filteredParties.sort((a, b) => (b.count || 0) - (a.count || 0));
@@ -97,28 +82,7 @@ const enrichedParties = parties.map((party) => {
     setSelectedCandidate(null);
   };
 
-  // If we are in second round and don't have enough eligible candidates, show message
-  if (isSecondRound && filteredParties.length < 2) {
-    return (
-      <div className="relative backdrop-blur-xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 rounded-2xl border border-slate-600/30 shadow-2xl overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-indigo-600/5 pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/80 via-indigo-500/80 to-purple-500/80" />
-        <div className="relative z-10 p-6">
-          <div className="text-center">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-slate-700/50 to-slate-600/50 border border-slate-500/30 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 mr-3 animate-pulse" />
-              <span className="text-sm font-semibold text-slate-200 tracking-wide">
-                {t('secondRound.title')}
-              </span>
-            </div>
-          </div>
-          <div className="text-center mt-4 text-slate-300">
-            <p>Esperando resultados de la primera ronda para determinar los candidatos que pasan a la segunda ronda.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Mensaje especial de segunda vuelta eliminado
 
   return (
     <>
@@ -135,7 +99,7 @@ const enrichedParties = parties.map((party) => {
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-slate-700/50 to-slate-600/50 border border-slate-500/30 backdrop-blur-sm">
               <div className="w-2 h-2 rounded-full bg-emerald-400 mr-3 animate-pulse" />
               <span className="text-sm font-semibold text-slate-200 tracking-wide">
-                {isSecondRound ? t('secondRound.title') : t('parties.title')}: <span className="text-white font-bold">{locationName}</span>
+                {t('parties.title')}: <span className="text-white font-bold">{locationName}</span>
               </span>
             </div>
           </div>
@@ -143,7 +107,7 @@ const enrichedParties = parties.map((party) => {
           {/* Header row: Party and Votes */}
           <div className="flex justify-between items-center mb-4 px-1">
             <span className="text-sm font-medium text-slate-300 uppercase tracking-wider">
-              {isSecondRound ? t('secondRound.subtitle') : t('parties.title')}
+              {t('parties.title')}
             </span>
             <span className="text-sm font-medium text-slate-300 uppercase tracking-wider">
               {t('parties.votes')}
@@ -229,8 +193,8 @@ const enrichedParties = parties.map((party) => {
             ))}
           </div>
 
-          {/* Botón expandir/colapsar solo si no estamos en segunda ronda */}
-          {!isSecondRound && sortedParties.length > 3 && (
+          {/* Botón expandir/colapsar */}
+          {sortedParties.length > 3 && (
             <div className="mt-4 text-center">
               <button
                 onClick={() => setIsExpanded(!isExpanded)}

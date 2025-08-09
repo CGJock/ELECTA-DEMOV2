@@ -1,6 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSocketData } from '../context/context';
-import { useElectionPhase } from './useElectionPhase';
 import { mockParties } from '../data/mockData';
 
 // Constante del padrón electoral de Bolivia
@@ -31,7 +30,6 @@ export interface WinnerDetection {
   } | null;
   winCondition: 'majority' | 'difference' | 'simple' | null;
   totalValidVotes: number;
-  isSecondRound: boolean;
   // Nuevos campos para información de participación
   participationPercentage: number;
   totalVotesEmitted: number;
@@ -50,7 +48,6 @@ export interface WinnerDetection {
  */
 export const useWinnerDetection = (): WinnerDetection => {
   const { globalSummary } = useSocketData();
-  const { isSecondRound, isPostFirstRound, isPostSecondRound } = useElectionPhase();
   const [mockDataVersion, setMockDataVersion] = useState(0);
 
   // Escuchar cambios en datos mock
@@ -74,15 +71,14 @@ export const useWinnerDetection = (): WinnerDetection => {
     const totalVotesEmitted = dataToUse?.totalVotes || 0;
     const participationPercentage = (totalVotesEmitted / PADRON_ELECTORAL) * 100;
     
-    // Si no hay datos o no estamos en fase post-elección, no hay ganador
-    if (!dataToUse?.partyBreakdown || (!isPostFirstRound && !isSecondRound && !isPostSecondRound)) {
+    // Si no hay datos, no hay ganador
+    if (!dataToUse?.partyBreakdown) {
       return {
         hasWinner: false,
         winner: null,
         runnerUp: null,
         winCondition: null,
         totalValidVotes: 0,
-        isSecondRound,
         participationPercentage,
         totalVotesEmitted,
         padronElectoral: PADRON_ELECTORAL
@@ -101,7 +97,6 @@ export const useWinnerDetection = (): WinnerDetection => {
         runnerUp: null,
         winCondition: null,
         totalValidVotes: 0,
-        isSecondRound,
         participationPercentage,
         totalVotesEmitted,
         padronElectoral: PADRON_ELECTORAL
@@ -149,59 +144,37 @@ export const useWinnerDetection = (): WinnerDetection => {
       };
     })() : null;
 
-    // LÓGICA DE DETECCIÓN DE GANADOR
-    if (isSecondRound || isPostSecondRound) {
-      // SEGUNDA VUELTA: Mayoría simple
-      if (firstPlace.count > (secondPlace?.count || 0)) {
+    // LÓGICA DE DETECCIÓN DE GANADOR (fases eliminadas)
+    // Declarar ganador solo si se ha contado el 100% del padrón
+    if (participationPercentage >= 100) {
+      // Condición 1: Más del 50% de votos válidos
+      if (firstPlace.percentage > 50) {
         return {
           hasWinner: true,
           winner: winnerData,
           runnerUp: runnerUpData,
-          winCondition: 'simple',
+          winCondition: 'majority',
           totalValidVotes,
-          isSecondRound: isSecondRound || isPostSecondRound,
           participationPercentage,
           totalVotesEmitted,
           padronElectoral: PADRON_ELECTORAL
         };
       }
-    } else {
-      // PRIMERA VUELTA: Verificar condiciones de ganador directo
-      
-      // NUEVA CONDICIÓN: Solo declarar ganador si se ha contado el 100% del padrón
-      if (participationPercentage >= 100) {
-        
-        // Condición 1: Más del 50% de votos válidos
-        if (firstPlace.percentage > 50) {
+
+      // Condición 2: Al menos 40% Y diferencia ≥10 puntos con el segundo
+      if (firstPlace.percentage >= 40 && secondPlace) {
+        const difference = firstPlace.percentage - secondPlace.percentage;
+        if (difference >= 10) {
           return {
             hasWinner: true,
             winner: winnerData,
             runnerUp: runnerUpData,
-            winCondition: 'majority',
+            winCondition: 'difference',
             totalValidVotes,
-            isSecondRound,
             participationPercentage,
             totalVotesEmitted,
             padronElectoral: PADRON_ELECTORAL
           };
-        }
-
-        // Condición 2: Al menos 40% Y diferencia ≥10 puntos con el segundo
-        if (firstPlace.percentage >= 40 && secondPlace) {
-          const difference = firstPlace.percentage - secondPlace.percentage;
-          if (difference >= 10) {
-            return {
-              hasWinner: true,
-              winner: winnerData,
-              runnerUp: runnerUpData,
-              winCondition: 'difference',
-              totalValidVotes,
-              isSecondRound,
-              participationPercentage,
-              totalVotesEmitted,
-              padronElectoral: PADRON_ELECTORAL
-            };
-          }
         }
       }
     }
@@ -213,10 +186,9 @@ export const useWinnerDetection = (): WinnerDetection => {
       runnerUp: null,
       winCondition: null,
       totalValidVotes,
-      isSecondRound: isSecondRound || isPostSecondRound,
       participationPercentage,
       totalVotesEmitted,
       padronElectoral: PADRON_ELECTORAL
     };
-  }, [globalSummary, isSecondRound, isPostFirstRound, isPostSecondRound, mockDataVersion]);
+  }, [globalSummary, mockDataVersion]);
 }; 
