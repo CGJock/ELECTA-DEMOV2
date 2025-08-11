@@ -1,10 +1,11 @@
 {
-  "name": "electa-demo",
   "private": true,
-  "version": "1.0.0",
   "workspaces": [
-    "packages/front-end/react",
-    "packages/back-end/Express",
-    "shared"
-  ]
+    "packages/shared",
+    "packages/back-end",
+    "packages/front-end"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  }
 }
