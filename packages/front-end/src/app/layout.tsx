@@ -11,6 +11,7 @@ import ClientProviders from '@/components/components-wrappers/i18nProvider';
 import FooterWrapper from '@/components/components-wrappers/FooterWrapper';
 import NotificationService from '@/components/NotificationService';
 import MaintenanceWrapper from '@/components/MaintenanceWrapper';
+import { AuthProvider } from '@/context/authContext';
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -47,14 +48,16 @@ export default function RootLayout({
           }}
         >
           <ClientProviders>
-          <NotificationService />
-          <MaintenanceWrapper>
-            {children}
-          </MaintenanceWrapper>
-          {/* <FooterWrapper onAddIncident={(incident) => {
-            // TODO: Implementar lógica para agregar incidentes
-            console.log('Nuevo incidente:', incident);
-          }} /> */}
+            <div>
+              <NotificationService />
+              <MaintenanceWrapper>
+                {children}
+              </MaintenanceWrapper>
+              {/* <FooterWrapper onAddIncident={(incident) => {
+                // TODO: Implementar lógica para agregar incidentes
+                console.log('Nuevo incidente:', incident);
+              }} /> */}
+            </div>
           </ClientProviders>
         </body>
       

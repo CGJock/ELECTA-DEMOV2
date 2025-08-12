@@ -16,7 +16,8 @@ import {
   Edit,
   Trash2,
   Plus,
-  Save
+  Save,
+  LogOut
 } from 'lucide-react';
 import { useMaintenance } from '@/hooks/useMaintenance';
 import { useTranslation } from 'react-i18next';
@@ -26,10 +27,17 @@ import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { useNotifications } from '@/hooks/useNotifications';
 import NotificationToast from '@/components/NotificationToast';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { useAuth } from '@/context/authContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { useAdminManagement } from '@/context/adminManagementContext';
+import AdminManagement from '@/components/AdminManagement';
 
 export default function AdminPage() {
   // Hook de traducción
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  // Hook de autenticación
+  const { admin, logout } = useAuth();
   
   // Estado para el sidebar móvil
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -257,6 +265,12 @@ export default function AdminPage() {
       name: t('admin.sections.election_config.title'),
       icon: Vote,
       description: t('admin.sections.election_config.description')
+    },
+    {
+      id: 'admin-management',
+      name: t('admin.sections.admin_management.title'),
+      icon: Shield,
+      description: t('admin.sections.admin_management.description')
     }
   ];
 
@@ -357,7 +371,7 @@ export default function AdminPage() {
                     className="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
-                    Guardar Configuración
+                    {t('admin.sections.site_control.save_config')}
                   </button>
                 </div>
               </div>
@@ -689,117 +703,160 @@ export default function AdminPage() {
           </div>
         );
 
+      case 'admin-management':
+        return <AdminManagement notifications={{ showSuccess, showError, showWarning }} />;
+        
       default:
         return null;
     }
   };
 
+  // Función para cambiar idioma
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'es' : 'en';
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('i18nextLng', newLang);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      {/* Header móvil */}
-      <div className="lg:hidden bg-slate-800 border-b border-slate-700 p-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-cyan-400">ELECTA</h1>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 text-slate-400 hover:text-white transition-colors"
-          >
-            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-slate-900 text-white">
+        {/* Header móvil */}
+        <div className="lg:hidden bg-slate-800 border-b border-slate-700 p-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold text-cyan-400">ELECTA</h1>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 text-slate-400 hover:text-white transition-colors"
+            >
+              {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}>
-          <div className="flex flex-col h-full">
-            {/* Header del sidebar */}
-            <div className="p-6 border-b border-slate-700">
-              <h1 className="text-2xl font-bold text-cyan-400">ELECTA</h1>
-              <p className="text-sm text-slate-400 mt-1">{t('admin.version')}</p>
-            </div>
+        <div className="flex">
+          {/* Sidebar */}
+          <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}>
+            <div className="flex flex-col h-full">
+              {/* Header del sidebar */}
+              <div className="p-6 border-b border-slate-700">
+                <h1 className="text-2xl font-bold text-cyan-400">ELECTA</h1>
+                <p className="text-sm text-slate-400 mt-3">{t('admin.version')}</p>
+              </div>
 
-            {/* Navegación */}
-            <nav className="flex-1 p-4">
-              <ul className="space-y-2">
-                {sidebarItems.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => {
-                        setActiveSection(item.id);
-                        setSidebarOpen(false);
-                      }}
-                      className={`w-full text-left p-3 rounded-lg transition-colors ${
-                        activeSection === item.id
-                          ? 'bg-cyan-500 text-white'
-                          : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <item.icon className="w-5 h-5" />
-                        <div>
-                          <div className="font-medium">{item.name}</div>
-                          <div className="text-xs opacity-75">{item.description}</div>
+              {/* Navegación */}
+              <nav className="flex-1 p-4">
+                <ul className="space-y-2">
+                  {sidebarItems.map((item) => (
+                    <li key={item.id}>
+                      <button
+                        onClick={() => {
+                          setActiveSection(item.id);
+                          setSidebarOpen(false);
+                        }}
+                        className={`w-full text-left p-3 rounded-lg transition-colors ${
+                          activeSection === item.id
+                            ? 'bg-cyan-500 text-white'
+                            : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <item.icon className="w-5 h-5" />
+                          <div>
+                            <div className="font-medium">{item.name}</div>
+                            <div className="text-xs opacity-75">{item.description}</div>
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
 
-            {/* Footer del sidebar */}
-            <div className="p-4 border-t border-slate-700">
-              <div className="text-center">
-                <p className="text-xs text-slate-400">{t('admin.subtitle')}</p>
+              {/* Footer del sidebar */}
+              <div className="p-4 border-t border-slate-700">
+                <div className="text-center">
+                  <p className="text-xs text-slate-400">{t('admin.subtitle')}</p>
+                  <div className="mt-3 pt-3 border-t border-slate-600">
+                    <div className="text-sm text-slate-300 mb-2">
+                      {t('admin.sidebar.connected_as')} <span className="text-cyan-400">{admin?.username}</span>
+                    </div>
+                    <button
+                      onClick={logout}
+                      className="w-full px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      {t('admin.sidebar.logout')}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Contenido principal */}
-        <div className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">{t('admin.title')}</h1>
-              <p className="text-slate-400">{t('admin.subtitle')}</p>
+          {/* Contenido principal */}
+          <div className="flex-1 p-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="mb-8 flex justify-between items-start">
+                <div>
+                  <h1 className="text-3xl font-bold text-white mb-2">{t('admin.title')}</h1>
+                  <p className="text-slate-400">{t('admin.subtitle')}</p>
+                </div>
+                
+                {/* Toggle de idioma en la esquina superior derecha */}
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-300 font-medium">ES</span>
+                  <button
+                    onClick={toggleLanguage}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      i18n.language === 'es' ? 'bg-cyan-500' : 'bg-slate-600'
+                    }`}
+                    title={i18n.language === 'en' ? t('admin.language_toggle.change_to_spanish') : t('admin.language_toggle.change_to_english')}
+                  >
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      i18n.language === 'es' ? 'translate-x-6' : 'translate-x-1'
+                    }`} />
+                  </button>
+                  <span className="text-sm text-slate-300 font-medium">EN</span>
+                </div>
+              </div>
+
+              {renderSectionContent()}
             </div>
-
-            {renderSectionContent()}
           </div>
         </div>
-      </div>
 
-      {/* Overlay para cerrar sidebar en móvil */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Notificaciones */}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        {notifications.map((notification) => (
-          <NotificationToast
-            key={notification.id}
-            notification={notification}
-            onClose={removeNotification}
+        {/* Overlay para cerrar sidebar en móvil */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
           />
-        ))}
-      </div>
+        )}
 
-      {/* Diálogo de confirmación */}
-      <ConfirmationDialog
-        isOpen={confirmationDialog.isOpen}
-        title={confirmationDialog.title}
-        message={confirmationDialog.message}
-        onConfirm={confirmationDialog.onConfirm}
-        onCancel={() => setConfirmationDialog(prev => ({ ...prev, isOpen: false }))}
-        type="danger"
-      />
-    </div>
+        {/* Notificaciones */}
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {notifications.map((notification) => (
+            <NotificationToast
+              key={notification.id}
+              notification={notification}
+              onClose={removeNotification}
+            />
+          ))}
+        </div>
+
+        {/* Diálogo de confirmación */}
+        <ConfirmationDialog
+          isOpen={confirmationDialog.isOpen}
+          title={confirmationDialog.title}
+          message={confirmationDialog.message}
+          onConfirm={confirmationDialog.onConfirm}
+          onCancel={() => setConfirmationDialog(prev => ({ ...prev, isOpen: false }))}
+          type="danger"
+        />
+      </div>
+    </ProtectedRoute>
   );
 }

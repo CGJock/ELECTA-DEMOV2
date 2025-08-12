@@ -9,6 +9,9 @@ import { mockIncidents } from '@data/mockIncidents';
 import type { Incident } from '@/types/election';
 import { IncidentsFlag } from '@components/IncidentsFlag';
 
+// Alias para evitar conflicto con el nombre del componente
+const MapConstructor = window.Map;
+
 interface PartyData {
   name: string;
   abbr: string;
@@ -31,7 +34,7 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
   const [mounted, setMounted] = useState(false);
-  const geoIdMapRef = useRef<Map<string, string>>(new globalThis.Map());
+  const geoIdMapRef = useRef<Map<string, string>>(new MapConstructor());
   const { setSelectedLocationCode, selectedLocationCode, breakdownData, setbreakdownLocData} = useSocketData();
   const { t } = useTranslation();
   const [timestamp, setTimestamp] = useState<string | null>(null);
@@ -66,7 +69,7 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
       const response = await fetch('/data/map/geoData.json');
       const geoJson = await response.json();
 
-      const geoIdMap = new globalThis.Map();
+      const geoIdMap = new MapConstructor();
       const departmentCentroids: Record<string, [number, number]> = {};
       geoJson.features.forEach((feature: any) => {
         const { name, code } = feature.properties;

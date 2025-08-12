@@ -23,7 +23,7 @@ function useDebouncedEvent(key: string, ms: number) {
  * NotificationService: Componente simplificado para notificaciones electorales
  * Se monta en background, detecta eventos y envía correos genéricos
  */
-const NotificationService: React.FC = () => {
+const NotificationService = () => {
   const { globalSummary } = useSocketData();
   const prevDataHash = useRef<string>('');
 

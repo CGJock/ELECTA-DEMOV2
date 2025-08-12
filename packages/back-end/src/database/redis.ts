@@ -14,7 +14,6 @@ if (!process.env.REDIS_URL) {
 const redisClient = new Redis(process.env.REDIS_URL!, {
   maxRetriesPerRequest: 3,
   enableReadyCheck: false,
-  retryDelayOnFailover: 100,
 });
 
 redisClient.on('connect', () => console.log('✅ Redis conectado con Upstash.'));

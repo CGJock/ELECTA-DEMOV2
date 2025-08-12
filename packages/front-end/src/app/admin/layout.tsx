@@ -1,13 +1,19 @@
+'use client';
+
+import React from 'react';
+import { AuthProvider } from '@/context/authContext';
+import { AdminManagementProvider } from '@/context/adminManagementContext';
+
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <>
-      <main className="flex-1 flex flex-col">
+    <AuthProvider>
+      <AdminManagementProvider>
         {children}
-      </main>
-    </>
+      </AdminManagementProvider>
+    </AuthProvider>
   );
 }

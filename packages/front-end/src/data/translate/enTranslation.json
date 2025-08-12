@@ -1,10 +1,6 @@
 {
   "header": {
-<<<<<<< HEAD
     "title": "ELECTA",
-=======
-    "title": "ELECTA - Bolivia",
->>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
     "subtitle": "Electoral Dashboard",
     "language": "Language",
     "spanish": "Español",
@@ -31,19 +27,12 @@
     "percentage": "Total Votes",
     "votes": "Votes",
     "ver_mas": "See more",
-<<<<<<< HEAD
     "ver_menos": "See less",
     "disqualified_disclaimer": "Candidate disqualified by the TSE for submitting tax solvency late.",
     "withdrawn_disclaimer": "Candidate withdrawn from the electoral race."
   },
   "footer": {
     "company_desc": "Professional platform for electoral monitoring and data visualization for global elections.",
-=======
-    "ver_menos": "See less"
-  },
-  "footer": {
-    "company_desc": "Professional platform for electoral monitoring and data visualization for Bolivia.",
->>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
     "status_live": "Status: Live",
     "status_realtime": "Real-time updates",
     "quick_links": "Quick Links",
@@ -58,21 +47,16 @@
     "follow_us": "Follow Us",
     "rights_reserved": "All rights reserved.",
     "privacy_policy": "Privacy Policy",
-<<<<<<< HEAD
     "terms_of_service": "Terms of Service",
     "incident_form": "Incidents Form",
     "legal_notice": "Legal Notice",
     "ver_mas": "See more"
-=======
-    "terms_of_service": "Terms of Service"
->>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   },
   "counter": {
     "loading": "Loading vote summary...",
     "total_votes": "Total Vote Count",
     "null_votes": "Null Votes",
     "blank_votes": "Blank Votes",
-<<<<<<< HEAD
     "top_candidates": "Top Candidates"
   },
   "secondRound": {
@@ -103,25 +87,11 @@
     "email": "Email",
     "select_department": "Select a department",
     "department": "Department"
-=======
-    "total_votes_hint": "voteshint"
-  },
-  "incidents": {
-    "title": "INCIDENTS",
-    "no_incidents": "No incidents reported",
-    "reports": "Incident Reports",
-    "severity_high": "HIGH",
-    "severity_medium": "MEDIUM",
-    "severity_low": "LOW",
-    "location": "Location",
-    "time": "Time"
->>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   },
   "nav": {
     "home": "HOME",
     "elections": "Upcoming Elections",
     "about": "About Us",
-<<<<<<< HEAD
     "faq": "FAQ",
     "contact": "Contact Us"
   },
@@ -132,10 +102,6 @@
     "paragraph3": "The only official and definitive results are those published by the competent electoral authorities.",
     "understood": "Understood"
   },
-=======
-    "contact": "Contact Us"
-  },
->>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   "candidate": {
     "age": "years old",
     "experience": "Experience",
@@ -169,7 +135,6 @@
     "timestamp": "Last update: {{date}}",
     "download": "Download Excel"
   },
-<<<<<<< HEAD
   "result": "Result",
   "subscription": {
     "banner_message": "🗳️ Live Election Results — Get alerts about important changes",
@@ -516,6 +481,14 @@
     "title": "Admin Panel",
     "subtitle": "Manage your electoral site",
     "version": "ELECTA Admin Panel v1.0",
+    "language_toggle": {
+      "change_to_spanish": "Change to Spanish",
+      "change_to_english": "Change to English"
+    },
+    "sidebar": {
+      "connected_as": "Connected as:",
+      "logout": "Logout"
+    },
     "sections": {
       "site_control": {
         "title": "Site Control",
@@ -529,7 +502,8 @@
         "access_code": "Access Code",
         "access_code_placeholder": "Enter access code",
         "terms_message": "Terms and Conditions Message",
-        "terms_placeholder": "Terms and conditions message"
+        "terms_placeholder": "Terms and conditions message",
+        "save_config": "Save Configuration"
       },
       "component_selector": {
         "title": "Component Selector",
@@ -589,11 +563,83 @@
           "delete": "Delete"
         },
         "delete_confirm": "Are you sure you want to delete this election?"
+      },
+      "admin_management": {
+        "title": "Admin Management",
+        "description": "Manage panel users",
+        "header": {
+          "title": "Admin Management",
+          "subtitle": "Manage users with access to the admin panel",
+          "new_admin": "New Administrator"
+        },
+        "form": {
+          "new_admin": "New Administrator",
+          "edit_admin": "Edit Administrator",
+          "username": "Username",
+          "username_placeholder": "user123",
+          "username_required": "Username is required",
+          "username_min_length": "Username must be at least 3 characters long",
+          "email": "Email",
+          "email_placeholder": "admin@electa.com",
+          "email_required": "Email is required",
+          "email_invalid": "Email is not valid",
+          "role": "Role",
+          "role_placeholder": "Select role",
+          "role_required": "Role is required",
+          "is_active": "Active Administrator",
+          "cancel": "Cancel",
+          "create": "Create",
+          "update": "Update",
+          "save": "Save"
+        },
+        "table": {
+          "username": "User",
+          "email": "Email",
+          "role": "Role",
+          "status": "Status",
+          "created": "Created",
+          "actions": "Actions",
+          "principal": "Principal",
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "actions": {
+          "edit": "Edit",
+          "activate": "Activate",
+          "deactivate": "Deactivate",
+          "delete": "Delete",
+          "edit_title": "Edit",
+          "activate_title": "Activate",
+          "deactivate_title": "Deactivate",
+          "delete_title": "Delete"
+        },
+        "delete_confirm": "Are you sure you want to delete this administrator?",
+        "delete_confirm_title": "Confirm Deletion",
+        "delete_confirm_message": "Are you sure you want to delete administrator {{username}}? This action cannot be undone.",
+        "delete_success_title": "Administrator Deleted",
+        "delete_success_message": "Administrator {{username}} has been successfully deleted.",
+        "delete_error_title": "Delete Error",
+        "delete_error_message": "Could not delete administrator. Please try again.",
+        "create_success_title": "Administrator Created",
+        "create_success_message": "Administrator {{username}} has been successfully created.",
+        "create_error_title": "Create Error",
+        "create_error_message": "Could not create administrator. Verify that the username is not duplicated.",
+        "update_success_title": "Administrator Updated",
+        "update_success_message": "Administrator {{username}} has been successfully updated.",
+        "update_error_title": "Update Error",
+        "update_error_message": "Could not update administrator. Verify that the username is not duplicated.",
+        "status_change_success_title": "Status Changed",
+        "status_change_success_message": "Administrator {{username}} status has been successfully changed to {{status}}.",
+        "status_change_error_title": "Status Change Error",
+        "status_change_error_message": "Could not change administrator status. Please try again.",
+        "roles": {
+          "super_admin": "Super Admin",
+          "admin": "Admin",
+          "moderator": "Moderator",
+          "editor": "Editor"
+        }
       }
     }
   }
-=======
-  "result": "Result"
->>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
 }
 
