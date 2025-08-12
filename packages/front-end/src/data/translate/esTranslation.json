@@ -1,0 +1,554 @@
+{
+  "header": {
+    "title": "ELECTA",
+    "subtitle": "Dashboard Electoral",
+    "language": "Idioma",
+    "spanish": "Español",
+    "english": "Inglés"
+  },
+  "stats": {
+    "title": "Estadísticas Electorales",
+    "tab_table": "Tabla",
+    "tab_chart": "Gráfico",
+    "loading": "Cargando...",
+    "election_statistics": "Estadísticas Electorales",
+    "detailed_statistics": "Las estadísticas y análisis detallados se mostrarán aquí."
+  },
+  "map": {
+    "title": "Mostrando resultados: {{name}}",
+    "return_global": "Volver a resultados nacionales",
+    "national": "Nacionales",
+    "tooltip_total_votes": "Total de Votos",
+    "tooltip_parties": "Partidos",
+    "mostrando_resultados": "Mostrando resultados -"
+  },
+  "parties": {
+    "title": "Partido Político",
+    "percentage": "Votos Totales",
+    "votes": "Votos",
+    "ver_mas": "Ver más",
+    "ver_menos": "Ver menos",
+    "disqualified_disclaimer": "Candidato descalificado por el TSE por presentar solvencia fiscal fuera de plazo.",
+    "withdrawn_disclaimer": "Candidato retirado de la contienda electoral."
+  },
+  "footer": {
+    "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para elecciones globales.",
+    "status_live": "Estado: En vivo",
+    "status_realtime": "Actualizaciones en tiempo real",
+    "quick_links": "Enlaces Rápidos",
+    "link_home": "Inicio",
+    "link_elections": "Próximas Elecciones",
+    "link_about": "Sobre Nosotros",
+    "link_contact": "Contáctanos",
+    "contact": "Contacto",
+    "email": "Correo",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "follow_us": "Síguenos",
+    "rights_reserved": "Todos los derechos reservados.",
+    "privacy_policy": "Política de Privacidad",
+    "terms_of_service": "Términos de Servicio",
+    "incident_form": "Formulario de incidentes",
+    "legal_notice": "Aviso Legal",
+    "ver_mas": "Ver más"
+  },
+  "counter": {
+    "loading": "Cargando resumen de votos...",
+    "total_votes": "Conteo Total De Votos",
+    "null_votes": "Votos Nulos",
+    "blank_votes": "Votos En Blanco",
+    "top_candidates": "Candidatos principales"
+  },
+  "secondRound": {
+    "title": "SEGUNDA RONDA",
+    "votes": "Votos",
+    "definitive_election": "Elección Presidencial Definitiva",
+    "date": "20 de octubre del 2025",
+    "final_confrontation": "Enfrentamiento Final",
+    "live_status": "En vivo",
+    "first_round_summary": "Resumen de la primera ronda",
+    "bolivia_2025": "Bolivia 2025"
+  },
+  "incidents": {
+    "form_title": "Reportar incidente",
+    "title": "Título",
+    "description": "Descripción",
+    "location": "Ubicación",
+    "status": "Estado",
+    "submit": "Reportar incidente",
+    "required": "Este campo es obligatorio.",
+    "no_incidents": "No hay incidentes reportados",
+    "reports": "Reportes de Incidentes",
+    "status_stuck": "EN CURSO",
+    "status_new": "NUEVO",
+    "status_resolved": "RESUELTO",
+    "time": "Hora",
+    "disclaimer": "Los datos mostrados provienen de terceros. ELECTA no se hace responsable por la veracidad o consecuencias del uso de esta información.",
+    "zone": "Zona/Barrio",
+    "email": "Correo electrónico",
+    "select_department": "Selecciona un departamento",
+    "department": "Departamento"
+  },
+  "nav": {
+    "home": "INICIO",
+    "elections": "Próximas Elecciones",
+    "about": "Sobre Nosotros",
+    "faq": "Preguntas Frecuentes",
+    "contact": "Contáctanos"
+  },
+  "disclaimer": {
+    "title": "Aviso Legal",
+    "paragraph1": "Los datos presentados en este sitio provienen de fuentes confiables y se actualizan en tiempo real con fines informativos.",
+    "paragraph2": "Sin embargo, esta plataforma es independiente y no constituye una fuente oficial.",
+    "paragraph3": "Los únicos resultados oficiales y definitivos son aquellos publicados por las autoridades electorales competentes.",
+    "understood": "Entendido"
+  },
+  "candidate": {
+    "age": "años",
+    "experience": "Experiencia",
+    "main_proposals": "Propuestas Principales",
+    "no_proposals": "Sin propuestas registradas",
+    "current_votes": "Votos actuales",
+    "percentage": "Porcentaje"
+  },
+  "excel": {
+  "party": "Partido",
+  "votes": "Votos",
+  "type": "Vote Type",
+  "percentage": "Porcentaje",
+  "total_votes": "Votos Totales",
+  "valid_votes": "Votos Válidos",
+  "null_votes": "Votos Nulos",
+  "blank_votes": "Votos Blancos",
+  "location": "Ubicación",
+  "timestamp": "Fecha y Hora de Generación"
+  },
+  "ver_mas": "Ver más",
+  "ver_menos": "Ver menos",
+  "votechart": {
+    "results": "Resultados",
+    "national_results": "Resultados Nacionales",
+    "department_results": "Resultados por departamento",
+    "political_parties": "Partidos Políticos",
+    "votes": "Votos",
+    "percentage": "Porcentaje",
+    "total_votes": "Votos Totales",
+    "timestamp": "Última actualización: {{date}}",
+    "download": "Descarga Excel"
+  },
+  "result": "Resultado",
+  "subscription": {
+    "banner_message": "🗳️ Resultados Electorales en Vivo — Recibe alertas sobre cambios importantes",
+    "subscribe_button": "Suscribirse",
+    "modal_title": "Suscríbete a alertas electorales",
+    "unsubscribe_modal_title": "Cancelar suscripción a alertas",
+    "name_label": "Nombre",
+    "email_label": "Email",
+    "name_placeholder": "Nombre",
+    "email_placeholder": "Email",
+    "subscribe_loading": "Enviando...",
+    "subscribe_success": "¡Suscripción exitosa!",
+    "subscribe_error": "No se pudo suscribir",
+    "unsubscribe_button": "Cancelar suscripción",
+    "unsubscribe_loading": "Procesando...",
+    "unsubscribe_success": "¡Desuscripción exitosa!",
+    "unsubscribe_error": "No se pudo desuscribir",
+    "invalid_name": "Nombre inválido. Solo letras y espacios, 2-50 caracteres.",
+    "invalid_email": "Email inválido.",
+    "footer_unsubscribe_text": "¿No quieres recibir más notificaciones?",
+    "footer_unsubscribe_link": "Haz clic aquí"
+  },
+  "about": {
+    "hero": {
+      "title": "Sobre Electa",
+      "subtitle": "Plataforma líder en transparencia electoral y visualización de datos en tiempo real para elecciones globales",
+      "cta_button": "Contáctanos"
+    },
+              "history": {
+            "title": "Nuestra Historia",
+            "paragraph1": "Electa nació de la pasión por proteger y fortalecer la democracia. Nos apasiona empoderar a los ciudadanos con información electoral transparente y accesible, centrando nuestros esfuerzos en proteger los valores democráticos mediante plataformas tecnológicas innovadoras.",
+            "paragraph2": "Desde nuestros inicios, nos hemos comprometido con la transparencia y la participación ciudadana, desarrollando soluciones que empoderan a los votantes con información confiable y actualizada."
+          },
+    "mission": {
+      "title": "Nuestra Misión",
+      "paragraph1": "Buscamos explorar formas de proporcionar información electoral más transparente, accesible y oportuna para ciudadanos de todo el mundo, con la intención de fomentar la participación y apoyar los valores democráticos donde sea posible.",
+      "paragraph2": "Nuestro trabajo se centra en desarrollar herramientas tecnológicas que puedan servir como puente entre los ciudadanos y los procesos electorales, con el objetivo de fomentar la transparencia y generar confianza en los sistemas democráticos."
+    },
+    "vision": {
+      "title": "Nuestra Visión",
+      "paragraph1": "Nuestra visión es trabajar para convertirnos en un recurso reconocido para la visualización y análisis de datos electorales, con la aspiración de contribuir al crecimiento de la democracia digital.",
+      "paragraph2": "Con el tiempo, esperamos expandirnos a países y regiones adicionales, explorando la posibilidad de crear una red que fomente la transparencia electoral y el compromiso globalmente."
+    },
+    "whatwedo": {
+      "title": "¿Qué Hacemos?",
+      "paragraph1": "Trabajamos en el desarrollo y mantenimiento de plataformas tecnológicas destinadas al monitoreo electoral en tiempo real, con el objetivo de proporcionar datos más accesibles e información sobre los procesos electorales.",
+      "paragraph2": "Creamos herramientas de visualización interactiva diseñadas para ayudar a los usuarios a explorar e interpretar los resultados electorales de una manera fácil de usar."
+    },
+    "values": {
+      "title": "Nuestros Valores",
+      "subtitle": "Los principios que guían nuestro trabajo y compromiso con la democracia",
+      "transparency": {
+        "title": "Transparencia",
+        "description": "Compromiso total con la transparencia en todos nuestros procesos y datos, asegurando que la información sea accesible y verificable."
+      },
+      "participation": {
+        "title": "Participación",
+        "description": "Fomentamos la participación ciudadana activa en los procesos democráticos, proporcionando herramientas que empoderan a los votantes."
+      },
+      "justice": {
+        "title": "Justicia",
+        "description": "Promovemos la justicia electoral a través de la equidad en el acceso a la información y la igualdad de oportunidades para todos los ciudadanos."
+      },
+      "education": {
+        "title": "Educación",
+        "description": "Educamos a la ciudadanía sobre los procesos electorales y la importancia de la participación democrática."
+      },
+      "integrity": {
+        "title": "Integridad",
+        "description": "Mantenemos los más altos estándares de integridad en el manejo de datos y la presentación de información electoral."
+      }
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "subtitle": "¿Tienes preguntas o sugerencias? Nos encantaría escucharte",
+      "name_placeholder": "Tu nombre completo",
+      "email_placeholder": "tu-email@ejemplo.com",
+      "message_placeholder": "Escribe tu mensaje aquí...",
+      "submit_button": "Enviar Mensaje",
+      "sending": "Enviando...",
+      "success_message": "¡Mensaje enviado exitosamente! Te responderemos pronto.",
+      "error_message": "Error al enviar el mensaje. Por favor intenta de nuevo.",
+      "validation_error": "Por favor completa todos los campos",
+      "email_error": "Por favor ingresa un email válido",
+      "social_text": "Síguenos en nuestras redes sociales"
+    }
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Encuentra respuestas a las preguntas más comunes sobre nuestra plataforma de monitoreo electoral y cómo usar sus funciones.",
+    "search_placeholder": "Buscar preguntas y respuestas...",
+    "all_categories": "Todas las Categorías",
+    "no_results": "No se encontraron preguntas que coincidan con tu búsqueda.",
+    "clear_filters": "Limpiar filtros",
+    "clear_search": "Limpiar búsqueda",
+    "need_help": "¿Aún necesitas ayuda?",
+    "contact_message": "Si no encontraste la respuesta que buscas, no dudes en contactarnos directamente.",
+    "contact_us": "Contáctanos",
+    "categories": {
+      "map": "Mapa",
+      "counter": "Contador Global",
+      "candidates": "Modal de Candidatos",
+      "charts": "Componentes de Gráficos",
+      "general": "Funcionalidad General",
+      "actas": "Revisión de Actas"
+    },
+    "show_less": "Mostrar menos",
+    "show_more": "Mostrar {{count}} preguntas más",
+    "filtered_by": "Filtrado por",
+    "and": "y",
+    "searching_for": "Buscando",
+    "showing_category": "Mostrando",
+    "no_results_title": "No se encontraron resultados",
+    "results_found": "resultados encontrados",
+    "question": "pregunta",
+    "questions": "preguntas"
+  },
+  "faq_content": {
+    "map": {
+      "title": "Mapa",
+      "questions": [
+        {
+          "question": "¿Cómo veo los resultados de un departamento específico?",
+          "answer": "Haz clic en cualquier departamento del mapa para seleccionarlo. Los resultados detallados de ese departamento se mostrarán automáticamente en la sección de Partidos Políticos, donde podrás ver el conteo de votos por candidato, porcentajes y estadísticas específicas de esa área geográfica."
+        },
+        {
+          "question": "¿Cómo vuelvo a ver los resultados nacionales?",
+          "answer": "Usa el botón 'Volver a resultados nacionales' que aparece cuando tienes seleccionada una región específica. Esto te llevará de vuelta al resumen general de todo el país."
+        }
+      ]
+    },
+    "counter": {
+      "title": "Contador Global",
+      "questions": [
+        {
+          "question": "¿Qué representa el contador global?",
+          "answer": "El contador global muestra el número total de votos emitidos a nivel nacional en tiempo real. Incluye votos válidos, nulos y en blanco, proporcionando una visión completa de la participación electoral."
+        },
+        {
+          "question": "¿Cómo se actualiza en tiempo real?",
+          "answer": "El contador se conecta a nuestro flujo de datos en vivo y se actualiza automáticamente a medida que las mesas reportan sus resultados. Las actualizaciones ocurren cada pocos segundos para asegurar la información más reciente."
+        },
+        {
+          "question": "¿Qué métricas muestra?",
+          "answer": "El contador muestra votos totales, votos nulos, votos en blanco y los principales candidatos con sus votos y porcentajes actuales. Esto te da una visión rápida del panorama electoral."
+        }
+      ]
+    },
+    "candidates": {
+      "title": "Modal de Candidatos",
+      "questions": [
+        {
+          "question": "¿Cómo abro el modal de candidatos?",
+          "answer": "Haz clic en el nombre o foto de cualquier candidato en la sección de partidos políticos o listas de candidatos. Se abrirá el modal mostrando información detallada sobre ese candidato."
+        },
+        {
+          "question": "¿Qué información contiene?",
+          "answer": "El modal muestra información personal del candidato, experiencia política, propuestas principales, votos actuales, porcentaje y otros detalles relevantes de su campaña y trayectoria."
+        },
+        {
+          "question": "¿Cómo navego entre candidatos?",
+          "answer": "Cierra el modal actual y haz clic en el nombre o foto de otro candidato para ver su información. Cada candidato se abre en un modal independiente."
+        }
+      ]
+    },
+    "charts": {
+      "title": "Componentes de Gráficos",
+      "questions": [
+        {
+          "question": "¿Qué tipos de gráficos hay disponibles?",
+          "answer": "Ofrecemos gráficos de barras que muestran el desempeño de partidos políticos y la distribución de votos. Los gráficos se actualizan en tiempo real con los datos electorales más recientes."
+        },
+        {
+          "question": "¿Cómo interpreto los datos en los gráficos?",
+          "answer": "Los gráficos incluyen etiquetas claras y leyendas. Pasa el cursor sobre las secciones para ver valores exactos de votos y porcentajes por partido político."
+        }
+      ]
+    },
+    "general": {
+      "title": "Funcionalidad General",
+      "questions": [
+        {
+          "question": "¿Cómo navego por la aplicación?",
+          "answer": "Usa el menú de navegación superior para cambiar entre Inicio, Elecciones, Sobre Nosotros y Preguntas Frecuentes. El dashboard principal muestra resultados en tiempo real y las demás páginas brindan contexto adicional."
+        },
+        {
+          "question": "¿Cómo reporto problemas?",
+          "answer": "Utiliza el formulario 'Reportar Incidente' disponible en el pie de página para informar cualquier inconveniente. Incluye detalles del problema, tu ubicación y cualquier mensaje de error."
+        },
+        {
+          "question": "¿Los datos son en tiempo real y precisos?",
+          "answer": "Sí, los datos provienen de fuentes oficiales y se actualizan en tiempo real. Sin embargo, incluimos un aviso de que la información proviene de terceros y no nos responsabilizamos por su exactitud."
+        },
+        {
+          "question": "¿Qué navegadores son compatibles?",
+          "answer": "Nuestra aplicación funciona en todos los navegadores modernos incluyendo Chrome, Firefox, Safari y Edge. Para la mejor experiencia, recomendamos usar la versión más reciente de tu navegador."
+        },
+        {
+          "question": "¿Puedo suscribirme a actualizaciones?",
+          "answer": "Sí, puedes suscribirte para recibir alertas sobre cambios importantes en los resultados electorales. Busca el banner de suscripción o usa el modal de suscripción para registrarte en las notificaciones."
+        }
+      ]
+    },
+    "actas": {
+      "title": "Revisión de Actas",
+      "questions": [
+        {
+          "question": "¿Qué es la revisión de actas?",
+          "answer": "La revisión de actas es un proceso fundamental para verificar la transparencia electoral. Permite a los ciudadanos y observadores revisar las actas de escrutinio y cierre de cada mesa de votación para detectar posibles irregularidades o inconsistencias en los resultados."
+        },
+        {
+          "question": "¿Cómo puedo acceder a las actas para revisión?",
+          "answer": "Puedes acceder a las actas a través de nuestra plataforma en la sección 'Revisión de Actas'. Las actas se cargan automáticamente desde las fuentes oficiales y están organizadas por departamento, municipio y mesa de votación para facilitar la búsqueda."
+        },
+        {
+          "question": "¿Qué información contiene cada acta?",
+          "answer": "Cada acta contiene información detallada como: número de mesa, ubicación, total de votos válidos, votos nulos, votos en blanco, resultados por partido político, firmas de autoridades de mesa y observaciones o incidentes reportados durante el proceso electoral."
+        },
+        {
+          "question": "¿Las actas se actualizan en tiempo real?",
+          "answer": "Sí, las actas se actualizan en tiempo real conforme son procesadas y validadas por las autoridades electorales. Nuestra plataforma sincroniza automáticamente con las fuentes oficiales para mantener la información actualizada."
+        }
+
+      ]
+    }
+  },
+  "upcomingElections": {
+    "title": "Próximas Elecciones",
+    "subtitle": "Calendario electoral mundial 2025-2026",
+    "what": "Qué se elige",
+    "system": "Sistema electoral",
+    "main_parties": "Principales partidos",
+    "context": "Contexto",
+    "footer": "Información actualizada sobre procesos electorales mundiales",
+    "costaRica": "Costa Rica",
+    "costaRica_date": "1 febrero 2026",
+    "costaRica_what": "Presidente, dos vicepresidentes y 57 diputados de la Asamblea Legislativa.",
+    "costaRica_system": "Voto popular; necesita al menos 40 % para salir electo en primera ronda, si no se va a segunda (entre los dos más votados)",
+    "costaRica_pln": "Partido Liberación Nacional (PLN)",
+    "costaRica_pln_candidate": "Álvaro Ramos",
+    "costaRica_pusc": "Partido Unidad Social Cristiana (PUSC)",
+    "costaRica_pusc_candidate": "Juan Carlos Hidalgo",
+    "costaRica_psd": "Partido Progreso Social Democrático (PSD)",
+    "costaRica_psd_candidate": "Luis Amador",
+    "costaRica_summary": "Amplia fragmentación partidaria, alta indecisión electoral (≈ 66 % sin candidato definido), temas clave como inseguridad, empleo y desigualdad.",
+
+    "southKorea": "Corea del Sur",
+    "southKorea_date": "3 junio 2025 (elección anticipada)",
+    "southKorea_what": "Presidente (mandato de 5 años, sin reelección directa).",
+    "southKorea_system": "Pluralidad (gana quien tenga más votos)",
+    "southKorea_dp": "Democratic Party (DP)",
+    "southKorea_dp_candidate": "Lee Jae‑Myung (49.4 %), ganador",
+    "southKorea_ppp": "People Power Party (PPP)",
+    "southKorea_ppp_candidate": "Kim Moon‑Soo (41.2 %)",
+    "southKorea_rp": "Reform Party",
+    "southKorea_rp_candidate": "Lee Jun‑Seok (8.3 %)",
+    "southKorea_summary": "Elección adelantada tras destitución del presidente Yoon Suk Yeol. Es una de las pocas elecciones presidenciales interruptas en Corea.",
+
+    "ecuador": "Ecuador",
+    "ecuador_date": "9 febrero y 13 abril 2025",
+    "ecuador_what": "Presidente, vicepresidente y 151 escaños de la Asamblea Nacional.",
+    "ecuador_system": "Dos rondas. Para ganar en primera: >50 % o ≥40 % y 10 puntos de ventaja.",
+    "ecuador_noboa": "Daniel Noboa (Acción Democrática Nacional)",
+    "ecuador_noboa_candidate": "44.17 % (1ra ronda), 55.63 % (2da), ganó",
+    "ecuador_gonzalez": "Luisa González (Citizen Revolution Movement)",
+    "ecuador_gonzalez_candidate": "44 % (1ra), 44.37 % (2da), perdió",
+    "ecuador_summary": "Alta participación (~82 %), contienda reñida que desembocó en un balotaje y ganó Noboa, centrado en atraer a jóvenes.",
+
+    "malawi": "Malawi",
+    "malawi_date": "16 septiembre 2025",
+    "malawi_what": "Presidente, 193 diputados y autoridades locales.",
+    "malawi_system": "Si ningún candidato consigue mayoría, hay segunda vuelta en 30 días.",
+    "malawi_mcp": "Malawi Congress Party (MCP)",
+    "malawi_mcp_candidate": "Lazarus Chakwera (incumbente)",
+    "malawi_dpp": "Democratic Progressive Party (DPP)",
+    "malawi_dpp_candidate": "Peter Mutharika",
+    "malawi_pp": "People Party (PP)",
+    "malawi_pp_candidate": "Joyce Banda",
+    "malawi_summary": "Segunda elección bajo el nuevo estándar del 50+1; retirada de UTM desestabiliza coalición, importancia de coaliciones actuales.",
+
+    "tanzania": "Tanzania",
+    "tanzania_date": "28 octubre 2025",
+    "tanzania_what": "Presidente y Asamblea Nacional.",
+    "tanzania_system": "Pluralidad (\"first-past-the-post\")",
+    "tanzania_ccm": "Chama Cha Mapinduzi (CCM)",
+    "tanzania_ccm_candidate": "Samia Suluhu Hassan (incumbente)",
+    "tanzania_chadema": "Opposition Chadema",
+    "tanzania_chadema_candidate": "descalificado por ley",
+    "tanzania_summary": "CCM domina, oposición debilitada; principal rival inhabilitado por no firmar un código de conducta.",
+
+    "guineaBissau": "Guinea‑Bissau",
+    "guineaBissau_date": "23 noviembre 2025",
+    "guineaBissau_what": "Presidente y 102 asientos de la Asamblea.",
+    "guineaBissau_system": "Dos vueltas",
+    "guineaBissau_paigc": "PAIGC",
+    "guineaBissau_paigc_candidate": "Domingos Simões Pereira",
+    "guineaBissau_madem": "MADEM‑G15",
+    "guineaBissau_madem_candidate": "Braima Camará",
+    "guineaBissau_prs": "PRS",
+    "guineaBissau_prs_candidate": "Partido de Renovación Social",
+    "guineaBissau_summary": "Fuertes tensiones institucionales: la parlamento fue disuelto, hay acusaciones de \"golpe institucional\"; elecciones buscan líderes estables y sin abuso de poder.",
+
+    "chile": "Chile",
+    "chile_date": "16 noviembre 2025",
+    "chile_what": "Presidente, toda la Cámara de Diputados y mitad del Senado.",
+    "chile_system": "Dos vueltas si ningún candidato logra mayoría absoluta",
+    "chile_right": "Coalición de centro-derecha",
+    "chile_right_candidate": "favorita tras desgaste de Boric",
+    "chile_left": "Oposición progresista",
+    "chile_left_candidate": "fragmentada, con candidaturas débiles",
+    "chile_summary": "Elección crítica en contexto de baja aprobación del gobierno actual; reconfiguración política posible."
+  },
+  "election_report": {
+    "title": "Verificación de Actas de Votación",
+    "department": "Departamento",
+    "department_placeholder": "Selecciona o busca un departamento...",
+    "province": "Provincia",
+    "province_placeholder": "Selecciona o busca una provincia...",
+    "municipality": "Municipio",
+    "municipality_placeholder": "Selecciona o busca un municipio...",
+    "clear_filters": "Limpiar filtros",
+    "total_records": "Total de actas",
+    "page": "Página",
+    "of": "de",
+    "showing": "Mostrando",
+    "no_results": "No se encontraron actas para los filtros seleccionados.",
+    "view_full_image": "Ver imagen completa",
+    "view_record": "Ver acta {{mesa}}",
+    "record_image_alt": "Imagen del acta {{mesa}}",
+    "open_image": "Abrir imagen en nueva pestaña",
+    "download_image": "Descargar imagen",
+    "downloading": "Descargando...",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "admin": {
+    "title": "Panel de Administrador",
+    "subtitle": "Gestiona tu sitio electoral",
+    "version": "ELECTA Admin Panel v1.0",
+    "sections": {
+      "site_control": {
+        "title": "Control del Sitio",
+        "description": "Configuración general del sitio",
+        "general_status": "Estado General del Sitio",
+        "maintenance_mode": "Sitio en Mantenimiento",
+        "maintenance_description": "Activa la página de mantenimiento",
+        "private_access": "Sitio Privado/Público",
+        "private_description": "Requiere código de acceso",
+        "access_config": "Configuración de Acceso",
+        "access_code": "Código de Acceso",
+        "access_code_placeholder": "Ingresa el código de acceso",
+        "terms_message": "Mensaje de Términos y Condiciones",
+        "terms_placeholder": "Mensaje de términos y condiciones"
+      },
+      "component_selector": {
+        "title": "Selector de Componentes",
+        "description": "Gestionar visibilidad por fase",
+        "phase_selector": "Seleccionar Fase Activa",
+        "before": "Antes",
+        "during": "Durante",
+        "after": "Después",
+        "active_phase": "Fase Activa",
+        "active_phase_description": "Solo esta fase está activa. Las otras fases están desactivadas.",
+        "visible_components": "Componentes Visibles - Fase",
+        "components_count": "de {{count}} componentes visibles",
+        "visible": "Visible",
+        "hidden": "Oculto",
+        "save_config": "Guardar Configuración",
+        "apply_site": "Aplicar al Sitio Web",
+        "save_success": "Configuración de la fase \"{{phase}}\" guardada exitosamente",
+        "apply_success": "Configuración de la fase \"{{phase}}\" aplicada al sitio web",
+        "select_phase_first": "Por favor selecciona una fase activa primero"
+      },
+      "election_config": {
+        "title": "Configuración de Elecciones",
+        "description": "Administrar elecciones",
+        "new_election": "Nueva Elección",
+        "election_table": {
+          "election": "Elección",
+          "status": "Estado",
+          "dates": "Fechas",
+          "votes": "Votos",
+          "actions": "Acciones"
+        },
+        "status": {
+          "active": "Activa",
+          "upcoming": "Próxima",
+          "inactive": "Inactiva",
+          "unknown": "Desconocido"
+        },
+        "form": {
+          "edit_election": "Editar Elección",
+          "create_election": "Crear Nueva Elección",
+          "election_name": "Nombre de la Elección",
+          "election_name_placeholder": "Nombre de la elección",
+          "description": "Descripción",
+          "description_placeholder": "Descripción breve",
+          "start_date": "Fecha de Inicio",
+          "end_date": "Fecha de Fin",
+          "total_voters": "Total de Votantes",
+          "total_voters_placeholder": "0",
+          "cancel": "Cancelar",
+          "update_election": "Actualizar Elección",
+          "create_election_button": "Crear Elección"
+        },
+        "actions": {
+          "edit": "Editar",
+          "activate": "Activar",
+          "deactivate": "Desactivar",
+          "delete": "Eliminar"
+        },
+        "delete_confirm": "¿Estás seguro de que quieres eliminar esta elección?"
+      }
+    }
+  }
+}
