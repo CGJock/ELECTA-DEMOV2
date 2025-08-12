@@ -1,6 +1,10 @@
 {
   "header": {
+<<<<<<< HEAD
     "title": "ELECTA",
+=======
+    "title": "ELECTA - Bolivia",
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
     "subtitle": "Electoral Dashboard",
     "language": "Language",
     "spanish": "Español",
@@ -27,12 +31,19 @@
     "percentage": "Total Votes",
     "votes": "Votes",
     "ver_mas": "See more",
+<<<<<<< HEAD
     "ver_menos": "See less",
     "disqualified_disclaimer": "Candidate disqualified by the TSE for submitting tax solvency late.",
     "withdrawn_disclaimer": "Candidate withdrawn from the electoral race."
   },
   "footer": {
     "company_desc": "Professional platform for electoral monitoring and data visualization for global elections.",
+=======
+    "ver_menos": "See less"
+  },
+  "footer": {
+    "company_desc": "Professional platform for electoral monitoring and data visualization for Bolivia.",
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
     "status_live": "Status: Live",
     "status_realtime": "Real-time updates",
     "quick_links": "Quick Links",
@@ -47,16 +58,21 @@
     "follow_us": "Follow Us",
     "rights_reserved": "All rights reserved.",
     "privacy_policy": "Privacy Policy",
+<<<<<<< HEAD
     "terms_of_service": "Terms of Service",
     "incident_form": "Incidents Form",
     "legal_notice": "Legal Notice",
     "ver_mas": "See more"
+=======
+    "terms_of_service": "Terms of Service"
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   },
   "counter": {
     "loading": "Loading vote summary...",
     "total_votes": "Total Vote Count",
     "null_votes": "Null Votes",
     "blank_votes": "Blank Votes",
+<<<<<<< HEAD
     "top_candidates": "Top Candidates"
   },
   "secondRound": {
@@ -87,11 +103,25 @@
     "email": "Email",
     "select_department": "Select a department",
     "department": "Department"
+=======
+    "total_votes_hint": "voteshint"
+  },
+  "incidents": {
+    "title": "INCIDENTS",
+    "no_incidents": "No incidents reported",
+    "reports": "Incident Reports",
+    "severity_high": "HIGH",
+    "severity_medium": "MEDIUM",
+    "severity_low": "LOW",
+    "location": "Location",
+    "time": "Time"
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   },
   "nav": {
     "home": "HOME",
     "elections": "Upcoming Elections",
     "about": "About Us",
+<<<<<<< HEAD
     "faq": "FAQ",
     "contact": "Contact Us"
   },
@@ -102,6 +132,10 @@
     "paragraph3": "The only official and definitive results are those published by the competent electoral authorities.",
     "understood": "Understood"
   },
+=======
+    "contact": "Contact Us"
+  },
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   "candidate": {
     "age": "years old",
     "experience": "Experience",
@@ -135,6 +169,7 @@
     "timestamp": "Last update: {{date}}",
     "download": "Download Excel"
   },
+<<<<<<< HEAD
   "result": "Result",
   "subscription": {
     "banner_message": "🗳️ Live Election Results — Get alerts about important changes",
@@ -557,5 +592,8 @@
       }
     }
   }
+=======
+  "result": "Result"
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
 }
 

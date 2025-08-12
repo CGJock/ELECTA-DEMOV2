@@ -27,50 +27,47 @@ interface VoteChartProps {
 }
 
 export default function VoteChart({ active }: VoteChartProps) {
-  const { globalSummary, breakdownLocData, selectedLocationCode, timestamp } = useSocketData();
+
+  
+
+  const { globalSummary, breakdownLocData,  selectedLocationCode, timestamp } = useSocketData();
+
   const { t } = useTranslation();
 
-  const currentSummary = selectedLocationCode
-    ? breakdownLocData
-    : globalSummary;
 
-  console.log(`current data ${currentSummary?.partyBreakdown}`)
-  console.log(`breakdown location data ${breakdownLocData}`)
+  const currentSummary = selectedLocationCode
+  ? breakdownLocData  // Usa breakdownLocData si existe, o globalSummary como fallback
+  : globalSummary;
+
+  console.log(`data actual ${currentSummary?.partyBreakdown}`)
+   console.log(`breadownlocdata ${breakdownLocData}`)
 
   const totalVotes = currentSummary?.totalVotes || 0;
   console.log(selectedLocationCode)
 
-  // Filter data (fases eliminadas)
-  let filteredData: VoteData[] = [];
-  
-  if (Array.isArray(currentSummary?.partyBreakdown)) {
-    let partyData = currentSummary!.partyBreakdown.map((party) => ({
+  const data: VoteData[] = Array.isArray(currentSummary?.partyBreakdown)
+  ? currentSummary!.partyBreakdown.map((party) => ({
       name: party.name,
       abbr: party.abbr,
       votes: party.count,
       totalVotes,
       percentage: Number(party.percentage),
-    }));
+    })).sort((a, b) => b.percentage - a.percentage)
+  : [];
 
-    // Mostrar siempre todos ordenados por porcentaje
-    filteredData = partyData.sort((a, b) => b.percentage - a.percentage);
-  }
 
   function generateTicks(max: number, step: number): number[] {
-    const ticks = [];
-    for (let i = 0; i <= max; i += step) {
-      ticks.push(i);
-    }
-    if (ticks[ticks.length - 1] !== max) {
-      ticks.push(max);
-    }
-    return ticks;
+  const ticks = [];
+  for (let i = 0; i <= max; i += step) {
+    ticks.push(i);
   }
+  if (ticks[ticks.length - 1] !== max) {
+    ticks.push(max);
+  }
+  return ticks;
+}
 
-  const tickValues = generateTicks(totalVotes, 50000);
-
-  // Calculate dynamic height based on number of parties
-  const dynamicHeight = Math.max(300, filteredData.length * 50 + 100);
+const tickValues = generateTicks(totalVotes, 50000);
 
   useEffect(() => {
     if (active) {
@@ -78,18 +75,15 @@ export default function VoteChart({ active }: VoteChartProps) {
     }
   }, [active]);
 
-  if (!currentSummary || !Array.isArray(currentSummary.partyBreakdown)) {
-    return (
-      <div className="w-full h-96 flex items-center justify-center text-gray-500">
-        Cargando datos de votación...
-      </div>
-    );
-  }
-
-  // Mensaje especial de segunda vuelta eliminado
-
+    if (!currentSummary || !Array.isArray(currentSummary.partyBreakdown)) {
   return (
-    <div className="w-full rounded-md flex flex-col p-2" style={{ height: `${dynamicHeight}px` }}>
+    <div className="w-full h-96 flex items-center justify-center text-gray-500">
+      Cargando datos de votación...
+    </div>
+  );
+}
+  return (
+    <div className="w-full h-96 min-w-[300px] min-h-[300px]  rounded-md flex flex-col p-2">
       <div className="text-center text-base font-semibold text-gray-700 mb-1 select-none">
         {selectedLocationCode === null
           ? t('votechart.national_results')

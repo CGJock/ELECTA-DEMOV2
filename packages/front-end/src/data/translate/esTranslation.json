@@ -1,6 +1,10 @@
 {
   "header": {
+<<<<<<< HEAD
     "title": "ELECTA",
+=======
+    "title": "ELECTA - Bolivia",
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
     "subtitle": "Dashboard Electoral",
     "language": "Idioma",
     "spanish": "Español",
@@ -27,12 +31,19 @@
     "percentage": "Votos Totales",
     "votes": "Votos",
     "ver_mas": "Ver más",
+<<<<<<< HEAD
     "ver_menos": "Ver menos",
     "disqualified_disclaimer": "Candidato descalificado por el TSE por presentar solvencia fiscal fuera de plazo.",
     "withdrawn_disclaimer": "Candidato retirado de la contienda electoral."
   },
   "footer": {
     "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para elecciones globales.",
+=======
+    "ver_menos": "Ver menos"
+  },
+  "footer": {
+    "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para Bolivia.",
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
     "status_live": "Estado: En vivo",
     "status_realtime": "Actualizaciones en tiempo real",
     "quick_links": "Enlaces Rápidos",
@@ -47,16 +58,21 @@
     "follow_us": "Síguenos",
     "rights_reserved": "Todos los derechos reservados.",
     "privacy_policy": "Política de Privacidad",
+<<<<<<< HEAD
     "terms_of_service": "Términos de Servicio",
     "incident_form": "Formulario de incidentes",
     "legal_notice": "Aviso Legal",
     "ver_mas": "Ver más"
+=======
+    "terms_of_service": "Términos de Servicio"
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   },
   "counter": {
     "loading": "Cargando resumen de votos...",
     "total_votes": "Conteo Total De Votos",
     "null_votes": "Votos Nulos",
     "blank_votes": "Votos En Blanco",
+<<<<<<< HEAD
     "top_candidates": "Candidatos principales"
   },
   "secondRound": {
@@ -88,11 +104,25 @@
     "email": "Correo electrónico",
     "select_department": "Selecciona un departamento",
     "department": "Departamento"
+=======
+    "total_votes_hint": "voteshint"
+  },
+  "incidents": {
+    "title": "INCIDENTES",
+    "no_incidents": "No hay incidentes reportados",
+    "reports": "Reportes de Incidentes",
+    "severity_high": "ALTA",
+    "severity_medium": "MEDIA",
+    "severity_low": "BAJA",
+    "location": "Ubicación",
+    "time": "Hora"
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   },
   "nav": {
     "home": "INICIO",
     "elections": "Próximas Elecciones",
     "about": "Sobre Nosotros",
+<<<<<<< HEAD
     "faq": "Preguntas Frecuentes",
     "contact": "Contáctanos"
   },
@@ -103,6 +133,10 @@
     "paragraph3": "Los únicos resultados oficiales y definitivos son aquellos publicados por las autoridades electorales competentes.",
     "understood": "Entendido"
   },
+=======
+    "contact": "Contáctanos"
+  },
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
   "candidate": {
     "age": "años",
     "experience": "Experiencia",
@@ -136,6 +170,7 @@
     "timestamp": "Última actualización: {{date}}",
     "download": "Descarga Excel"
   },
+<<<<<<< HEAD
   "result": "Resultado",
   "subscription": {
     "banner_message": "🗳️ Resultados Electorales en Vivo — Recibe alertas sobre cambios importantes",
@@ -551,4 +586,7 @@
       }
     }
   }
+=======
+  "result": "Resultado"
+>>>>>>> 9edecaf5a9ff517f12b3c377221a1348aeb7c562
 }

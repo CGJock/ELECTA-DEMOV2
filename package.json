@@ -1,17 +1,11 @@
 {
-  "name": "electa-demo",
   "private": true,
-  "version": "1.0.0",
   "workspaces": [
-    "packages/front-end/react",
-    "packages/back-end/Express",
-    "shared"
+    "packages/shared",
+    "packages/back-end",
+    "packages/front-end"
   ],
   "scripts": {
-    "dev": "pnpm --parallel dev",
-    "dev:frontend": "pnpm --filter electa-bolivia dev",
-    "dev:backend": "pnpm --filter express dev",
-    "build": "pnpm --recursive build",
-    "start": "pnpm --parallel start"
+    "build": "tsc -b"
   }
 }

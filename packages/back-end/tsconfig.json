@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "outDir": "dist",
+    "rootDir": "./",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@types/*": ["src/types/*"],
+      "@routes/*": ["src/routes/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@db/*": ["src/database/*"],
+      "@utils/*": ["src/utils/*"],
+      "@fetchers/*": ["src/datafetchers/*"],
+      "@data/*": ["data/*"],
+      "@listeners/*": ["src/Listeners/*"],
+      "@socket/*": ["src/Socketio/*"],
+      "@middlerare/*": ["src/middlewares/*"],
+      "@configuration/*": ["src/config/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "data/**/*"
+, "index.ts"  ],
+  "exclude": ["node_modules", "dist"]
+}

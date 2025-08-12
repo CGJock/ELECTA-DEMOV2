@@ -22,7 +22,7 @@ interface PartyData {
 
 interface GlobalSummary {
   totalVotes: number;
-  partyBreakdown: PartyData[];
+  politicalParties: PartyData[];
   
 }
 
@@ -123,6 +123,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
     function handleFullVoteData(data: VoteBreakdown) {
       if (!('error' in data)) {
         setbreakdownData(data);
+        console.log('breakdowndata',data)
         setTimestamp(new Date().toISOString());
       }
     }
@@ -131,6 +132,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
     function handleTotalBreakdownSummary(data: GlobalSummary) {
       if (!('error' in data)) {
         setglobalSummary(data);
+        console.log('log por breakdownloc',data)
         setTimestamp(new Date().toISOString());
       }
     }
