@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "ELECTA - Bolivia",
+    "title": "ELECTA",
     "subtitle": "Electoral Dashboard",
     "language": "Language",
     "spanish": "Español",
@@ -32,7 +32,7 @@
     "withdrawn_disclaimer": "Candidate withdrawn from the electoral race."
   },
   "footer": {
-    "company_desc": "Professional platform for electoral monitoring and data visualization for Bolivia.",
+    "company_desc": "Professional platform for electoral monitoring and data visualization for global elections.",
     "status_live": "Status: Live",
     "status_realtime": "Real-time updates",
     "quick_links": "Quick Links",
@@ -48,7 +48,9 @@
     "rights_reserved": "All rights reserved.",
     "privacy_policy": "Privacy Policy",
     "terms_of_service": "Terms of Service",
-    "incident_form": "Incidents Form"
+    "incident_form": "Incidents Form",
+    "legal_notice": "Legal Notice",
+    "ver_mas": "See more"
   },
   "counter": {
     "loading": "Loading vote summary...",
@@ -92,6 +94,13 @@
     "about": "About Us",
     "faq": "FAQ",
     "contact": "Contact Us"
+  },
+  "disclaimer": {
+    "title": "Legal Notice",
+    "paragraph1": "The data presented on this site comes from reliable sources and is updated in real time for informational purposes.",
+    "paragraph2": "However, this platform is independent and does not constitute an official source.",
+    "paragraph3": "The only official and definitive results are those published by the competent electoral authorities.",
+    "understood": "Understood"
   },
   "candidate": {
     "age": "years old",
@@ -150,30 +159,29 @@
   },
   "about": {
     "hero": {
-      "title": "About Electa Bolivia",
-      "subtitle": "Leading platform for electoral transparency and real-time data visualization for Bolivia",
+      "title": "About Electa",
+      "subtitle": "Leading platform for electoral transparency and real-time data visualization for global elections",
       "cta_button": "Contact Us"
     },
-    "history": {
-      "title": "Our History",
-      "paragraph1": "Electa Bolivia was born from the need to provide transparent and accessible electoral information for all Bolivians. Our platform has become the main reference for real-time election monitoring, offering accurate data and detailed analysis.",
-      "paragraph2": "Since our beginnings, we have been committed to transparency and citizen participation, creating tools that empower voters with reliable and up-to-date information."
-    },
+              "history": {
+            "title": "Our History",
+            "paragraph1": "Electa was created from an interest in supporting democratic processes. Our aim is to help provide citizens with more transparent and accessible electoral information, with a focus on using technology to encourage democratic values.",
+            "paragraph2": "From the start, we have sought to promote transparency and citizen participation by developing tools that aim to give voters access to reliable, up-to-date information."
+          },
     "mission": {
       "title": "Our Mission",
-      "paragraph1": "To provide transparent, accurate, and accessible electoral information for all Bolivians, facilitating citizen participation and strengthening democracy.",
-      "paragraph2": "To create a technological platform that serves as a bridge between citizens and electoral processes, promoting transparency and trust in the democratic system."
+      "paragraph1": "We seek to explore ways of providing more transparent, accessible, and timely electoral information for citizens worldwide, with the intention of encouraging participation and supporting democratic values where possible.",
+      "paragraph2": "Our work focuses on developing technological tools that may serve as a bridge between citizens and electoral processes, aiming to encourage transparency and foster trust in democratic systems."
     },
     "vision": {
       "title": "Our Vision",
-      "paragraph1": "To be the leading platform in Latin America for electoral data visualization and analysis, contributing to the strengthening of digital democracy.",
-      "paragraph2": "To expand our reach to include more countries in the region, creating an electoral transparency network that benefits all of Latin America."
+      "paragraph1": "Our vision is to work toward becoming a recognized resource for electoral data visualization and analysis, with the aspiration of contributing to the growth of digital democracy.",
+      "paragraph2": "Over time, we hope to expand into additional countries and regions, exploring the possibility of creating a network that encourages electoral transparency and engagement globally."
     },
     "whatwedo": {
       "title": "What We Do",
-      "paragraph1": "We develop and maintain advanced technological platforms for real-time electoral monitoring, providing accurate data and detailed analysis of electoral processes.",
-      "paragraph2": "We offer interactive visualization tools that allow users to explore and understand electoral results in an intuitive and accessible way.",
-      "paragraph3": "We promote electoral transparency through the publication of open data and the creation of detailed reports that facilitate analysis and research."
+      "paragraph1": "We work on developing and maintaining technological platforms intended for real-time electoral monitoring, aiming to provide more accessible data and insights into electoral processes.",
+      "paragraph2": "We create interactive visualization tools designed to help users explore and interpret electoral results in a user-friendly way."
     },
     "values": {
       "title": "Our Values",
@@ -215,8 +223,8 @@
     }
   },
   "faq": {
-    "title": "Preguntas Frecuentes",
-    "subtitle": "Encuentra respuestas a las preguntas más comunes sobre nuestra plataforma de monitoreo electoral y cómo usar sus funciones.",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to the most common questions about our electoral monitoring platform and how to use its features.",
     "search_placeholder": "Search questions and answers...",
     "all_categories": "All Categories",
     "no_results": "No questions found matching your search.",
@@ -249,16 +257,12 @@
       "title": "Map",
       "questions": [
         {
-          "question": "How does the map visualization work?",
-          "answer": "The map displays real-time electoral results across Bolivia. Each region is color-coded based on voting percentages, and you can click on any department to view detailed results for that area. The map updates automatically as new data comes in."
+          "question": "How do I view results for a specific region?",
+          "answer": "Click on any department on the map to select it. The detailed results for that region will automatically display in the Political Parties section, where you can see the vote count by candidate, percentages, and specific statistics for that area."
         },
         {
-          "question": "What data is shown on the map?",
-          "answer": "The map shows voting results by political party, total votes cast, voter turnout percentages, and demographic information for each electoral district. You can toggle between different data layers to view specific metrics."
-        },
-        {
-          "question": "How do I interact with the map?",
-          "answer": "Click on any department to zoom in and see detailed results. Use the zoom controls to navigate, and hover over regions to see tooltips with key statistics. The 'Return to National Results' button takes you back to the overview."
+          "question": "How do I return to national results?",
+          "answer": "Use the 'Return to National Results' button that appears when you have a specific region selected. This will take you back to the general overview of the entire country."
         }
       ]
     },
@@ -301,15 +305,11 @@
       "questions": [
         {
           "question": "What types of charts are available?",
-          "answer": "We offer bar charts, pie charts, and line graphs showing voting trends, party performance, demographic breakdowns, and historical comparisons. Each chart is interactive and can be customized."
+          "answer": "We offer bar charts and pie charts showing political party performance and vote distribution. The charts update in real-time with the latest electoral data."
         },
         {
-          "question": "How do I interpret the data?",
-          "answer": "Charts include clear labels, legends, and tooltips. Hover over data points to see exact values, and use the chart controls to filter by time period, region, or party."
-        },
-        {
-          "question": "Can I customize the visualizations?",
-          "answer": "Yes, you can switch between different chart types, adjust time ranges, filter by specific parties or regions, and download charts as images for your own use."
+          "question": "How do I interpret the data in the charts?",
+          "answer": "Charts include clear labels and legends. Hover over sections to see exact vote values and percentages by political party."
         }
       ]
     },
@@ -476,6 +476,86 @@
     "downloading": "Downloading...",
     "previous": "Previous",
     "next": "Next"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Manage your electoral site",
+    "version": "ELECTA Admin Panel v1.0",
+    "sections": {
+      "site_control": {
+        "title": "Site Control",
+        "description": "General site configuration",
+        "general_status": "General Site Status",
+        "maintenance_mode": "Site in Maintenance",
+        "maintenance_description": "Activate maintenance page",
+        "private_access": "Private/Public Site",
+        "private_description": "Requires access code",
+        "access_config": "Access Configuration",
+        "access_code": "Access Code",
+        "access_code_placeholder": "Enter access code",
+        "terms_message": "Terms and Conditions Message",
+        "terms_placeholder": "Terms and conditions message"
+      },
+      "component_selector": {
+        "title": "Component Selector",
+        "description": "Manage visibility by phase",
+        "phase_selector": "Select Active Phase",
+        "before": "Before",
+        "during": "During",
+        "after": "After",
+        "active_phase": "Active Phase",
+        "active_phase_description": "Only this phase is active. Other phases are deactivated.",
+        "visible_components": "Visible Components - Phase",
+        "components_count": "of {{count}} components visible",
+        "visible": "Visible",
+        "hidden": "Hidden",
+        "save_config": "Save Configuration",
+        "apply_site": "Apply to Website",
+        "save_success": "Configuration for phase \"{{phase}}\" saved successfully",
+        "apply_success": "Configuration for phase \"{{phase}}\" applied to website",
+        "select_phase_first": "Please select an active phase first"
+      },
+      "election_config": {
+        "title": "Election Configuration",
+        "description": "Manage elections",
+        "new_election": "New Election",
+        "election_table": {
+          "election": "Election",
+          "status": "Status",
+          "dates": "Dates",
+          "votes": "Votes",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Active",
+          "upcoming": "Upcoming",
+          "inactive": "Inactive",
+          "unknown": "Unknown"
+        },
+        "form": {
+          "edit_election": "Edit Election",
+          "create_election": "Create New Election",
+          "election_name": "Election Name",
+          "election_name_placeholder": "Election name",
+          "description": "Description",
+          "description_placeholder": "Brief description",
+          "start_date": "Start Date",
+          "end_date": "End Date",
+          "total_voters": "Total Voters",
+          "total_voters_placeholder": "0",
+          "cancel": "Cancel",
+          "update_election": "Update Election",
+          "create_election_button": "Create Election"
+        },
+        "actions": {
+          "edit": "Edit",
+          "activate": "Activate",
+          "deactivate": "Deactivate",
+          "delete": "Delete"
+        },
+        "delete_confirm": "Are you sure you want to delete this election?"
+      }
+    }
   }
 }
 

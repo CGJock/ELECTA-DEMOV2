@@ -275,7 +275,10 @@ const FAQ: React.FC = () => {
           <p className="text-slate-300 mb-8 text-lg">
             {t('faq.contact_message', 'Si no encontraste la respuesta que buscas, no dudes en contactarnos directamente.')}
           </p>
-          <button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-500 hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-105">
+          <button 
+            onClick={() => window.location.href = '/about'}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-500 hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-105"
+          >
             {t('faq.contact_us', 'Contáctanos')}
           </button>
         </div>

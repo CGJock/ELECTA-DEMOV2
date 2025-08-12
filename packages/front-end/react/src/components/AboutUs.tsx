@@ -172,10 +172,10 @@ const AboutUs: React.FC = () => {
           
           <div className="prose prose-lg prose-invert max-w-none">
             <div className="space-y-6 text-slate-300 leading-relaxed">
-              <p className="text-xl font-light first-letter:text-6xl first-letter:font-light first-letter:text-white first-letter:float-left first-letter:mr-2 first-letter:mt-1">
+              <p className="text-xl font-light">
                 {t('about.history.paragraph1')}
               </p>
-              <p className="text-lg">
+              <p className="text-lg font-light">
                 {t('about.history.paragraph2')}
               </p>
             </div>
@@ -186,9 +186,9 @@ const AboutUs: React.FC = () => {
       {/* Misión y Visión */}
       <section className="py-24 px-6 bg-gradient-to-br from-slate-800 to-slate-900">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div>
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            <div className="space-y-8 h-full">
+              <div className="bg-slate-800/30 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 h-full">
                 <h3 className="text-3xl font-light text-white mb-6 tracking-tight">
                   {t('about.mission.title')}
                 </h3>
@@ -202,8 +202,8 @@ const AboutUs: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="space-y-8">
-              <div>
+            <div className="space-y-8 h-full">
+              <div className="bg-slate-800/30 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 h-full">
                 <h3 className="text-3xl font-light text-white mb-6 tracking-tight">
                   {t('about.vision.title')}
                 </h3>
@@ -233,11 +233,8 @@ const AboutUs: React.FC = () => {
             <p className="text-xl font-light">
               {t('about.whatwedo.paragraph1')}
             </p>
-            <p className="text-lg">
+            <p className="text-lg font-light">
               {t('about.whatwedo.paragraph2')}
-            </p>
-            <p className="text-lg">
-              {t('about.whatwedo.paragraph3')}
             </p>
           </div>
         </div>

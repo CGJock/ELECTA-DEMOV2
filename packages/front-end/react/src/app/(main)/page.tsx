@@ -14,7 +14,6 @@ import WinnerBanner from '@/components/WinnerBanner';
 import { Suspense } from 'react';
 // import GlobalCounter from '@components/GlobalCounter';
 const GlobalCounter = dynamic(() => import('@components/GlobalCounter'), { ssr: false });
-const FullscreenWrapper = dynamic(() => import('@components/FullscreenWrapper'), { ssr: false });
 const Map2 = dynamic(() => import('@components/Map'), { ssr: false });
 
 import StatsContainer from '@components/StatsContainer';
@@ -152,9 +151,7 @@ export default function Page() {
                   alignItems: 'center',
                   transform: 'translateX(55px)' // Mover 55px hacia la derecha (70px - 15px = 55px)
                 }}>
-                  <FullscreenWrapper>
-                    <GlobalCounter />
-                  </FullscreenWrapper>
+                  <GlobalCounter />
                 </div>
                 {/* Espacio a la derecha para mantener el centro */}
                 <div style={{ flex: '1' }}></div>

@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "ELECTA - Bolivia",
+    "title": "ELECTA",
     "subtitle": "Dashboard Electoral",
     "language": "Idioma",
     "spanish": "Español",
@@ -32,7 +32,7 @@
     "withdrawn_disclaimer": "Candidato retirado de la contienda electoral."
   },
   "footer": {
-    "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para Bolivia.",
+    "company_desc": "Plataforma profesional de monitoreo electoral y visualización de datos para elecciones globales.",
     "status_live": "Estado: En vivo",
     "status_realtime": "Actualizaciones en tiempo real",
     "quick_links": "Enlaces Rápidos",
@@ -48,7 +48,9 @@
     "rights_reserved": "Todos los derechos reservados.",
     "privacy_policy": "Política de Privacidad",
     "terms_of_service": "Términos de Servicio",
-    "incident_form": "Formulario de incidentes"
+    "incident_form": "Formulario de incidentes",
+    "legal_notice": "Aviso Legal",
+    "ver_mas": "Ver más"
   },
   "counter": {
     "loading": "Cargando resumen de votos...",
@@ -93,6 +95,13 @@
     "about": "Sobre Nosotros",
     "faq": "Preguntas Frecuentes",
     "contact": "Contáctanos"
+  },
+  "disclaimer": {
+    "title": "Aviso Legal",
+    "paragraph1": "Los datos presentados en este sitio provienen de fuentes confiables y se actualizan en tiempo real con fines informativos.",
+    "paragraph2": "Sin embargo, esta plataforma es independiente y no constituye una fuente oficial.",
+    "paragraph3": "Los únicos resultados oficiales y definitivos son aquellos publicados por las autoridades electorales competentes.",
+    "understood": "Entendido"
   },
   "candidate": {
     "age": "años",
@@ -151,30 +160,29 @@
   },
   "about": {
     "hero": {
-      "title": "Sobre Electa Bolivia",
-      "subtitle": "Plataforma líder en transparencia electoral y visualización de datos en tiempo real para Bolivia",
+      "title": "Sobre Electa",
+      "subtitle": "Plataforma líder en transparencia electoral y visualización de datos en tiempo real para elecciones globales",
       "cta_button": "Contáctanos"
     },
-    "history": {
-      "title": "Nuestra Historia",
-      "paragraph1": "Electa Bolivia nació de la necesidad de proporcionar información electoral transparente y accesible para todos los bolivianos. Nuestra plataforma se ha convertido en la referencia principal para el seguimiento de elecciones en tiempo real, ofreciendo datos precisos y análisis detallados.",
-      "paragraph2": "Desde nuestros inicios, nos hemos comprometido con la transparencia y la participación ciudadana, creando herramientas que empoderan a los votantes con información confiable y actualizada."
-    },
+              "history": {
+            "title": "Nuestra Historia",
+            "paragraph1": "Electa nació de la pasión por proteger y fortalecer la democracia. Nos apasiona empoderar a los ciudadanos con información electoral transparente y accesible, centrando nuestros esfuerzos en proteger los valores democráticos mediante plataformas tecnológicas innovadoras.",
+            "paragraph2": "Desde nuestros inicios, nos hemos comprometido con la transparencia y la participación ciudadana, desarrollando soluciones que empoderan a los votantes con información confiable y actualizada."
+          },
     "mission": {
       "title": "Nuestra Misión",
-      "paragraph1": "Proporcionar información electoral transparente, precisa y accesible para todos los bolivianos, facilitando la participación ciudadana y fortaleciendo la democracia.",
-      "paragraph2": "Crear una plataforma tecnológica que sirva como puente entre los ciudadanos y los procesos electorales, promoviendo la transparencia y la confianza en el sistema democrático."
+      "paragraph1": "Buscamos explorar formas de proporcionar información electoral más transparente, accesible y oportuna para ciudadanos de todo el mundo, con la intención de fomentar la participación y apoyar los valores democráticos donde sea posible.",
+      "paragraph2": "Nuestro trabajo se centra en desarrollar herramientas tecnológicas que puedan servir como puente entre los ciudadanos y los procesos electorales, con el objetivo de fomentar la transparencia y generar confianza en los sistemas democráticos."
     },
     "vision": {
       "title": "Nuestra Visión",
-      "paragraph1": "Ser la plataforma líder en América Latina para la visualización y análisis de datos electorales, contribuyendo al fortalecimiento de la democracia digital.",
-      "paragraph2": "Expandir nuestro alcance para incluir más países de la región, creando una red de transparencia electoral que beneficie a toda Latinoamérica."
+      "paragraph1": "Nuestra visión es trabajar para convertirnos en un recurso reconocido para la visualización y análisis de datos electorales, con la aspiración de contribuir al crecimiento de la democracia digital.",
+      "paragraph2": "Con el tiempo, esperamos expandirnos a países y regiones adicionales, explorando la posibilidad de crear una red que fomente la transparencia electoral y el compromiso globalmente."
     },
     "whatwedo": {
       "title": "¿Qué Hacemos?",
-      "paragraph1": "Desarrollamos y mantenemos plataformas tecnológicas avanzadas para el monitoreo electoral en tiempo real, proporcionando datos precisos y análisis detallados de los procesos electorales.",
-      "paragraph2": "Ofrecemos herramientas de visualización interactiva que permiten a los usuarios explorar y entender los resultados electorales de manera intuitiva y accesible.",
-      "paragraph3": "Promovemos la transparencia electoral a través de la publicación de datos abiertos y la creación de reportes detallados que facilitan el análisis y la investigación."
+      "paragraph1": "Trabajamos en el desarrollo y mantenimiento de plataformas tecnológicas destinadas al monitoreo electoral en tiempo real, con el objetivo de proporcionar datos más accesibles e información sobre los procesos electorales.",
+      "paragraph2": "Creamos herramientas de visualización interactiva diseñadas para ayudar a los usuarios a explorar e interpretar los resultados electorales de una manera fácil de usar."
     },
     "values": {
       "title": "Nuestros Valores",
@@ -250,16 +258,12 @@
       "title": "Mapa",
       "questions": [
         {
-          "question": "¿Cómo funciona la visualización del mapa?",
-          "answer": "El mapa muestra resultados electorales en tiempo real en Bolivia. Cada región está coloreada según los porcentajes de votación, y puedes hacer clic en cualquier departamento para ver resultados detallados. El mapa se actualiza automáticamente a medida que llegan nuevos datos."
+          "question": "¿Cómo veo los resultados de un departamento específico?",
+          "answer": "Haz clic en cualquier departamento del mapa para seleccionarlo. Los resultados detallados de ese departamento se mostrarán automáticamente en la sección de Partidos Políticos, donde podrás ver el conteo de votos por candidato, porcentajes y estadísticas específicas de esa área geográfica."
         },
         {
-          "question": "¿Qué datos se muestran en el mapa?",
-          "answer": "El mapa muestra resultados de votación por partido político, total de votos emitidos, porcentajes de participación y datos demográficos por distrito electoral. Puedes alternar entre diferentes capas de datos para ver métricas específicas."
-        },
-        {
-          "question": "¿Cómo interactúo con el mapa?",
-          "answer": "Haz clic en cualquier departamento para acercar y ver resultados detallados. Usa los controles de zoom para navegar y pasa el cursor sobre las regiones para ver estadísticas clave. El botón 'Volver a resultados nacionales' te lleva al resumen general."
+          "question": "¿Cómo vuelvo a ver los resultados nacionales?",
+          "answer": "Usa el botón 'Volver a resultados nacionales' que aparece cuando tienes seleccionada una región específica. Esto te llevará de vuelta al resumen general de todo el país."
         }
       ]
     },
@@ -293,7 +297,7 @@
         },
         {
           "question": "¿Cómo navego entre candidatos?",
-          "answer": "Usa las flechas en el modal para moverte entre candidatos, o cierra el modal y haz clic en otro nombre para ver su información."
+          "answer": "Cierra el modal actual y haz clic en el nombre o foto de otro candidato para ver su información. Cada candidato se abre en un modal independiente."
         }
       ]
     },
@@ -302,15 +306,11 @@
       "questions": [
         {
           "question": "¿Qué tipos de gráficos hay disponibles?",
-          "answer": "Ofrecemos gráficos de barras, pastel y líneas que muestran tendencias de votación, desempeño de partidos, desglose demográfico y comparaciones históricas. Cada gráfico es interactivo y personalizable."
+          "answer": "Ofrecemos gráficos de barras que muestran el desempeño de partidos políticos y la distribución de votos. Los gráficos se actualizan en tiempo real con los datos electorales más recientes."
         },
         {
-          "question": "¿Cómo interpreto los datos?",
-          "answer": "Los gráficos incluyen etiquetas claras, leyendas y tooltips. Pasa el cursor sobre los puntos de datos para ver valores exactos y usa los controles para filtrar por periodo, región o partido."
-        },
-        {
-          "question": "¿Puedo personalizar las visualizaciones?",
-          "answer": "Sí, puedes cambiar el tipo de gráfico, ajustar rangos de tiempo, filtrar por partidos o regiones específicas y descargar los gráficos como imágenes para tu uso."
+          "question": "¿Cómo interpreto los datos en los gráficos?",
+          "answer": "Los gráficos incluyen etiquetas claras y leyendas. Pasa el cursor sobre las secciones para ver valores exactos de votos y porcentajes por partido político."
         }
       ]
     },
@@ -322,10 +322,6 @@
           "answer": "Usa el menú de navegación superior para cambiar entre Inicio, Elecciones, Sobre Nosotros y Preguntas Frecuentes. El dashboard principal muestra resultados en tiempo real y las demás páginas brindan contexto adicional."
         },
         {
-          "question": "¿Qué navegadores son compatibles?",
-          "answer": "Nuestra aplicación funciona en todos los navegadores modernos como Chrome, Firefox, Safari y Edge. Para la mejor experiencia, recomendamos usar la última versión disponible."
-        },
-        {
           "question": "¿Cómo reporto problemas?",
           "answer": "Utiliza el formulario 'Reportar Incidente' disponible en el pie de página para informar cualquier inconveniente. Incluye detalles del problema, tu ubicación y cualquier mensaje de error."
         },
@@ -334,8 +330,12 @@
           "answer": "Sí, los datos provienen de fuentes oficiales y se actualizan en tiempo real. Sin embargo, incluimos un aviso de que la información proviene de terceros y no nos responsabilizamos por su exactitud."
         },
         {
+          "question": "¿Qué navegadores son compatibles?",
+          "answer": "Nuestra aplicación funciona en todos los navegadores modernos incluyendo Chrome, Firefox, Safari y Edge. Para la mejor experiencia, recomendamos usar la versión más reciente de tu navegador."
+        },
+        {
           "question": "¿Puedo suscribirme a actualizaciones?",
-          "answer": "Sí, puedes suscribirte para recibir alertas sobre cambios importantes en los resultados. Busca el banner de suscripción o usa el modal para registrarte."
+          "answer": "Sí, puedes suscribirte para recibir alertas sobre cambios importantes en los resultados electorales. Busca el banner de suscripción o usa el modal de suscripción para registrarte en las notificaciones."
         }
       ]
     },
@@ -355,17 +355,10 @@
           "answer": "Cada acta contiene información detallada como: número de mesa, ubicación, total de votos válidos, votos nulos, votos en blanco, resultados por partido político, firmas de autoridades de mesa y observaciones o incidentes reportados durante el proceso electoral."
         },
         {
-          "question": "¿Cómo reporto una irregularidad encontrada en un acta?",
-          "answer": "Si encuentras una irregularidad en un acta, puedes reportarla usando el formulario de 'Reportar Incidente' disponible en nuestra plataforma. Incluye el número de mesa, descripción detallada del problema y adjunta evidencia fotográfica si es posible."
-        },
-        {
           "question": "¿Las actas se actualizan en tiempo real?",
           "answer": "Sí, las actas se actualizan en tiempo real conforme son procesadas y validadas por las autoridades electorales. Nuestra plataforma sincroniza automáticamente con las fuentes oficiales para mantener la información actualizada."
-        },
-        {
-          "question": "¿Puedo comparar actas entre diferentes mesas?",
-          "answer": "Sí, nuestra plataforma permite comparar actas entre diferentes mesas de votación. Puedes seleccionar múltiples mesas y ver una comparación lado a lado de los resultados, facilitando la detección de patrones o inconsistencias."
         }
+
       ]
     }
   },
@@ -477,5 +470,85 @@
     "downloading": "Descargando...",
     "previous": "Anterior",
     "next": "Siguiente"
+  },
+  "admin": {
+    "title": "Panel de Administrador",
+    "subtitle": "Gestiona tu sitio electoral",
+    "version": "ELECTA Admin Panel v1.0",
+    "sections": {
+      "site_control": {
+        "title": "Control del Sitio",
+        "description": "Configuración general del sitio",
+        "general_status": "Estado General del Sitio",
+        "maintenance_mode": "Sitio en Mantenimiento",
+        "maintenance_description": "Activa la página de mantenimiento",
+        "private_access": "Sitio Privado/Público",
+        "private_description": "Requiere código de acceso",
+        "access_config": "Configuración de Acceso",
+        "access_code": "Código de Acceso",
+        "access_code_placeholder": "Ingresa el código de acceso",
+        "terms_message": "Mensaje de Términos y Condiciones",
+        "terms_placeholder": "Mensaje de términos y condiciones"
+      },
+      "component_selector": {
+        "title": "Selector de Componentes",
+        "description": "Gestionar visibilidad por fase",
+        "phase_selector": "Seleccionar Fase Activa",
+        "before": "Antes",
+        "during": "Durante",
+        "after": "Después",
+        "active_phase": "Fase Activa",
+        "active_phase_description": "Solo esta fase está activa. Las otras fases están desactivadas.",
+        "visible_components": "Componentes Visibles - Fase",
+        "components_count": "de {{count}} componentes visibles",
+        "visible": "Visible",
+        "hidden": "Oculto",
+        "save_config": "Guardar Configuración",
+        "apply_site": "Aplicar al Sitio Web",
+        "save_success": "Configuración de la fase \"{{phase}}\" guardada exitosamente",
+        "apply_success": "Configuración de la fase \"{{phase}}\" aplicada al sitio web",
+        "select_phase_first": "Por favor selecciona una fase activa primero"
+      },
+      "election_config": {
+        "title": "Configuración de Elecciones",
+        "description": "Administrar elecciones",
+        "new_election": "Nueva Elección",
+        "election_table": {
+          "election": "Elección",
+          "status": "Estado",
+          "dates": "Fechas",
+          "votes": "Votos",
+          "actions": "Acciones"
+        },
+        "status": {
+          "active": "Activa",
+          "upcoming": "Próxima",
+          "inactive": "Inactiva",
+          "unknown": "Desconocido"
+        },
+        "form": {
+          "edit_election": "Editar Elección",
+          "create_election": "Crear Nueva Elección",
+          "election_name": "Nombre de la Elección",
+          "election_name_placeholder": "Nombre de la elección",
+          "description": "Descripción",
+          "description_placeholder": "Descripción breve",
+          "start_date": "Fecha de Inicio",
+          "end_date": "Fecha de Fin",
+          "total_voters": "Total de Votantes",
+          "total_voters_placeholder": "0",
+          "cancel": "Cancelar",
+          "update_election": "Actualizar Elección",
+          "create_election_button": "Crear Elección"
+        },
+        "actions": {
+          "edit": "Editar",
+          "activate": "Activar",
+          "deactivate": "Desactivar",
+          "delete": "Eliminar"
+        },
+        "delete_confirm": "¿Estás seguro de que quieres eliminar esta elección?"
+      }
+    }
   }
 }

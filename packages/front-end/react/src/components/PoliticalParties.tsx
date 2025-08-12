@@ -45,7 +45,7 @@ const enrichedParties = parties.map((party) => {
   const normalizedAliases = aliasList.map(a => a.trim().toLowerCase());
 
   // Find match in source.partyBreakdown
-  const match = source?.partyBreakdown.find(p => {
+  const match = source?.partyBreakdown?.find(p => {
     if (!p.abbr) return false;
     const abbrNormalized = p.abbr.trim().toLowerCase();
     return normalizedAliases.includes(abbrNormalized);

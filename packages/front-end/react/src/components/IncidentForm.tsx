@@ -176,7 +176,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
         <AlertTriangle className="text-yellow-400" size={18} />
         {t("incidents.form_title") || "Reportar incidente"}
         {isConfigured && (
-          <Languages className="text-cyan-400" size={16} title="Traducción automática habilitada" />
+          <Languages className="text-cyan-400" size={16} />
         )}
       </h2>
 

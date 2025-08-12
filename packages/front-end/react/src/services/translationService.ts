@@ -107,7 +107,7 @@ class TranslationService {
           targetLanguage,
           'es'
         );
-        translatedObj[property] = translatedText;
+        (translatedObj as any)[property] = translatedText;
       }
     }
 

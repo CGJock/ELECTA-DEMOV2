@@ -43,52 +43,24 @@ const Header: React.FC = () => {
             <div className="hidden md:block absolute top-4 right-8 z-20">
               <LanguageSwitcher small />
             </div>
-            <div className="flex items-center justify-between py-6 min-h-[80px] relative">
-              {/* Logo a la izquierda, completamente pegado al borde */}
-              <div className="flex flex-1 items-center gap-4 min-w-0 pl-0 md:pl-0 lg:pl-0 xl:pl-0">
-                <div className="relative w-24 h-24 md:w-28 md:h-28 group ml-0 -translate-x-6 md:-translate-x-10 lg:-translate-x-16 xl:-translate-x-24" style={{left: 0}}>
+            <div className="flex items-center justify-center py-3 h-48 relative overflow-visible">
+              {/* Logo centrado horizontalmente */}
+              <div className="flex items-center justify-center">
+                <div className="relative w-52 h-52 md:w-60 md:h-60 lg:w-68 lg:h-68">
                   <Image
-                    src="/img/Logo-trans.png"
-                    alt="Electa Logo"
+                    src="/img/LogoDesigner.png"
+                    alt="Logo Designer"
                     fill
-                    className="object-contain transition-all duration-300 group-hover:drop-shadow-lg group-hover:drop-shadow-cyan-400/20"
+                    className="object-contain scale-[1.7]"
                     priority
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
               </div>
-              {/* Título centrado, más grande */}
-              <div className="flex-1 flex justify-center items-center min-w-0">
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight truncate text-center">
-                  <span className="bg-gradient-to-r from-cyan-300 to-slate-400 bg-clip-text text-transparent">
-                    ELECTA
-                  </span>
-                </h1>
-              </div>
-              {/* Espacio a la derecha para mantener el centro */}
-              <div className="flex-1"></div>
-              {/* Mobile: Logo y título centrados, menú hamburguesa a la derecha */}
-              <div className="flex md:hidden flex-1 items-center justify-center relative w-full">
-                <div className="flex flex-col items-center justify-center w-full">
-                  <div className="relative w-20 h-20 group mx-auto">
-                    <Image
-                      src="/img/Logo-trans.png"
-                      alt="Electa Logo"
-                      fill
-                      className="object-contain transition-all duration-300 group-hover:drop-shadow-lg group-hover:drop-shadow-cyan-400/20"
-                      priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
-                  <h1 className="text-3xl font-bold text-white mb-1 relative text-center">
-                    <span className="bg-gradient-to-r from-cyan-300 to-slate-400 bg-clip-text text-transparent relative group">
-                      ELECTA
-                    </span>
-                  </h1>
-                </div>
+              {/* Mobile: Logo centrado, menú hamburguesa a la derecha */}
+              <div className="flex md:hidden absolute right-4 top-3 items-center">
                 {/* Botón hamburguesa solo en mobile, a la derecha */}
                 <button
-                  className="md:hidden absolute right-2 top-2 p-2 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                  className="p-2 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
                   onClick={() => setMobileMenuOpen(true)}
                   aria-label="Abrir menú"
                 >

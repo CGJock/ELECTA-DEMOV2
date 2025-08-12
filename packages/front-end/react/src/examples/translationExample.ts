@@ -8,13 +8,15 @@ import type { Incident } from '@/types/election';
  * Ejemplo básico de traducción de texto
  */
 export async function translateTextExample() {
+  // Declarar la variable fuera del try para que esté disponible en el catch
+  const originalText = 'Problema de conectividad en el centro de votación';
+  
   try {
     // Configurar la API key (en producción, esto se haría desde la interfaz)
     translationService.setApiKey('tu_api_key_aqui');
     translationService.setRegion('global');
 
     // Traducir un texto simple
-    const originalText = 'Problema de conectividad en el centro de votación';
     const translatedText = await translationService.translateText(originalText, 'en', 'es');
     
     console.log('Texto original:', originalText);
@@ -31,23 +33,23 @@ export async function translateTextExample() {
  * Ejemplo de traducción de un incidente completo
  */
 export async function translateIncidentExample() {
+  // Declarar la variable fuera del try para que esté disponible en el catch
+  const incident: Incident = {
+    id: '1',
+    title: { es: 'Falta de material electoral', en: '' },
+    description: { 
+      es: 'No hay suficientes boletas en el recinto electoral. Los votantes están esperando.', 
+      en: '' 
+    },
+    location: { es: 'La Paz, Centro', en: '' },
+    status: 'new',
+    timestamp: new Date().toISOString()
+  };
+
   try {
     // Configurar la API key
     translationService.setApiKey('tu_api_key_aqui');
     translationService.setRegion('global');
-
-    // Incidente de ejemplo en español
-    const incident: Incident = {
-      id: '1',
-      title: { es: 'Falta de material electoral', en: '' },
-      description: { 
-        es: 'No hay suficientes boletas en el recinto electoral. Los votantes están esperando.', 
-        en: '' 
-      },
-      location: { es: 'La Paz, Centro', en: '' },
-      status: 'new',
-      timestamp: new Date().toISOString()
-    };
 
     // Traducir el incidente completo
     const translatedIncident = await translationService.translateIncident(incident);
@@ -66,17 +68,18 @@ export async function translateIncidentExample() {
  * Ejemplo de traducción de múltiples textos
  */
 export async function translateMultipleTextsExample() {
+  // Declarar la variable fuera del try para que esté disponible en el catch
+  const texts = [
+    'Problema de conectividad',
+    'Falta de material electoral',
+    'Lento procesamiento de votos',
+    'Error en el sistema de conteo'
+  ];
+
   try {
     // Configurar la API key
     translationService.setApiKey('tu_api_key_aqui');
     translationService.setRegion('global');
-
-    const texts = [
-      'Problema de conectividad',
-      'Falta de material electoral',
-      'Lento procesamiento de votos',
-      'Error en el sistema de conteo'
-    ];
 
     const translations = await Promise.all(
       texts.map(text => translationService.translateText(text, 'en', 'es'))

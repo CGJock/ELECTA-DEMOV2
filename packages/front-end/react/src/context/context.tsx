@@ -40,13 +40,13 @@ interface SocketDataContextValue {
   setbreakdownLocData: (data: LocationSummary | null) => void;
   selectedLocationCode: string | null;
   setSelectedLocationCode: (code: string | null) => void;
-  
+  isConnected: boolean;
   timestamp: string | null;
 }
 
 const SocketDataContext = createContext<SocketDataContextValue | undefined>(undefined);
 
-const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000';
+const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 const socket = io(socketUrl, {
     withCredentials: true,
   });
@@ -58,6 +58,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   const [breakdownData, setbreakdownData] = useState<VoteBreakdown | null>(null);
   const [breakdownLocData, setbreakdownLocData] = useState<LocationSummary | null>(null);
   const [selectedLocationCode, setSelectedLocationCode] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [timestamp, setTimestamp] = useState<string | null>(null); // timestamp to check data consistency
   
   
@@ -105,7 +106,18 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   // }, []);
 
   useEffect(() => {
-    // Regsiter listeners before emitting
+    // Register listeners before emitting
+
+    // Handle connection status
+    function handleConnect() {
+      console.log('Socket connected');
+      setIsConnected(true);
+    }
+
+    function handleDisconnect() {
+      console.log('Socket disconnected');
+      setIsConnected(false);
+    }
 
     // Show information related to plain votes
     function handleFullVoteData(data: VoteBreakdown) {
@@ -131,18 +143,25 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
       }
     }
 
+    // Set up connection listeners
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+
+    // Set up data listeners
     socket.on('full-vote-data', handleFullVoteData);
     socket.on('total-breakdown-summary', handleTotalBreakdownSummary);
     socket.on('location-breakdown-summary', handleLocationBreakdownSummary);
     socket.on('initial-vote-summary', (data) => {
-    setglobalSummary(data);
-  });
+      setglobalSummary(data);
+    });
 
     // Emit the request after the listeners
-    // socket.emit('get-total-breakdown');
+    socket.emit('get-total-breakdown');
 
     // Cleanup on unmount
     return () => {
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
       socket.off('full-vote-data', handleFullVoteData);
       socket.off('total-breakdown-summary', handleTotalBreakdownSummary);
       socket.off('location-breakdown-summary', handleLocationBreakdownSummary);
@@ -156,7 +175,7 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   }, [selectedLocationCode]);
 
   return (
-    <SocketDataContext.Provider value={{ globalSummary, breakdownData, breakdownLocData, setbreakdownLocData, selectedLocationCode, setSelectedLocationCode, timestamp  }}>
+    <SocketDataContext.Provider value={{ globalSummary, breakdownData, breakdownLocData, setbreakdownLocData, selectedLocationCode, setSelectedLocationCode, isConnected, timestamp  }}>
       {children}
     </SocketDataContext.Provider>
   );
