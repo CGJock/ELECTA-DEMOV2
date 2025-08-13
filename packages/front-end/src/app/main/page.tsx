@@ -17,7 +17,7 @@ const Map2 = dynamic(() => import('@components/Map'), { ssr: false });
 
 import StatsContainer from '@components/StatsContainer';
 import FooterWrapper from '@components/components-wrappers/FooterWrapper';
-import ElectionReportTable from '@components/ElectionReportTable';
+// import ElectionReportTable from '@components/ElectionReportTable';
 // Eliminar la importación de Footer
 // import Footer from '@components/Footer';
 import { useEffect } from 'react';
@@ -279,7 +279,7 @@ export default function Page() {
         {/* ElectionReportTable (fases eliminadas) */}
         {!hasWinner && (
           <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto', padding: '0 1rem' }}>
-            <ElectionReportTable />
+            {/* <ElectionReportTable /> */}
           </div>
         )}
 
