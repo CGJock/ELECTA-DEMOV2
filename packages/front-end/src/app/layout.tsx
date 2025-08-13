@@ -3,18 +3,29 @@ import './globals.css'
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Link from 'next/link';
 // import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import HeaderWrapper from '@wrappers/HeaderWrapper';
-import ClientProviders from '@wrappers/i18nProvider';
-import FooterWrapper from '@wrappers/FooterWrapper';
+import HeaderWrapper from '@/components/components-wrappers/HeaderWrapper';
+import ClientProviders from '@/components/components-wrappers/i18nProvider';
+import FooterWrapper from '@/components/components-wrappers/FooterWrapper';
+import MaintenanceWrapper from '@/components/MaintenanceWrapper';
+import { AuthProvider } from '@/context/authContext';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
-  title: "Electa Demo",
-  description: "A page to analize electoral presidential results",
+  title: "ELECTA - Dashboard Electoral",
+  description: "Plataforma profesional de monitoreo electoral y visualización de datos en tiempo real para Bolivia. Resultados electorales, mapas interactivos y reportes de incidentes.",
+  keywords: "elecciones, Bolivia, dashboard electoral, resultados en tiempo real, monitoreo electoral",
+  authors: [{ name: "ELECTA Team" }],
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -36,11 +47,16 @@ export default function RootLayout({
           }}
         >
           <ClientProviders>
-          <HeaderWrapper />
-          <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            {children}
-          </main>
-          <FooterWrapper />
+            <div>
+              {/* <NotificationService /> */}
+              <MaintenanceWrapper>
+                {children}
+              </MaintenanceWrapper>
+              {/* <FooterWrapper onAddIncident={(incident) => {
+                // TODO: Implementar lógica para agregar incidentes
+                console.log('Nuevo incidente:', incident);
+              }} /> */}
+            </div>
           </ClientProviders>
         </body>
       

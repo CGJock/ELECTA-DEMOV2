@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import '../lib/i18n';
 import { useTranslation } from 'react-i18next';
+import { changeLanguage, getCurrentLanguage, initializeLanguage } from '../lib/i18n';
 
 interface LanguageSwitcherProps {
   small?: boolean;
@@ -12,12 +13,18 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ small }) => {
   const [currentLang, setCurrentLang] = useState<string | null>(null);
 
   useEffect(() => {
+    // Inicializar idioma desde localStorage
+    initializeLanguage();
+    setCurrentLang(getCurrentLanguage());
+  }, []);
+
+  useEffect(() => {
     setCurrentLang(i18n.language);
   }, [i18n.language]);
 
-  const changeLanguage = (lng: string): void => {
-    i18n.changeLanguage(lng);
-    setCurrentLang(lng); // actualiza inmediatamente
+  const handleLanguageChange = (lng: 'en' | 'es'): void => {
+    changeLanguage(lng);
+    setCurrentLang(lng);
   };
 
   const getButtonStyle = (lng: string): React.CSSProperties => ({
@@ -46,10 +53,10 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ small }) => {
       background: 'none',
       boxShadow: 'none',
     }}>
-      <button style={getButtonStyle('es')} onClick={() => changeLanguage('es')}>
+      <button style={getButtonStyle('es')} onClick={() => handleLanguageChange('es')}>
         ESP
       </button>
-      <button style={getButtonStyle('en')} onClick={() => changeLanguage('en')}>
+      <button style={getButtonStyle('en')} onClick={() => handleLanguageChange('en')}>
         ENG
       </button>
     </div>

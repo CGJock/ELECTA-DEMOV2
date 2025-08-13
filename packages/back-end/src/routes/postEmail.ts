@@ -1,4 +1,3 @@
-
 import { Router, Request, Response } from 'express';
 import pool from '@db/db.js';
 import { z } from 'zod';
@@ -44,6 +43,45 @@ router.post('/', validateApiKey, votosLimiter ,async (req: Request, res: Respons
     );
 
     res.status(201).json({ message: 'Email succesfully registered' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error in the server' });
+  }
+});
+
+// DELETE - Eliminar email de la base de datos
+router.delete('/', validateApiKey, votosLimiter, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const parseResult = mailSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      res.status(400).json({
+        error: 'Email not valid',
+        details: parseResult.error.format()
+      });
+      return;
+    }
+
+    const { user_email } = parseResult.data;
+
+    // Verificar si el email existe
+    const exists = await pool.query(
+      'SELECT id FROM newsletter_mails WHERE email = $1',
+      [user_email]
+    );
+
+    if (exists.rows.length === 0) {
+      res.status(404).json({ error: 'Email not found' });
+      return;
+    }
+
+    // Eliminar el email
+    await pool.query(
+      'DELETE FROM newsletter_mails WHERE email = $1',
+      [user_email]
+    );
+
+    res.status(200).json({ message: 'Email successfully removed' });
 
   } catch (error) {
     console.error(error);

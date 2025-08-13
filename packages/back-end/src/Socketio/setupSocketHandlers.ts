@@ -4,15 +4,31 @@ import { sendGlobalSummary } from './global.js';
 import { getVotesSummary } from '@fetchers/votesDataFetcher.js';
 import { getLocationSummary } from '@fetchers/locationBreakdownSummary.js';
 import { getTotalSummary } from '@fetchers/breakdownSummary.js'; 
+import { startSummaryIntervals, stopSummaryIntervals } from '@utils/intervalManager.js';
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 import redisClient from '@db/redis.js';
+
+let noClientTimer: NodeJS.Timeout | null = null;
 
 export function setupSocketHandlers(io: Server, db: Pool) {
 io.on('connection', async(socket) => {
   console.log(`Socketio client conected: ${socket.id}`);
+
+  // Si había timer para detener intervalos, cancelar porque llegó un cliente
+    if (noClientTimer) {
+      clearTimeout(noClientTimer);
+      noClientTimer = null;
+      console.log('Clients reconnected — canceled stop timer.');
+    }
+
+  // Arranca intervalos si no están activos
+    startSummaryIntervals(io, db);
     
    // get the latest data for the global counter component
   try {
-      const raw = await redisClient.get('latest:vote:data');
+      const roundId = await getActiveElectionRoundId();
+      const redisKey = `latest:vote:data:${roundId}`;
+      const raw = await redisClient.get(redisKey);
       if (raw) {
         const data = JSON.parse(raw);
         console.log('getting latestvotedata from redis', JSON.stringify(data))
@@ -51,7 +67,10 @@ io.on('connection', async(socket) => {
     // Suscripción a un locationId específico
     socket.on('subscribe-to-location', async (locationCode: string) => {
       const room = `location-${locationCode}`;
-      socket.join(room);
+        if (socket.rooms.has(room)) {
+          console.log(`Socket ${socket.id} already subscribed to ${room}`);
+          return; // no hacer nada
+        }
       
       try {
         const redisKey = `location-${locationCode}`;
@@ -78,7 +97,15 @@ io.on('connection', async(socket) => {
     // disconnect users
     socket.on('disconnect', () => {
       console.log(`Disconnected Client: ${socket.id}`);
-      
+
+      if (io.sockets.sockets.size === 0) {
+        // Si no hay clientes conectados, espera 1 minuto antes de parar intervalos
+        console.log('No clients connected, starting 1 minute timer to stop intervals...');
+        noClientTimer = setTimeout(() => {
+          stopSummaryIntervals();
+          console.log('No clients for 1 minute, stopped summary intervals.');
+        }, 60 * 1000);
+      }
     });
   });
 }

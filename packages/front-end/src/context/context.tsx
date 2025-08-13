@@ -1,5 +1,6 @@
 'use client'
 import { useEffect,useState,useContext,createContext } from "react";
+import { useSocket, getSocket } from '@contexts/useSocket';
 import io from 'socket.io-client';
 
 interface VoteBreakdown {
@@ -12,17 +13,18 @@ interface VoteBreakdown {
   validPercent: number;
 }
 
-interface PartyData {
-  name: string;
+export interface PartyData {
+  name: string
   abbr: string;
   count: number;
   percentage: number;
 }
 
-interface GlobalSummary {
-  totalVotes: number;
+export interface GlobalSummary {
+  blankVotes: number;
+  nullVotes: number;
+  validVotes: number;
   politicalParties: PartyData[];
-  
 }
 
 interface LocationSummary {
@@ -45,12 +47,12 @@ interface SocketDataContextValue {
 
 const SocketDataContext = createContext<SocketDataContextValue | undefined>(undefined);
 
-const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
-const socket = io(socketUrl, {
-    withCredentials: true,
-  });
+// const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+// const socket = io(socketUrl, {
+//     withCredentials: true,
+//   });
 
-export default socket;
+
 
 export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [globalSummary, setglobalSummary] = useState<GlobalSummary | null>(null);
@@ -59,99 +61,38 @@ export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ chil
   const [selectedLocationCode, setSelectedLocationCode] = useState<string | null>(null);
   const [timestamp, setTimestamp] = useState<string | null>(null); //timestamp to check data consistency
   
-  
-  //   useEffect(() => {
-  // socket.emit('get-total-breakdown');
- 
-  // }, []);
 
-  // useEffect(() => {
-    
-
-  //   console.log(selectedLocationCode)
-
-  //   // Escuchar resumen en tiempo real desde NOTIFY PostgreSQL
-  //   socket.on('full-vote-data', (data) => {
-  //     console.log('full-vote-data-context',data)
-  //     if (!data.error)
-  //     setbreakdownData(data);
-  //   console.log('vote-data-contexto',breakdownData)
-  //     setTimestamp(new Date().toISOString());
-      
-  //   });
-
-  //   //socket that listens to the whole data information + individual party data
-  //   socket.on('total-breakdown-summary', (data) => {
-  //     console.log(`total-brakdownsummary`,data)
-  //     if (!data.error) setglobalSummary(data);
-  //     setTimestamp(new Date().toISOString());
-  //   });
-
-  //    socket.on('location-breakdown-summary', (data) => {
-  //     if (!data.error) setbreakdownLocData(data);
-  //     setTimestamp(new Date().toISOString());
-  //   });
-
-
-  
-
-  //   return () => {
-  //     socket.off('global-vote-summary');
-  //     socket.off('total-breakdown-summary');
-  //     socket.off('location-breakdown-summary')
-  //     socket.off('full-vote-data')
-  //   };
-  // }, []);
-
-  useEffect(() => {
-    // Regsiter listeners before emitting
-
-    //show information related to plain votes
-    function handleFullVoteData(data: VoteBreakdown) {
+   const handlers = {
+    'full-vote-data': (data: VoteBreakdown) => {
       if (!('error' in data)) {
         setbreakdownData(data);
-        console.log('breakdowndata',data)
         setTimestamp(new Date().toISOString());
       }
-    }
-
-    //show information reltaed to partydatabreakdown
-    function handleTotalBreakdownSummary(data: GlobalSummary) {
+    },
+    'total-breakdown-summary': (data: GlobalSummary) => {
       if (!('error' in data)) {
         setglobalSummary(data);
-        console.log('log por breakdownloc',data)
         setTimestamp(new Date().toISOString());
       }
-    }
-
-    //show information reltaed to partydatabreakdown by location
-    function handleLocationBreakdownSummary(data: LocationSummary) {
+    },
+    'location-breakdown-summary': (data: LocationSummary) => {
       if (!('error' in data)) {
         setbreakdownLocData(data);
         setTimestamp(new Date().toISOString());
       }
+    },
+    'initial-vote-summary': (data: GlobalSummary) => {
+      setglobalSummary(data);
     }
+  };
 
-    socket.on('full-vote-data', handleFullVoteData);
-    socket.on('total-breakdown-summary', handleTotalBreakdownSummary);
-    socket.on('location-breakdown-summary', handleLocationBreakdownSummary);
-    socket.on('initial-vote-summary', (data) => {
-    setglobalSummary(data);
-  });
+  // Usar el hook useSocket para manejar el socket y listeners
+  useSocket(handlers, { event: 'get-total-breakdown' });
 
-    // emits the request after the listeners
-    socket.emit('get-total-breakdown');
-
-    // Limpieza al desmontar
-    return () => {
-      socket.off('full-vote-data', handleFullVoteData);
-      socket.off('total-breakdown-summary', handleTotalBreakdownSummary);
-      socket.off('location-breakdown-summary', handleLocationBreakdownSummary);
-    };
-  }, []);
-
+  // Cuando cambia selectedLocationCode, emitimos para obtener datos de esa locación
   useEffect(() => {
     if (selectedLocationCode !== null) {
+      const socket = getSocket();
       socket.emit('get-location-summary', selectedLocationCode);
     }
   }, [selectedLocationCode]);
@@ -170,4 +111,3 @@ export function useSocketData() {
   }
   return context;
 }
-

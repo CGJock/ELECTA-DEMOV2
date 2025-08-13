@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "ELECTA - Bolivia",
+    "title": "ELECTA",
     "subtitle": "Electoral Dashboard",
     "language": "Language",
     "spanish": "Español",
@@ -27,10 +27,12 @@
     "percentage": "Total Votes",
     "votes": "Votes",
     "ver_mas": "See more",
-    "ver_menos": "See less"
+    "ver_menos": "See less",
+    "disqualified_disclaimer": "Candidate disqualified by the TSE for submitting tax solvency late.",
+    "withdrawn_disclaimer": "Candidate withdrawn from the electoral race."
   },
   "footer": {
-    "company_desc": "Professional platform for electoral monitoring and data visualization for Bolivia.",
+    "company_desc": "Professional platform for electoral monitoring and data visualization for global elections.",
     "status_live": "Status: Live",
     "status_realtime": "Real-time updates",
     "quick_links": "Quick Links",
@@ -45,30 +47,60 @@
     "follow_us": "Follow Us",
     "rights_reserved": "All rights reserved.",
     "privacy_policy": "Privacy Policy",
-    "terms_of_service": "Terms of Service"
+    "terms_of_service": "Terms of Service",
+    "incident_form": "Incidents Form",
+    "legal_notice": "Legal Notice",
+    "ver_mas": "See more"
   },
   "counter": {
     "loading": "Loading vote summary...",
     "total_votes": "Total Vote Count",
     "null_votes": "Null Votes",
     "blank_votes": "Blank Votes",
-    "total_votes_hint": "voteshint"
+    "top_candidates": "Top Candidates"
+  },
+  "secondRound": {
+    "title": "SECOND ROUND",
+    "votes": "Votes",
+    "definitive_election": "Definitive Presidential Election",
+    "date": "October 20, 2025",
+    "final_confrontation": "Final Confrontation",
+    "live_status": "Live",
+    "first_round_summary": "First round summary",
+    "bolivia_2025": "Bolivia 2025"
   },
   "incidents": {
-    "title": "INCIDENTS",
+    "form_title": "Report Incident",
+    "title": "Title",
+    "description": "Description",
+    "location": "Location",
+    "status": "Status",
+    "submit": "Report incident",
+    "required": "This field is required.",
     "no_incidents": "No incidents reported",
     "reports": "Incident Reports",
-    "severity_high": "HIGH",
-    "severity_medium": "MEDIUM",
-    "severity_low": "LOW",
-    "location": "Location",
-    "time": "Time"
+    "status_stuck": "ONGOING",
+    "status_new": "NEW",
+    "status_resolved": "RESOLVED",
+    "time": "Time",
+    "disclaimer": "The data shown comes from third parties. ELECTA is not responsible for the accuracy or consequences of the use of this information.",
+    "email": "Email",
+    "select_department": "Select a department",
+    "department": "Department"
   },
   "nav": {
     "home": "HOME",
     "elections": "Upcoming Elections",
     "about": "About Us",
+    "faq": "FAQ",
     "contact": "Contact Us"
+  },
+  "disclaimer": {
+    "title": "Legal Notice",
+    "paragraph1": "The data presented on this site comes from reliable sources and is updated in real time for informational purposes.",
+    "paragraph2": "However, this platform is independent and does not constitute an official source.",
+    "paragraph3": "The only official and definitive results are those published by the competent electoral authorities.",
+    "understood": "Understood"
   },
   "candidate": {
     "age": "years old",
@@ -103,6 +135,511 @@
     "timestamp": "Last update: {{date}}",
     "download": "Download Excel"
   },
-  "result": "Result"
+  "result": "Result",
+  "subscription": {
+    "banner_message": "🗳️ Live Election Results — Get alerts about important changes",
+    "subscribe_button": "Subscribe",
+    "modal_title": "Subscribe to election alerts",
+    "unsubscribe_modal_title": "Unsubscribe from alerts",
+    "name_label": "Name",
+    "email_label": "Email",
+    "name_placeholder": "Name",
+    "email_placeholder": "Email",
+    "subscribe_loading": "Sending...",
+    "subscribe_success": "Subscription successful!",
+    "subscribe_error": "Could not subscribe",
+    "unsubscribe_button": "Unsubscribe",
+    "unsubscribe_loading": "Processing...",
+    "unsubscribe_success": "Unsubscription successful!",
+    "unsubscribe_error": "Could not unsubscribe",
+    "invalid_name": "Invalid name. Only letters and spaces, 2-50 characters.",
+    "invalid_email": "Invalid email.",
+    "footer_unsubscribe_text": "Don't want to receive more notifications?",
+    "footer_unsubscribe_link": "Click here"
+  },
+  "about": {
+    "hero": {
+      "title": "About Electa",
+      "subtitle": "Leading platform for electoral transparency and real-time data visualization for global elections",
+      "cta_button": "Contact Us"
+    },
+              "history": {
+            "title": "Our History",
+            "paragraph1": "Electa was created from an interest in supporting democratic processes. Our aim is to help provide citizens with more transparent and accessible electoral information, with a focus on using technology to encourage democratic values.",
+            "paragraph2": "From the start, we have sought to promote transparency and citizen participation by developing tools that aim to give voters access to reliable, up-to-date information."
+          },
+    "mission": {
+      "title": "Our Mission",
+      "paragraph1": "We seek to explore ways of providing more transparent, accessible, and timely electoral information for citizens worldwide, with the intention of encouraging participation and supporting democratic values where possible.",
+      "paragraph2": "Our work focuses on developing technological tools that may serve as a bridge between citizens and electoral processes, aiming to encourage transparency and foster trust in democratic systems."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "paragraph1": "Our vision is to work toward becoming a recognized resource for electoral data visualization and analysis, with the aspiration of contributing to the growth of digital democracy.",
+      "paragraph2": "Over time, we hope to expand into additional countries and regions, exploring the possibility of creating a network that encourages electoral transparency and engagement globally."
+    },
+    "whatwedo": {
+      "title": "What We Do",
+      "paragraph1": "We work on developing and maintaining technological platforms intended for real-time electoral monitoring, aiming to provide more accessible data and insights into electoral processes.",
+      "paragraph2": "We create interactive visualization tools designed to help users explore and interpret electoral results in a user-friendly way."
+    },
+    "values": {
+      "title": "Our Values",
+      "subtitle": "The principles that guide our work and commitment to democracy",
+      "transparency": {
+        "title": "Transparency",
+        "description": "Total commitment to transparency in all our processes and data, ensuring that information is accessible and verifiable."
+      },
+      "participation": {
+        "title": "Participation",
+        "description": "We encourage active citizen participation in democratic processes, providing tools that empower voters."
+      },
+      "justice": {
+        "title": "Justice",
+        "description": "We promote electoral justice through equity in access to information and equal opportunities for all citizens."
+      },
+      "education": {
+        "title": "Education",
+        "description": "We educate citizens about electoral processes and the importance of democratic participation."
+      },
+      "integrity": {
+        "title": "Integrity",
+        "description": "We maintain the highest standards of integrity in data handling and presentation of electoral information."
+      }
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Do you have questions or suggestions? We'd love to hear from you",
+      "name_placeholder": "Your full name",
+      "email_placeholder": "your-email@example.com",
+      "message_placeholder": "Write your message here...",
+      "submit_button": "Send Message",
+      "sending": "Sending...",
+      "success_message": "Message sent successfully! We'll get back to you soon.",
+      "error_message": "Error sending message. Please try again.",
+      "validation_error": "Please complete all fields",
+      "email_error": "Please enter a valid email",
+      "social_text": "Follow us on our social networks"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to the most common questions about our electoral monitoring platform and how to use its features.",
+    "search_placeholder": "Search questions and answers...",
+    "all_categories": "All Categories",
+    "no_results": "No questions found matching your search.",
+    "clear_filters": "Clear filters",
+    "clear_search": "Clear search",
+    "need_help": "Still need help?",
+    "contact_message": "If you couldn't find the answer you're looking for, feel free to contact us directly.",
+    "contact_us": "Contact Us",
+    "categories": {
+      "map": "Map",
+      "counter": "Global Counter",
+      "candidates": "Candidate Modal",
+      "charts": "Chart Components",
+      "general": "General Functionality",
+      "actas": "Actas Review"
+    },
+    "show_less": "Show less",
+    "show_more": "Show {{count}} more questions",
+    "filtered_by": "Filtered by",
+    "and": "and",
+    "searching_for": "Searching for",
+    "showing_category": "Showing",
+    "no_results_title": "No results found",
+    "results_found": "results found",
+    "question": "question",
+    "questions": "questions"
+  },
+  "faq_content": {
+    "map": {
+      "title": "Map",
+      "questions": [
+        {
+          "question": "How do I view results for a specific region?",
+          "answer": "Click on any department on the map to select it. The detailed results for that region will automatically display in the Political Parties section, where you can see the vote count by candidate, percentages, and specific statistics for that area."
+        },
+        {
+          "question": "How do I return to national results?",
+          "answer": "Use the 'Return to National Results' button that appears when you have a specific region selected. This will take you back to the general overview of the entire country."
+        }
+      ]
+    },
+    "counter": {
+      "title": "Global Counter",
+      "questions": [
+        {
+          "question": "What does the global counter represent?",
+          "answer": "The global counter shows the total number of votes cast nationwide in real-time. It includes valid votes, null votes, and blank votes, providing a comprehensive overview of electoral participation."
+        },
+        {
+          "question": "How does it update in real-time?",
+          "answer": "The counter connects to our live data feed and updates automatically as polling stations report their results. Updates occur every few seconds to ensure you have the most current information."
+        },
+        {
+          "question": "What metrics does it show?",
+          "answer": "The counter displays total votes, null votes, blank votes, and the top candidates with their current vote counts and percentages. This gives you a quick snapshot of the electoral landscape."
+        }
+      ]
+    },
+    "candidates": {
+      "title": "Candidate Modal",
+      "questions": [
+        {
+          "question": "How do I open the candidate modal?",
+          "answer": "Click on any candidate's name or photo in the political parties section or candidate lists. The modal will open showing detailed information about that candidate."
+        },
+        {
+          "question": "What information does it contain?",
+          "answer": "The modal shows the candidate's personal information, political experience, main proposals, current vote count, percentage, and other relevant details about their campaign and background."
+        },
+        {
+          "question": "How do I navigate between candidates?",
+          "answer": "Use the arrow buttons in the modal to move between candidates, or close the modal and click on a different candidate's name to view their information."
+        }
+      ]
+    },
+    "charts": {
+      "title": "Chart Components",
+      "questions": [
+        {
+          "question": "What types of charts are available?",
+          "answer": "We offer bar charts and pie charts showing political party performance and vote distribution. The charts update in real-time with the latest electoral data."
+        },
+        {
+          "question": "How do I interpret the data in the charts?",
+          "answer": "Charts include clear labels and legends. Hover over sections to see exact vote values and percentages by political party."
+        }
+      ]
+    },
+    "general": {
+      "title": "General Functionality",
+      "questions": [
+        {
+          "question": "How do I navigate the application?",
+          "answer": "Use the navigation menu at the top to switch between Home, Elections, About Us, and FAQ pages. The main dashboard shows real-time results, while other pages provide additional context and information."
+        },
+        {
+          "question": "Which browsers are compatible?",
+          "answer": "Our application works on all modern browsers including Chrome, Firefox, Safari, and Edge. For the best experience, we recommend using the latest version of your browser."
+        },
+        {
+          "question": "How do I report problems?",
+          "answer": "Use the 'Report Incident' form available in the footer to report any issues you encounter. Include details about the problem, your location, and any error messages you see."
+        },
+        {
+          "question": "Is the data real-time and accurate?",
+          "answer": "Yes, our data comes directly from official sources and updates in real-time. However, we include a disclaimer that the data comes from third parties and we are not responsible for its accuracy."
+        },
+        {
+          "question": "Can I subscribe to updates?",
+          "answer": "Yes, you can subscribe to receive alerts about important changes in the election results. Look for the subscription banner or use the subscription modal to sign up for notifications."
+        }
+      ]
+    },
+    "actas": {
+      "title": "Actas Review",
+      "questions": [
+        {
+          "question": "What is actas review?",
+          "answer": "Actas review is a fundamental process to verify electoral transparency. It allows citizens and observers to review the tally and closing records of each polling station to detect possible irregularities or inconsistencies in the results."
+        },
+        {
+          "question": "How can I access the actas for review?",
+          "answer": "You can access the actas through our platform in the 'Actas Review' section. The actas are automatically loaded from official sources and are organized by department, municipality, and polling station for easy searching."
+        },
+        {
+          "question": "What information does each acta contain?",
+          "answer": "Each acta contains detailed information such as: polling station number, location, total valid votes, null votes, blank votes, results by political party, signatures of polling authorities, and observations or incidents reported during the electoral process."
+        },
+        {
+          "question": "How do I report an irregularity found in an acta?",
+          "answer": "If you find an irregularity in an acta, you can report it using the 'Report Incident' form available on our platform. Include the polling station number, detailed description of the problem, and attach photographic evidence if possible."
+        },
+        {
+          "question": "Are the actas updated in real time?",
+          "answer": "Yes, the actas are updated in real time as they are processed and validated by the electoral authorities. Our platform automatically synchronizes with official sources to keep the information up to date."
+        },
+        {
+          "question": "Can I compare actas between different polling stations?",
+          "answer": "Yes, our platform allows you to compare actas between different polling stations. You can select multiple stations and see a side-by-side comparison of the results, making it easier to detect patterns or inconsistencies."
+        }
+      ]
+    }
+  },
+  "upcomingElections": {
+    "title": "Upcoming Elections",
+    "subtitle": "Global electoral calendar 2025-2026",
+    "what": "What is elected",
+    "system": "Electoral system",
+    "main_parties": "Main parties",
+    "context": "Context",
+    "footer": "Updated information on global electoral processes",
+    "costaRica": "Costa Rica",
+    "costaRica_date": "February 1, 2026",
+    "costaRica_what": "President, two vice presidents, and 57 deputies of the Legislative Assembly.",
+    "costaRica_system": "Popular vote; needs at least 40% to be elected in the first round, otherwise a runoff between the top two.",
+    "costaRica_pln": "National Liberation Party (PLN)",
+    "costaRica_pln_candidate": "Álvaro Ramos",
+    "costaRica_pusc": "Social Christian Unity Party (PUSC)",
+    "costaRica_pusc_candidate": "Juan Carlos Hidalgo",
+    "costaRica_psd": "Social Democratic Progress Party (PSD)",
+    "costaRica_psd_candidate": "Luis Amador",
+    "costaRica_summary": "High party fragmentation, high electoral indecision (≈ 66% without a defined candidate), key issues: insecurity, employment, inequality.",
+
+    "southKorea": "South Korea",
+    "southKorea_date": "June 3, 2025 (early election)",
+    "southKorea_what": "President (5-year term, no immediate re-election).",
+    "southKorea_system": "Plurality (whoever gets the most votes wins)",
+    "southKorea_dp": "Democratic Party (DP)",
+    "southKorea_dp_candidate": "Lee Jae‑Myung (49.4%), winner",
+    "southKorea_ppp": "People Power Party (PPP)",
+    "southKorea_ppp_candidate": "Kim Moon‑Soo (41.2%)",
+    "southKorea_rp": "Reform Party",
+    "southKorea_rp_candidate": "Lee Jun‑Seok (8.3%)",
+    "southKorea_summary": "Early election after the impeachment of President Yoon Suk Yeol. One of the few interrupted presidential elections in Korea.",
+
+    "ecuador": "Ecuador",
+    "ecuador_date": "February 9 and April 13, 2025",
+    "ecuador_what": "President, vice president, and 151 seats in the National Assembly.",
+    "ecuador_system": "Two rounds. To win in the first: >50% or ≥40% and 10-point lead.",
+    "ecuador_noboa": "Daniel Noboa (National Democratic Action)",
+    "ecuador_noboa_candidate": "44.17% (1st round), 55.63% (2nd), won",
+    "ecuador_gonzalez": "Luisa González (Citizen Revolution Movement)",
+    "ecuador_gonzalez_candidate": "44% (1st), 44.37% (2nd), lost",
+    "ecuador_summary": "High turnout (~82%), close race led to a runoff, Noboa won, focused on attracting youth.",
+
+    "malawi": "Malawi",
+    "malawi_date": "September 16, 2025",
+    "malawi_what": "President, 193 deputies, and local authorities.",
+    "malawi_system": "If no candidate gets a majority, a runoff is held within 30 days.",
+    "malawi_mcp": "Malawi Congress Party (MCP)",
+    "malawi_mcp_candidate": "Lazarus Chakwera (incumbent)",
+    "malawi_dpp": "Democratic Progressive Party (DPP)",
+    "malawi_dpp_candidate": "Peter Mutharika",
+    "malawi_pp": "People Party (PP)",
+    "malawi_pp_candidate": "Joyce Banda",
+    "malawi_summary": "Second election under the new 50+1 standard; UTM withdrawal destabilizes coalition, current coalitions are key.",
+
+    "tanzania": "Tanzania",
+    "tanzania_date": "October 28, 2025",
+    "tanzania_what": "President and National Assembly.",
+    "tanzania_system": "Plurality (\"first-past-the-post\")",
+    "tanzania_ccm": "Chama Cha Mapinduzi (CCM)",
+    "tanzania_ccm_candidate": "Samia Suluhu Hassan (incumbent)",
+    "tanzania_chadema": "Opposition Chadema",
+    "tanzania_chadema_candidate": "disqualified by law",
+    "tanzania_summary": "CCM dominates, opposition weakened; main rival disqualified for not signing a code of conduct.",
+
+    "guineaBissau": "Guinea‑Bissau",
+    "guineaBissau_date": "November 23, 2025",
+    "guineaBissau_what": "President and 102 seats in the Assembly.",
+    "guineaBissau_system": "Two rounds",
+    "guineaBissau_paigc": "PAIGC",
+    "guineaBissau_paigc_candidate": "Domingos Simões Pereira",
+    "guineaBissau_madem": "MADEM‑G15",
+    "guineaBissau_madem_candidate": "Braima Camará",
+    "guineaBissau_prs": "PRS",
+    "guineaBissau_prs_candidate": "Party for Social Renewal",
+    "guineaBissau_summary": "Strong institutional tensions: parliament dissolved, accusations of 'institutional coup'; elections seek stable leaders without abuse of power.",
+
+    "chile": "Chile",
+    "chile_date": "November 16, 2025",
+    "chile_what": "President, entire Chamber of Deputies, and half the Senate.",
+    "chile_system": "Two rounds if no candidate achieves an absolute majority",
+    "chile_right": "Center-right coalition",
+    "chile_right_candidate": "favorite after Boric's wear",
+    "chile_left": "Progressive opposition",
+    "chile_left_candidate": "fragmented, with weak candidacies",
+    "chile_summary": "Critical election amid low approval of the current government; possible political reconfiguration."
+  },
+  "election_report": {
+    "title": "Voting Record Verification",
+    "department": "Department",
+    "department_placeholder": "Select or search a department...",
+    "province": "Province",
+    "province_placeholder": "Select or search a province...",
+    "municipality": "Municipality",
+    "municipality_placeholder": "Select or search a municipality...",
+    "clear_filters": "Clear filters",
+    "total_records": "Total records",
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "no_results": "No records found for the selected filters.",
+    "view_full_image": "View full image",
+    "view_record": "View record {{mesa}}",
+    "record_image_alt": "Record {{mesa}} image",
+    "open_image": "Open image in new tab",
+    "download_image": "Download image",
+    "downloading": "Downloading...",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Manage your electoral site",
+    "version": "ELECTA Admin Panel v1.0",
+    "language_toggle": {
+      "change_to_spanish": "Change to Spanish",
+      "change_to_english": "Change to English"
+    },
+    "sidebar": {
+      "connected_as": "Connected as:",
+      "logout": "Logout"
+    },
+    "sections": {
+      "site_control": {
+        "title": "Site Control",
+        "description": "General site configuration",
+        "general_status": "General Site Status",
+        "maintenance_mode": "Site in Maintenance",
+        "maintenance_description": "Activate maintenance page",
+        "private_access": "Private/Public Site",
+        "private_description": "Requires access code",
+        "access_config": "Access Configuration",
+        "access_code": "Access Code",
+        "access_code_placeholder": "Enter access code",
+        "terms_message": "Terms and Conditions Message",
+        "terms_placeholder": "Terms and conditions message",
+        "save_config": "Save Configuration"
+      },
+      "component_selector": {
+        "title": "Component Selector",
+        "description": "Manage visibility by phase",
+        "phase_selector": "Select Active Phase",
+        "before": "Before",
+        "during": "During",
+        "after": "After",
+        "active_phase": "Active Phase",
+        "active_phase_description": "Only this phase is active. Other phases are deactivated.",
+        "visible_components": "Visible Components - Phase",
+        "components_count": "of {{count}} components visible",
+        "visible": "Visible",
+        "hidden": "Hidden",
+        "save_config": "Save Configuration",
+        "apply_site": "Apply to Website",
+        "save_success": "Configuration for phase \"{{phase}}\" saved successfully",
+        "apply_success": "Configuration for phase \"{{phase}}\" applied to website",
+        "select_phase_first": "Please select an active phase first"
+      },
+      "election_config": {
+        "title": "Election Configuration",
+        "description": "Manage elections",
+        "new_election": "New Election",
+        "election_table": {
+          "election": "Election",
+          "status": "Status",
+          "dates": "Dates",
+          "votes": "Votes",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Active",
+          "upcoming": "Upcoming",
+          "inactive": "Inactive",
+          "unknown": "Unknown"
+        },
+        "form": {
+          "edit_election": "Edit Election",
+          "create_election": "Create New Election",
+          "election_name": "Election Name",
+          "election_name_placeholder": "Election name",
+          "description": "Description",
+          "description_placeholder": "Brief description",
+          "start_date": "Start Date",
+          "end_date": "End Date",
+          "total_voters": "Total Voters",
+          "total_voters_placeholder": "0",
+          "cancel": "Cancel",
+          "update_election": "Update Election",
+          "create_election_button": "Create Election"
+        },
+        "actions": {
+          "edit": "Edit",
+          "activate": "Activate",
+          "deactivate": "Deactivate",
+          "delete": "Delete"
+        },
+        "delete_confirm": "Are you sure you want to delete this election?"
+      },
+      "admin_management": {
+        "title": "Admin Management",
+        "description": "Manage panel users",
+        "header": {
+          "title": "Admin Management",
+          "subtitle": "Manage users with access to the admin panel",
+          "new_admin": "New Administrator"
+        },
+        "form": {
+          "new_admin": "New Administrator",
+          "edit_admin": "Edit Administrator",
+          "username": "Username",
+          "username_placeholder": "user123",
+          "username_required": "Username is required",
+          "username_min_length": "Username must be at least 3 characters long",
+          "email": "Email",
+          "email_placeholder": "admin@electa.com",
+          "email_required": "Email is required",
+          "email_invalid": "Email is not valid",
+          "role": "Role",
+          "role_placeholder": "Select role",
+          "role_required": "Role is required",
+          "is_active": "Active Administrator",
+          "cancel": "Cancel",
+          "create": "Create",
+          "update": "Update",
+          "save": "Save"
+        },
+        "table": {
+          "username": "User",
+          "email": "Email",
+          "role": "Role",
+          "status": "Status",
+          "created": "Created",
+          "actions": "Actions",
+          "principal": "Principal",
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "actions": {
+          "edit": "Edit",
+          "activate": "Activate",
+          "deactivate": "Deactivate",
+          "delete": "Delete",
+          "edit_title": "Edit",
+          "activate_title": "Activate",
+          "deactivate_title": "Deactivate",
+          "delete_title": "Delete"
+        },
+        "delete_confirm": "Are you sure you want to delete this administrator?",
+        "delete_confirm_title": "Confirm Deletion",
+        "delete_confirm_message": "Are you sure you want to delete administrator {{username}}? This action cannot be undone.",
+        "delete_success_title": "Administrator Deleted",
+        "delete_success_message": "Administrator {{username}} has been successfully deleted.",
+        "delete_error_title": "Delete Error",
+        "delete_error_message": "Could not delete administrator. Please try again.",
+        "create_success_title": "Administrator Created",
+        "create_success_message": "Administrator {{username}} has been successfully created.",
+        "create_error_title": "Create Error",
+        "create_error_message": "Could not create administrator. Verify that the username is not duplicated.",
+        "update_success_title": "Administrator Updated",
+        "update_success_message": "Administrator {{username}} has been successfully updated.",
+        "update_error_title": "Update Error",
+        "update_error_message": "Could not update administrator. Verify that the username is not duplicated.",
+        "status_change_success_title": "Status Changed",
+        "status_change_success_message": "Administrator {{username}} status has been successfully changed to {{status}}.",
+        "status_change_error_title": "Status Change Error",
+        "status_change_error_message": "Could not change administrator status. Please try again.",
+        "roles": {
+          "super_admin": "Super Admin",
+          "admin": "Admin",
+          "moderator": "Moderator",
+          "editor": "Editor"
+        }
+      }
+    }
+  }
 }
 

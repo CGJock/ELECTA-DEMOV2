@@ -7,10 +7,8 @@ import  { seedMunicipalities }  from '@db/seeding/seedMunicipalities.js';
 
 import { insertElection } from '@db/seeding/seedElections.js'
 import { seedElectionTypes } from '@db/seeding/seedElectionTypes.js'
-import { insertVotes } from '@db/seeding/seedVotes.js'
 import { setupVotesTrigger } from '@db/triggers.js';
 import  { seedFirstElectionRound } from '@db/seeding/seedFirstRound.js'
-import  { seedSecondElectionRound } from '@db/seeding/seedSecondRound.js'
 
  
 export async function runMigrations() {
@@ -31,14 +29,13 @@ export async function runMigrations() {
   console.log('➤ seedElectionTypes()');
   await seedElectionTypes();
   
-  console.log('➤ insertElection()');
-  await insertElection();
+  // console.log('➤ insertElection()');
+  // await insertElection();
   
-  console.log('➤ seedFirstElectionRound()');
-  await seedFirstElectionRound(1, '2025-08-17');
+  // console.log('➤ seedFirstElectionRound()');
+  // await seedFirstElectionRound(1, '2025-08-17');
 
-  console.log('➤ insertVotes()');
-  await insertVotes();
+
 
   console.log('➤ setupVotesTrigger()');
   await setupVotesTrigger();

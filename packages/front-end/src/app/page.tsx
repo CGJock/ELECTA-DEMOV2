@@ -5,17 +5,22 @@ import dynamic from 'next/dynamic';
 // Componentes
 import { Suspense } from 'react';
 // import GlobalCounter from '../components/GlobalCounter';
-const GlobalCounter = dynamic(() => import('@components/GlobalCounter'), { ssr: false });
-const Map2 = dynamic(() => import('@components/Map'), { ssr: false });
+const GlobalCounter = dynamic(() => import('@components/GlobalCounter') as any, { ssr: false });
+const Map2 = dynamic(() => import('@components/Map') as any, { ssr: false });
 import StatsContainer from '@components/StatsContainer';
 import { IncidentsFlag } from '@components/IncidentsFlag';
+import { ElectionForm } from '@/components/ADMIN-components/createElection';
+import { ActiveElectionSelector } from '@/components/ADMIN-components/setActiveElection';
+import { ActiveElectionDisplay } from '@/components/activeElectionRead';
+import HeaderWrapper from '@components/components-wrappers/HeaderWrapper';
+import FooterWrapper from '@components/components-wrappers/FooterWrapper';
 
 export default function Page() {
 
 return (
-  
-    
-      <Suspense fallback={<div>Loading translations...</div>}>
+  <>
+    <HeaderWrapper />
+    <Suspense fallback={<div>Loading translations...</div>}>
       <div style={{
         flex: 1, // Allow this container to grow
         display: 'flex',
@@ -39,6 +44,10 @@ return (
             marginBottom: '1.5rem' // Increased margin
           }}>
             <GlobalCounter />
+
+            <ElectionForm />
+            <ActiveElectionDisplay />
+            <ActiveElectionSelector />
           </div>
 
           {/* Separator */}
@@ -67,7 +76,7 @@ return (
               alignItems: 'center',
               height: '100%',
             }}>
-              <Map2 />
+              <Map2 incidents={[]} {...({} as any)} />
             </div>
 
             {/* Stats Section */}
@@ -87,8 +96,7 @@ return (
         <IncidentsFlag />
       </div>
       </Suspense>
-      
-    
-    
+      <FooterWrapper onAddIncident={() => {}} />
+    </>
   );
 }
