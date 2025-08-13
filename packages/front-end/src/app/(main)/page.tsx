@@ -6,8 +6,7 @@ import { mockIncidents } from '@data/mockIncidents';
 import IncidentForm from '@components/IncidentForm';
 import { IncidentsFlag } from '@components/IncidentsFlag';
 import type { Incident } from '@/types/election';
-// Eliminado useElectionPhase y FirstRoundResultsBanner
-import SecondRoundBanner from '@/components/SecondRoundBanner';
+
 import WinnerBanner from '@/components/WinnerBanner';
 
 // Componentes
@@ -264,7 +263,7 @@ export default function Page() {
           )}
         </div>
         
-        {/* Línea divisoria moderna (fases eliminadas) */}
+        Línea divisoria moderna (fases eliminadas)
         {!hasWinner && (
           <div style={{
             height: '3px',
@@ -285,7 +284,7 @@ export default function Page() {
         )}
 
         {/* Second Round Banner al final (conservado) */}
-        {!hasWinner && (
+        {/* {!hasWinner && (
           <div 
             data-second-round-banner
             style={{ 
@@ -295,9 +294,9 @@ export default function Page() {
               padding: '0 1rem' 
             }}
           >
-            <SecondRoundBanner isVisible={true} />
+            
           </div>
-        )}
+        )} */}
       </div>
       </Suspense>
       

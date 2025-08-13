@@ -17,7 +17,7 @@ export const useNotifications = () => {
       id,
       type,
       title,
-      message,
+       message: message ?? '',
       duration
     };
 

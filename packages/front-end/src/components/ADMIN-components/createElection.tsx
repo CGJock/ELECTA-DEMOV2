@@ -31,7 +31,7 @@ export const ElectionForm: React.FC = () => {
 
   useEffect(() => {
     // Obtener tipos de elección desde backend
-    fetch('http://localhost:5000/api/get-election-type')
+    fetch('http://localhost:5000/api/get-election-types')
       .then((res) => res.json())
       .then(setElectionTypes)
       .catch((err) => console.error('Error fetching election types:', err));

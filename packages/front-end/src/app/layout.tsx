@@ -9,7 +9,6 @@ import Footer from "@/components/Footer";
 import HeaderWrapper from '@/components/components-wrappers/HeaderWrapper';
 import ClientProviders from '@/components/components-wrappers/i18nProvider';
 import FooterWrapper from '@/components/components-wrappers/FooterWrapper';
-import NotificationService from '@/components/NotificationService';
 import MaintenanceWrapper from '@/components/MaintenanceWrapper';
 import { AuthProvider } from '@/context/authContext';
 
@@ -49,7 +48,7 @@ export default function RootLayout({
         >
           <ClientProviders>
             <div>
-              <NotificationService />
+              {/* <NotificationService /> */}
               <MaintenanceWrapper>
                 {children}
               </MaintenanceWrapper>

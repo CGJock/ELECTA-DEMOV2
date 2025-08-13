@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@components/LanguageSwitcher';
-import SubscriptionBanner from '@components/SubscriptionBanner';
+// import SubscriptionBanner from '@components/SubscriptionBanner';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
@@ -154,7 +154,7 @@ const Header: React.FC = () => {
           </div>
         </div>
       )}
-      <SubscriptionBanner dateStr={dateStr} />
+      {/* <SubscriptionBanner dateStr={dateStr} /> */}
     </>
   );
 };

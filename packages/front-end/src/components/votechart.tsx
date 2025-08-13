@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   LabelList,
 } from 'recharts';
-import { useSocketData } from '@/context/context';
+import { useSocketData,PartyData, GlobalSummary } from '@/context/context';
 import { useTranslation } from 'react-i18next';
 
 type VoteData = {
@@ -27,63 +27,50 @@ interface VoteChartProps {
 }
 
 export default function VoteChart({ active }: VoteChartProps) {
-
-  
-
-  const { globalSummary, breakdownLocData,  selectedLocationCode, timestamp } = useSocketData();
-
+  const { globalSummary, breakdownLocData, selectedLocationCode } = useSocketData();
   const { t } = useTranslation();
 
+  // Elegir resumen actual: global o por locación
+  const currentSummary = selectedLocationCode && breakdownLocData
+    ? breakdownLocData.partyBreakdown
+    : globalSummary?.politicalParties || [];
 
-  const currentSummary = selectedLocationCode
-  ? breakdownLocData  // Usa breakdownLocData si existe, o globalSummary como fallback
-  : globalSummary;
+  const totalVotes = selectedLocationCode && breakdownLocData
+    ? breakdownLocData.totalVotes
+    : globalSummary?.validVotes || 0;
 
-  console.log(`data actual ${currentSummary?.partyBreakdown}`)
-   console.log(`breadownlocdata ${breakdownLocData}`)
-
-  const totalVotes = currentSummary?.totalVotes || 0;
-  console.log(selectedLocationCode)
-
-  const data: VoteData[] = Array.isArray(currentSummary?.partyBreakdown)
-  ? currentSummary!.partyBreakdown.map((party) => ({
-      name: party.name,
-      abbr: party.abbr,
-      votes: party.count,
-      totalVotes,
-      percentage: Number(party.percentage),
-    })).sort((a, b) => b.percentage - a.percentage)
-  : [];
-
+  // Convertir datos para Recharts
+  const data: VoteData[] = currentSummary.map(party => ({
+    name: party.name,
+    abbr: party.abbr,
+    votes: Number(party.count),
+    totalVotes,
+    percentage: Number(party.percentage),
+  })).sort((a, b) => b.percentage - a.percentage);
 
   function generateTicks(max: number, step: number): number[] {
-  const ticks = [];
-  for (let i = 0; i <= max; i += step) {
-    ticks.push(i);
+    const ticks = [];
+    for (let i = 0; i <= max; i += step) ticks.push(i);
+    if (ticks[ticks.length - 1] !== max) ticks.push(max);
+    return ticks;
   }
-  if (ticks[ticks.length - 1] !== max) {
-    ticks.push(max);
-  }
-  return ticks;
-}
 
-const tickValues = generateTicks(totalVotes, 50000);
+  const tickValues = generateTicks(totalVotes, Math.ceil(totalVotes / 5));
 
   useEffect(() => {
-    if (active) {
-      window.dispatchEvent(new Event('resize'));
-    }
+    if (active) window.dispatchEvent(new Event('resize'));
   }, [active]);
 
-    if (!currentSummary || !Array.isArray(currentSummary.partyBreakdown)) {
+  if (!currentSummary.length) {
+    return (
+      <div className="w-full h-96 flex items-center justify-center text-gray-500">
+        Cargando datos de votación...
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-96 flex items-center justify-center text-gray-500">
-      Cargando datos de votación...
-    </div>
-  );
-}
-  return (
-    <div className="w-full h-96 min-w-[300px] min-h-[300px]  rounded-md flex flex-col p-2">
+    <div className="w-full h-96 min-w-[300px] min-h-[300px] rounded-md flex flex-col p-2">
       <div className="text-center text-base font-semibold text-gray-700 mb-1 select-none">
         {selectedLocationCode === null
           ? t('votechart.national_results')
@@ -104,89 +91,48 @@ const tickValues = generateTicks(totalVotes, 50000);
         </div>
 
         <div className="flex-1">
-          {filteredData.length > 0 && (
-            <ResponsiveContainer width="100%" height="100%" key={totalVotes}>
-              <BarChart
-                data={filteredData}
-                layout="vertical"
-                margin={{ top: 20, right: 80, left: 70, bottom: 5 }} // Más espacio a la derecha para los %
-                barCategoryGap="10%" // Espacio entre barras
-              >
-                <XAxis 
-                  type="number" 
-                  domain={[0, totalVotes]} 
-                  ticks={tickValues}
-                  tick={{ fontSize: 11, fill: '#6B7280' }}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="abbr"
-                  width={60} // Ajustado para el nuevo margen
-                  tick={{ 
-                    fontSize: 11, 
-                    fill: '#F5FBFD',
-                    textAnchor: 'end' // Alinear texto a la derecha
-                  }}
-                  interval={0} // Mostrar todas las etiquetas
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <Tooltip
-                  cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
-                  contentStyle={{
-                    backgroundColor: '#1F2937',
-                    borderRadius: 8,
-                    border: '1px solid #374151',
-                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
-                  }}
-                  labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '8px' }}
-                  itemStyle={{ color: '#E5E7EB' }}
-                  formatter={(value: number, name: string, props: any) => {
-                    if (name === 'votes') {
-                      return [
-                        <>
-                          <div style={{ fontWeight: 'bold' }}>{props.payload.name}</div>
-                          <div>{value.toLocaleString()} {t('votechart.votes')}</div>
-                          <div>{props.payload.percentage}%</div>
-                        </>,
-                        'votes'
-                      ];
-                    }
-                    return [value, name];
-                  }}
-                />
-                <Bar
-                  dataKey="votes"
-                  fill="#3B82F6"
-                  radius={[0, 4, 4, 0]}
-                  animationDuration={1000}
-                  animationBegin={0}
-                >
-                  <LabelList
-                    dataKey="votes"
-                    position="right"
-                    formatter={(value: number) => value.toLocaleString()}
-                    style={{
-                      fontSize: '11px',
-                      fill: '#6B7280',
-                      fontWeight: 'bold'
-                    }}
-                  />
-                  <LabelList
-                    dataKey="percentage"
-                    position="insideRight"
-                    formatter={(value: number) => `${value.toFixed(1)}%`}
-                    style={{
-                      fontSize: '10px',
-                      fill: 'white',
-                      fontWeight: 'bold'
-                    }}
-                    offset={30}
-                  />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
+          <ResponsiveContainer width="100%" height="100%" key={totalVotes}>
+            <BarChart
+              data={data}
+              layout="vertical"
+              margin={{ top: 20, right: 80, left: 70, bottom: 5 }}
+              barCategoryGap="10%"
+            >
+              <XAxis type="number" domain={[0, totalVotes]} ticks={tickValues} tick={{ fontSize: 11, fill: '#6B7280' }} />
+              <YAxis
+                type="category"
+                dataKey="abbr"
+                width={60}
+                tick={{ fontSize: 11, fill: '#F5FBFD', textAnchor: 'end' }}
+                interval={0}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip
+                cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+                contentStyle={{ backgroundColor: '#1F2937', borderRadius: 8, border: '1px solid #374151' }}
+                labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: 8 }}
+                itemStyle={{ color: '#E5E7EB' }}
+                formatter={(value, name, props) => {
+                  if (name === 'votes') {
+                    return [
+                      <>
+                        <div style={{ fontWeight: 'bold' }}>{props.payload.name}</div>
+                        <div>{value.toLocaleString()} {t('votechart.votes')}</div>
+                        <div>{props.payload.percentage}%</div>
+                      </>,
+                      'votes'
+                    ];
+                  }
+                  return [value, name];
+                }}
+              />
+              <Bar dataKey="votes" fill="#3B82F6" radius={[0, 4, 4, 0]}>
+                <LabelList dataKey="votes" position="right" formatter={(value: number) => value.toLocaleString()} style={{ fontSize: 11, fill: '#6B7280', fontWeight: 'bold' }} />
+                <LabelList dataKey="percentage" position="insideRight" formatter={(value: number) => `${value.toFixed(1)}%`} style={{ fontSize: 10, fill: 'white', fontWeight: 'bold' }} offset={30} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

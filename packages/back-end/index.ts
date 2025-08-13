@@ -63,11 +63,11 @@ async function main() {
   app.use('/api/post-emails', postmailsRouter)
   // app.use('/api/auth', authRouter);
   app.use('/api/post-emails', postmailsRouter);
-  app.use('/api/get-election-type', getElectionsTypeRouter);
+  app.use('/api/get-election-types', getElectionsTypeRouter);
   app.use('/api/post-election', postElection);
   app.use('/api/get-countries',getCountriesRouter);
   app.use('/api/get_full-active_election',getActiveElectionInfo);
-  app.use('/api/get-all-election-rounds',getAllElectionRounds)
+  app.use('/api/get-all-election-rounds',getAllElectionRounds);
   app.use('/api/post-active-election',postActiveRoundandElection)
   app.use('/api/get-active_election',getActiveElecRouter);
 

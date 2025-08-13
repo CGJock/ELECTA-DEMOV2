@@ -13,17 +13,18 @@ interface VoteBreakdown {
   validPercent: number;
 }
 
-interface PartyData {
-  name: string;
+export interface PartyData {
+  name: string
   abbr: string;
   count: number;
   percentage: number;
 }
 
-interface GlobalSummary {
-  totalVotes: number;
+export interface GlobalSummary {
+  blankVotes: number;
+  nullVotes: number;
+  validVotes: number;
   politicalParties: PartyData[];
-  
 }
 
 interface LocationSummary {
