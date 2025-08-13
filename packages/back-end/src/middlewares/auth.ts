@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_CONFIG, JWTPayload } from '@config/jwt.config.js';
+import { JWT_CONFIG, JWTPayload } from '../config/jwt.config';
 
 export interface AuthenticatedRequest extends Request {
   admin?: JWTPayload;
