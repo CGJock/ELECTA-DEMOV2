@@ -6,7 +6,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { useHelmet } from '@middlerare/security.js';
 
-import  redisClient from '@db/redis.js'
+// import  redisClient from '@db/redis.js'
 
 
 import depRouter from '@routes/departments.js';
@@ -14,11 +14,12 @@ import voteRouter from '@routes/updateVotes.js';
 import newVoteRouter from '@routes/newUpdate.js'
 import getmailsRouter from '@routes/getMails.js';
 import postmailsRouter from '@routes/postEmail.js';
+import authRouter from '@routes/auth.js';
 import { runMigrations } from '@db/migrate.js';
-import { listenToVotesChanges } from '@listeners/listenVotes.js';
-import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
-import { startSummaryIntervals, stopSummaryIntervals } from '@utils/intervalManager.js';
-import { createAdapter } from '@socket.io/redis-streams-adapter';
+// import { listenToVotesChanges } from '@listeners/listenVotes.js';
+// import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
+// // import { startSummaryIntervals, stopSummaryIntervals } from '@utils/intervalManager.js';
+// import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { Pool } from 'pg';
 
 dotenv.config();
@@ -51,6 +52,7 @@ async function main() {
   app.use('/api/votes',newVoteRouter)
   app.use('/api/get-emails', getmailsRouter);
   app.use('/api/post-emails', postmailsRouter)
+  app.use('/api/auth', authRouter);
 
   // Connect Redis using ioredis
   // const redisClient = new Redis(redis_url, {
@@ -73,21 +75,21 @@ async function main() {
   });
 
   // Use the redis-streams-adapter
-  io.adapter(createAdapter(redisClient));
+  // io.adapter(createAdapter(redisClient));
 
   // Custom handlers
-  startSummaryIntervals(io,pool)//starts server intervals
-  setupSocketHandlers(io,pool);
-  listenToVotesChanges(pool,io);
+  // startSummaryIntervals(io,pool)//starts server intervals
+  // setupSocketHandlers(io,pool);
+  // listenToVotesChanges(pool,io);
   // setupGlobalBroadcaster(io,pool);
 
   //stops intervals and close all conections
 const ShutdownServer = async () => {
   console.log('Cerrando servidor...');
 
-  stopSummaryIntervals(); // stops intervals
+  // stopSummaryIntervals(); // stops intervals
 
-  await redisClient.quit(); // closes redis conection
+  // await redisClient.quit(); // closes redis conection
   await pool.end(); // closes Postgres conection
 
   httpServer.close(() => {

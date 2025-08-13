@@ -1,6 +1,7 @@
 {
-  "name": "react",
-  "version": "0.1.0",
+  "name": "electa-bolivia",
+  "version": "1.0.0",
+  "description": "Dashboard Electoral Profesional - Plataforma de monitoreo electoral y visualización de datos en tiempo real para Bolivia",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,9 +9,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "i18n": "next-i18next"
+    "i18n": "next-i18next",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
+
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.2",
@@ -24,10 +29,15 @@
     "next-i18next": "^15.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.59.0",
     "react-i18next": "^15.5.3",
+    "react-select": "^5.10.2",
     "recharts": "^2.15.3",
+    "resend": "^4.8.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
+    "swiper": "^11.2.10",
+    "uuid": "^11.1.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
@@ -38,7 +48,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
-    "nodemon": "^3.1.10",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
   }

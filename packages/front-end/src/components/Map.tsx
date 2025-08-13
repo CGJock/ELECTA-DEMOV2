@@ -5,7 +5,12 @@ import * as echarts from 'echarts';
 import socket from '@contexts/context';
 import { useSocketData } from '@contexts/context';
 import { useTranslation } from 'react-i18next'; 
+import { mockIncidents } from '@data/mockIncidents';
+import type { Incident } from '@/types/election';
+import { IncidentsFlag } from '@components/IncidentsFlag';
 
+// Alias para evitar conflicto con el nombre del componente
+const MapConstructor = window.Map;
 
 interface PartyData {
   name: string;
@@ -21,19 +26,25 @@ interface LocationSummary {
   partyBreakdown: PartyData[];
 }
 
-const map: React.FC = () => {
+interface MapProps {
+  incidents: Incident[];
+}
+
+const Map: React.FC<MapProps> = ({ incidents }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
   const [mounted, setMounted] = useState(false);
-  const geoIdMapRef = useRef<Map<string, string>>(new Map());
+  const geoIdMapRef = useRef<Map<string, string>>(new MapConstructor());
   const { setSelectedLocationCode, selectedLocationCode, breakdownData, setbreakdownLocData} = useSocketData();
   const { t } = useTranslation();
   const [timestamp, setTimestamp] = useState<string | null>(null);
+  const [incidentModalOpen, setIncidentModalOpen] = useState(false);
+  const [focusedIncidentId, setFocusedIncidentId] = useState<string | null>(null);
 
 
   useEffect(() => {
   const handleSummary = (data: LocationSummary) => {
-    console.log('Recieved data by Location:', data);
+    console.log('Received data by Location:', data);
     setbreakdownLocData(data);
     setTimestamp(new Date().toISOString());
   };
@@ -58,11 +69,31 @@ const map: React.FC = () => {
       const response = await fetch('/data/map/geoData.json');
       const geoJson = await response.json();
 
-      const geoIdMap = new Map<string, string>();
+      const geoIdMap = new MapConstructor();
+      const departmentCentroids: Record<string, [number, number]> = {};
       geoJson.features.forEach((feature: any) => {
         const { name, code } = feature.properties;
         if (name && code !== undefined) {
           geoIdMap.set(name, code);
+          
+          // Calculate centroids for incidents
+          function extractCoords(coords: any): [number, number][] {
+            if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+              return [[coords[0], coords[1]]];
+            } else if (Array.isArray(coords)) {
+              return coords.flatMap(extractCoords);
+            } else {
+              return [];
+            }
+          }
+          const allCoords: [number, number][] = extractCoords(feature.geometry.coordinates);
+          let sumLon = 0, sumLat = 0;
+          allCoords.forEach(([lon, lat]) => {
+            sumLon += lon;
+            sumLat += lat;
+          });
+          const n = allCoords.length;
+          departmentCentroids[name] = n > 0 ? [sumLon / n, sumLat / n] : [0, 0];
         }
       });
       geoIdMapRef.current = geoIdMap;
@@ -72,7 +103,7 @@ const map: React.FC = () => {
       if (chartRef.current && isMounted) {
  
  
-        // if there is an instance, it destroys it
+        // if there is an instance, destroy it
   const existingInstance = echarts.getInstanceByDom(chartRef.current);
   if (existingInstance) {
     echarts.dispose(chartRef.current);
@@ -81,14 +112,71 @@ const map: React.FC = () => {
   chartInstance.current = echarts.init(chartRef.current);
 
   chartInstance.current.on('click', (params: any) => {
-    const code = params?.data?.code ?? null; 
-    if (code) {
-      socket.emit('subscribe-to-location', code);
-      setSelectedLocationCode(code);
+    // Click on incident points
+    if (params.seriesType === 'scatter' && params.data.incidentId) {
+      console.log('Click on incident point:', params.data.incidentId);
+      setIncidentModalOpen(true);
+      setFocusedIncidentId(params.data.incidentId);
+    } else {
+      // Click on map (department)
+      const code = params?.data?.code ?? null; 
+      if (code) {
+        socket.emit('subscribe-to-location', code);
+        setSelectedLocationCode(code);
+      }
     }
   });
 
-        
+        // --- INCIDENTS ---
+        // Group incidents by department (using the part before the dash in location)
+        const incidentPoints: any[] = [];
+        const departmentIncidentCount: Record<string, number> = {};
+        incidents.forEach((incident) => {
+          const dept = incident.location.es.split(' - ')[0];
+          departmentIncidentCount[dept] = (departmentIncidentCount[dept] || 0) + 1;
+        });
+        // To distribute points if there are several in the same department
+        const departmentIncidentOffsets: Record<string, number> = {};
+        incidents.forEach((incident) => {
+          const dept = incident.location.es.split(' - ')[0];
+          const centroid = departmentCentroids[dept];
+          if (!centroid) return;
+          const count = departmentIncidentCount[dept];
+          const idx = departmentIncidentOffsets[dept] || 0;
+          // Distribute in circle if there are several
+          let offsetLon = 0, offsetLat = 0;
+          if (count > 1) {
+            const angle = (2 * Math.PI * idx) / count;
+            const radius = 0.3; // degrees, adjust if necessary
+            offsetLon = Math.cos(angle) * radius;
+            offsetLat = Math.sin(angle) * radius;
+          }
+          departmentIncidentOffsets[dept] = idx + 1;
+          incidentPoints.push({
+            name: dept,
+            value: [centroid[0] + offsetLon, centroid[1] + offsetLat],
+            incidentId: incident.id,
+            incident,
+            symbolSize: 8,
+            itemStyle: {
+              color:
+                incident.status === 'stuck'
+                  ? '#ef4444'
+                  : incident.status === 'new'
+                  ? '#2563eb'
+                  : '#22c55e',
+              borderColor: '#fff',
+              borderWidth: 2,
+              shadowBlur: 8,
+              shadowColor:
+                incident.status === 'stuck'
+                  ? '#ef4444'
+                  : incident.status === 'new'
+                  ? '#2563eb'
+                  : '#22c55e',
+            },
+          });
+        });
 
         chartInstance.current.setOption({
           title: {
@@ -182,6 +270,43 @@ const map: React.FC = () => {
                 },
               },
             },
+            // --- INCIDENT POINTS ---
+            {
+              name: 'Incidents',
+              type: 'scatter',
+              coordinateSystem: 'geo',
+              data: incidentPoints,
+              symbol: 'circle',
+              zlevel: 10,
+              tooltip: {
+                show: true,
+                formatter: (params: any) => {
+                  const incident = params.data.incident;
+                  const color =
+                    incident.status === 'stuck'
+                      ? '#ef4444'
+                      : incident.status === 'new'
+                      ? '#2563eb'
+                      : '#22c55e';
+                  return `<b style='color:${color}'>${incident.title.es}</b><br/>${incident.location.es}`;
+                },
+              },
+              emphasis: {
+                itemStyle: {
+                  borderColor: '#fff',
+                  borderWidth: 3,
+                  shadowBlur: 12,
+                  shadowColor: (params: any) => {
+                    const incident = params.data.incident;
+                    return incident.status === 'stuck'
+                      ? '#ef4444'
+                      : incident.status === 'new'
+                      ? '#2563eb'
+                      : '#22c55e';
+                  },
+                },
+              },
+            },
           ],
         });
 
@@ -200,7 +325,7 @@ const map: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [mounted, t, selectedLocationCode]);
+  }, [mounted, t, selectedLocationCode, incidents]);
 
 const getDepartmentName = (code: string | null): string => {
   if (code === null) return t('map.national');
@@ -216,6 +341,19 @@ const getDepartmentName = (code: string | null): string => {
 
   return (
     <div className="flex flex-col items-center mt-6">
+      {/* IncidentsFlag modal controlled from Map */}
+      <IncidentsFlag
+        key={focusedIncidentId}
+        incidents={incidents}
+        isOpen={incidentModalOpen}
+        focusedIncidentId={focusedIncidentId || undefined}
+        hideButton={incidentModalOpen}
+        onIncidentsChange={() => {}}
+        onClose={() => {
+          setIncidentModalOpen(false);
+          setFocusedIncidentId(null);
+        }}
+      />
          {selectedLocationCode !== null && (
           <div className="w-full text-center mt-3" style={{ minHeight: '30px' }}>
             <button
@@ -257,4 +395,4 @@ const getDepartmentName = (code: string | null): string => {
   );
 };
 
-export default map;
+export default Map;

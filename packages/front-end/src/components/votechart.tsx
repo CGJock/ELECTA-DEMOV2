@@ -14,7 +14,6 @@ import {
 import { useSocketData } from '@/context/context';
 import { useTranslation } from 'react-i18next';
 
-
 type VoteData = {
   name: string;
   abbr: string;
@@ -105,42 +104,84 @@ const tickValues = generateTicks(totalVotes, 50000);
         </div>
 
         <div className="flex-1">
-          {data.length > 0 && (
+          {filteredData.length > 0 && (
             <ResponsiveContainer width="100%" height="100%" key={totalVotes}>
               <BarChart
-                data={data}
+                data={filteredData}
                 layout="vertical"
-                margin={{ top: 20, right: 50, left: 10, bottom: 5 }}
+                margin={{ top: 20, right: 80, left: 70, bottom: 5 }} // Más espacio a la derecha para los %
+                barCategoryGap="10%" // Espacio entre barras
               >
-                <XAxis type="number" domain={[0, totalVotes]} ticks={tickValues} />
+                <XAxis 
+                  type="number" 
+                  domain={[0, totalVotes]} 
+                  ticks={tickValues}
+                  tick={{ fontSize: 11, fill: '#6B7280' }}
+                />
                 <YAxis
                   type="category"
-                  dataKey="abbr" 
-                  width={60}
-                  tick={{ fontSize: 12, fill: '#F5FBFD' }}
-                  interval={0}
+                  dataKey="abbr"
+                  width={60} // Ajustado para el nuevo margen
+                  tick={{ 
+                    fontSize: 11, 
+                    fill: '#F5FBFD',
+                    textAnchor: 'end' // Alinear texto a la derecha
+                  }}
+                  interval={0} // Mostrar todas las etiquetas
+                  axisLine={false}
+                  tickLine={false}
                 />
                 <Tooltip
-                  cursor={{ fill: 'transparent' }}
+                  cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
                   contentStyle={{
-                    backgroundColor: '#333',
+                    backgroundColor: '#1F2937',
                     borderRadius: 8,
-                    borderColor: '#555',
+                    border: '1px solid #374151',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
                   }}
-                  labelStyle={{ color: 'white', fontWeight: 'bold' }}
-                  itemStyle={{ color: 'white' }}
-                  formatter={(value: number, name: string) =>
-                    name === 'votes' ? [`${value}`, t('votechart.votes')] : [`${value}%`, t('votechart.percentage')]
-                  }
+                  labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '8px' }}
+                  itemStyle={{ color: '#E5E7EB' }}
+                  formatter={(value: number, name: string, props: any) => {
+                    if (name === 'votes') {
+                      return [
+                        <>
+                          <div style={{ fontWeight: 'bold' }}>{props.payload.name}</div>
+                          <div>{value.toLocaleString()} {t('votechart.votes')}</div>
+                          <div>{props.payload.percentage}%</div>
+                        </>,
+                        'votes'
+                      ];
+                    }
+                    return [value, name];
+                  }}
                 />
-                <Bar dataKey="votes" fill="#3B82F6">
+                <Bar
+                  dataKey="votes"
+                  fill="#3B82F6"
+                  radius={[0, 4, 4, 0]}
+                  animationDuration={1000}
+                  animationBegin={0}
+                >
+                  <LabelList
+                    dataKey="votes"
+                    position="right"
+                    formatter={(value: number) => value.toLocaleString()}
+                    style={{
+                      fontSize: '11px',
+                      fill: '#6B7280',
+                      fontWeight: 'bold'
+                    }}
+                  />
                   <LabelList
                     dataKey="percentage"
-                    position="right"
-                    dx={-20}
-                    dy={-1}
-                    formatter={(val: number) => `${val}%`}
-                    style={{ fill: '#10B981', fontWeight: 'bold', fontSize: '10px' }}
+                    position="insideRight"
+                    formatter={(value: number) => `${value.toFixed(1)}%`}
+                    style={{
+                      fontSize: '10px',
+                      fill: 'white',
+                      fontWeight: 'bold'
+                    }}
+                    offset={30}
                   />
                 </Bar>
               </BarChart>
@@ -149,15 +190,8 @@ const tickValues = generateTicks(totalVotes, 50000);
         </div>
       </div>
 
-      <div className="text-center mt-2 text-sm text-gray-600 select-none">
-        <label>{t('votechart.total_votes')}</label>
-        {timestamp && (
-          <div className="text-center mt-1 text-xs text-gray-500 select-none italic">
-            {t('votechart.timestamp', {
-              date: new Date(timestamp).toLocaleString()
-            })}
-          </div>
-        )}
+      {/* Excel download button */}
+      <div className="mt-4 flex justify-center">
         <DownloadExcel />
       </div>
     </div>

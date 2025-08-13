@@ -1,14 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { AlertTriangle, X, Clock, MapPin } from "lucide-react"
-import type { Incident } from "../types/election"
-import { mockIncidents } from "../data/mockIncidents"
+import { useState, useEffect, useRef } from "react"
+import { AlertTriangle, X, Clock, MapPin, Settings, Languages } from "lucide-react"
+import type { Incident } from '@/types/election';
+import { mockIncidents } from '@data/mockIncidents';
 import { useTranslation } from 'react-i18next'
+import TranslationConfig from './TranslationConfig';
+import { useTranslationService } from '@/hooks/useTranslationService';
 
 interface IncidentsFlagProps {
   incidents?: Incident[]
   onIncidentsChange?: (incidents: Incident[]) => void
+  isOpen?: boolean;
+  focusedIncidentId?: string;
+  hideButton?: boolean;
+  onClose?: () => void;
 }
 
 // Mock socket functions for demo purposes
@@ -28,11 +34,25 @@ const emitIncidentUpdate = (incident: Incident) => {
   console.log('Mock socket emitting incident:', incident)
 }
 
-export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onIncidentsChange }: IncidentsFlagProps) {
+// NUEVO: sistema de status de incidentes con colores
+const incidentStatus: Record<string, string> = {
+  stuck: '#ef4444',      // ongoing/stuck incidents (rojo)
+  new: '#2563eb',        // newly reported incidents (azul)
+  resolved: '#22c55e'    // completed/resolved incidents (verde)
+}
+
+export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onIncidentsChange, isOpen: isOpenProp, focusedIncidentId, hideButton = false, onClose }: IncidentsFlagProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [incidents, setIncidents] = useState<Incident[]>(initialIncidents)
   const [mounted, setMounted] = useState(false)
+  const [showTranslationConfig, setShowTranslationConfig] = useState(false)
   const { t, i18n } = useTranslation();
+
+  // Hook para el servicio de traducción
+  const { isConfigured: isTranslationConfigured } = useTranslationService();
+
+  // Nuevo: refs para incidentes
+  const incidentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   useEffect(() => {
     setMounted(true)
@@ -70,6 +90,17 @@ export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onI
     }
   }, [initialIncidents, mounted])
 
+  // Sincronizar apertura externa
+  useEffect(() => {
+    if (typeof isOpenProp === 'boolean') setIsOpen(isOpenProp);
+  }, [isOpenProp]);
+
+  useEffect(() => {
+    if (focusedIncidentId && incidentRefs.current[focusedIncidentId]) {
+      incidentRefs.current[focusedIncidentId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [focusedIncidentId, isOpen]);
+
   const handleAddIncident = (incident: Omit<Incident, 'id' | 'timestamp'>) => {
     const newIncident: Incident = {
       ...incident,
@@ -84,18 +115,26 @@ export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onI
       return updated
     })
   }
-//Rate the severity of the incident and return a corresponding color class
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "high":
-        return "text-orange-400 bg-orange-500/20"
-      case "medium":
-        return "text-blue-400 bg-blue-500/20"
-      case "low":
-        return "text-green-400 bg-green-500/20"
+
+  // Elimina getSeverityColor y reemplaza por getStatusColor
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'stuck':
+        return 'text-red-400 bg-red-500/20';
+      case 'new':
+        return 'text-blue-400 bg-blue-500/20';
+      case 'resolved':
+        return 'text-green-400 bg-green-500/20';
       default:
-        return "text-gray-400 bg-gray-500/20"
+        return 'text-gray-400 bg-gray-500/20';
     }
+  }
+
+  // NUEVO: función para el color del círculo del botón basada en status
+  function getFlagColor(incidents: Incident[]): string {
+    if (incidents.some((i: Incident) => i.status === 'stuck')) return incidentStatus.stuck;
+    if (incidents.some((i: Incident) => i.status === 'new')) return incidentStatus.new;
+    return incidentStatus.resolved;
   }
 
   const formatTime = (timestamp: string) => {
@@ -105,83 +144,92 @@ export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onI
     })
   }
 
-  if (!mounted) {
-    return null
-  }
+  const handleClose = () => {
+    setIsOpen(false);
+    if (onClose) onClose();
+  };
+
+  if (!mounted) return null;
 
   return (
     <>
-      {/* Flag Button */}
-      <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-50">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          style={{
-            background: 'linear-gradient(135deg, #10B981 0%, #2563EB 100%)',
-            color: '#E0FFE6',
-            padding: '1.2rem 0.4rem',
-            borderTopLeftRadius: '10px',
-            borderBottomLeftRadius: '10px',
-            border: '2px solid #10B981',
-            borderRight: 'none',
-            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.18)',
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.3rem',
-            minWidth: '44px',
-            writingMode: 'vertical-rl',
-            textOrientation: 'mixed',
-            cursor: 'pointer'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, #10B981 0%, #34D399 100%)';
-            e.currentTarget.style.color = '#0F172A';
-            e.currentTarget.style.border = '2px solid #10B981';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, #10B981 0%, #2563EB 100%)';
-            e.currentTarget.style.color = '#E0FFE6';
-            e.currentTarget.style.border = '2px solid #10B981';
-          }}
-        >
-          <AlertTriangle size={18} />
-          <span style={{ fontWeight: 'bold', fontSize: '0.7rem' }}>{t('incidents.title')}</span>
-          {incidents.length > 0 && (
-            <span style={{
-              background: getFlagColor(incidents),
-              color: '#fff',
-              borderRadius: '50%',
-              width: '16px',
-              height: '16px',
+      {/* Solo muestro el botón si el modal NO está abierto y hideButton es false */}
+      {(!hideButton && !isOpen) && (
+        <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-50">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            style={{
+              background: 'linear-gradient(135deg, #10B981 0%, #2563EB 100%)',
+              color: '#E0FFE6',
+              padding: '1.2rem 0.4rem',
+              borderTopLeftRadius: '10px',
+              borderBottomLeftRadius: '10px',
+              border: '2px solid #10B981',
+              borderRight: 'none',
+              boxShadow: '0 4px 16px rgba(16, 185, 129, 0.18)',
+              transition: 'all 0.3s ease',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '0.65rem',
-              fontWeight: 'bold'
-            }}>
-              {incidents.length}
-            </span>
-          )}
-        </button>
-      </div>
+              gap: '0.3rem',
+              minWidth: '44px',
+              writingMode: 'vertical-rl',
+              textOrientation: 'mixed',
+              cursor: 'pointer',
+              width: '44px',
+              maxWidth: '44px',
+            }}
+            className="sm:w-[44px] sm:max-w-[44px] sm:p-1 sm:gap-1 sm:min-w-0 sm:writing-mode-initial sm:text-orientation-initial group"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, #10B981 0%, #34D399 100%)';
+              e.currentTarget.style.color = '#0F172A';
+              e.currentTarget.style.border = '2px solid #10B981';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, #10B981 0%, #2563EB 100%)';
+              e.currentTarget.style.color = '#E0FFE6';
+              e.currentTarget.style.border = '2px solid #10B981';
+            }}
+            aria-label={t('incidents.reports')}
+            title={t('incidents.reports')}
+          >
+            <AlertTriangle size={18} />
+            {/* Solo muestra el texto en desktop */}
+            <span className="hidden md:inline" style={{ fontWeight: 'bold', fontSize: '0.7rem' }}>{t('incidents.reports')}</span>
+            {incidents.length > 0 && (
+              <span style={{
+                background: getFlagColor(incidents),
+                color: '#fff',
+                borderRadius: '50%',
+                width: '16px',
+                height: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.65rem',
+                fontWeight: 'bold',
+                marginTop: '2px',
+              }}>
+                {incidents.length}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Incidents Panel */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex">
-          {/* Backdrop */}
-          <div 
-            className="flex-1 bg-black/50 backdrop-blur-sm" 
-            onClick={() => setIsOpen(false)} 
-          />
-
-          {/* Panel */}
+        <div className="fixed top-0 right-0 h-full z-50">
           <div style={{
             width: '384px',
+            height: '100%',
             background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
             borderLeft: '2px solid #374151',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-            overflow: 'hidden'
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            position: 'relative'
           }}>
             <div style={{
               padding: '1rem',
@@ -201,85 +249,136 @@ export function IncidentsFlag({ incidents: initialIncidents = mockIncidents, onI
               }}>
                 <AlertTriangle style={{ color: '#10B981' }} size={20} />
                 <span>{t('incidents.reports')}</span>
+                {isTranslationConfigured && (
+                  <Languages 
+                    className="text-cyan-400" 
+                    size={16} 
+                  />
+                )}
               </h3>
-              <button 
-                onClick={() => setIsOpen(false)} 
-                style={{
-                  color: '#64748B',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'color 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#64748B'}
-              >
-                <X size={20} />
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                {/* Botón de configuración de traducción */}
+                <button
+                  onClick={() => setShowTranslationConfig(true)}
+                  style={{
+                    color: '#64748B',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'color 0.3s ease',
+                    padding: '0.25rem',
+                    borderRadius: '0.25rem'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#22D3EE'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#64748B'}
+                  title="Configurar traducción automática"
+                >
+                  <Settings size={16} />
+                </button>
+                {/* Botón de cerrar */}
+                <button 
+                  onClick={handleClose} 
+                  style={{
+                    color: '#64748B',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'color 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#64748B'}
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             <div style={{
-              overflowY: 'auto',
-              height: 'calc(100vh - 80px)',
-              paddingBottom: '5rem'
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              minHeight: 0,
+              justifyContent: 'space-between',
             }}>
-              {incidents.length === 0 ? (
-                <div style={{
-                  padding: '2rem',
-                  textAlign: 'center',
-                  color: '#64748B'
-                }}>
-                  <AlertTriangle size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-                  <p>{t('incidents.no_incidents')}</p>
-                </div>
-              ) : (
-                <div style={{
-                  padding: '1rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1rem'
-                }}>
-                  {incidents.map((incident) => (
-                    <div
-                      key={incident.id}
-                      style={{
-                        background: 'rgba(51, 65, 85, 0.3)',
-                        borderRadius: '12px',
-                        padding: '1rem',
-                        border: '2px solid #374151',
-                        transition: 'all 0.3s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.border = '2px solid #10B981';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.border = '2px solid #374151';
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <AlertTriangle style={{ color: '#facc15' }} size={18} />
-                        <span style={{ fontWeight: 'bold', color: '#fff' }}>{incident.title[i18n.language as 'es' | 'en'] || incident.title['es']}</span>
-                        <span className={getSeverityColor(incident.severity)} style={{ fontSize: '0.8rem', marginLeft: 'auto' }}>{t(`incidents.severity_${incident.severity}`)}</span>
+              <div style={{
+                overflowY: 'auto',
+                flex: 1,
+                minHeight: 0,
+                paddingBottom: 0,
+              }}>
+                {incidents.length === 0 ? (
+                  <div style={{
+                    padding: '2rem',
+                    textAlign: 'center',
+                    color: '#64748B'
+                  }}>
+                    <AlertTriangle size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+                    <p>{t('incidents.no_incidents')}</p>
+                  </div>
+                ) : (
+                  <div style={{
+                    padding: '1rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem'
+                  }}>
+                    {incidents.map((incident) => (
+                      <div
+                        key={incident.id}
+                        ref={el => { incidentRefs.current[incident.id] = el; }}
+                        style={{
+                          background: incident.id === focusedIncidentId ? 'rgba(239,68,68,0.25)' : 'rgba(51, 65, 85, 0.3)',
+                          borderRadius: '12px',
+                          padding: '1rem',
+                          border: incident.id === focusedIncidentId ? '2px solid #ef4444' : '2px solid #374151',
+                          boxShadow: incident.id === focusedIncidentId ? '0 0 0 2px #ef4444' : undefined,
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.border = incident.id === focusedIncidentId ? '2px solid #ef4444' : '2px solid #10B981';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.border = incident.id === focusedIncidentId ? '2px solid #ef4444' : '2px solid #374151';
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                          <AlertTriangle style={{ color: '#facc15' }} size={18} />
+                          <span style={{ fontWeight: 'bold', color: '#fff' }}>{incident.title[i18n.language as 'es' | 'en'] || incident.title['es']}</span>
+                          <span className={getStatusColor(incident.status)} style={{ fontSize: '0.8rem', marginLeft: 'auto' }}>{t(`incidents.status_${incident.status}`)}</span>
+                        </div>
+                        <div style={{ color: '#cbd5e1', fontSize: '0.95rem', marginBottom: '0.5rem' }}>{incident.description[i18n.language as 'es' | 'en'] || incident.description['es']}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', fontSize: '0.85rem' }}>
+                          <MapPin size={14} /> {incident.location[i18n.language as 'es' | 'en'] || incident.location['es']}
+                          <Clock size={14} style={{ marginLeft: '1rem' }} /> {formatTime(incident.timestamp)}
+                        </div>
                       </div>
-                      <div style={{ color: '#cbd5e1', fontSize: '0.95rem', marginBottom: '0.5rem' }}>{incident.description[i18n.language as 'es' | 'en'] || incident.description['es']}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', fontSize: '0.85rem' }}>
-                        <MapPin size={14} /> {incident.location[i18n.language as 'es' | 'en'] || incident.location['es']}
-                        <Clock size={14} style={{ marginLeft: '1rem' }} /> {formatTime(incident.timestamp)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Disclaimer */}
+              <div style={{
+                fontSize: '0.68rem',
+                color: '#64748B',
+                textAlign: 'center',
+                padding: '0.7rem 1.2rem 1.2rem 1.2rem',
+                lineHeight: 1.4,
+                borderTop: '1px solid #374151',
+                background: 'rgba(30,41,59,0.92)',
+                width: '100%',
+              }}>
+                {t('incidents.disclaimer')}
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Modal de configuración de traducción */}
+      <TranslationConfig 
+        isOpen={showTranslationConfig} 
+        onClose={() => setShowTranslationConfig(false)} 
+      />
     </>
   )
-}
-
-function getFlagColor(incidents: Incident[]): string {
-  if (incidents.some((i: Incident) => i.severity === 'high')) return '#ef4444';
-  if (incidents.some((i: Incident) => i.severity === 'medium')) return '#facc15';
-  return '#22c55e';
 } 

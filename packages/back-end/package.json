@@ -4,30 +4,34 @@
   "private": true,
   "type": "module",
   "main": "index.js",
-"scripts": {
-  "build": "pnpm exec tsc --project tsconfig.json && pnpm exec tsc-alias && pnpm exec cpy \"data/**/*\" --cwd=. dist/data",
-  "dev": "tsx watch index.ts",
-  "start": "node -r ./register-tsconfig-paths.js dist/index.js"
-},
+  "scripts": {
+    "build": "pnpm exec tsc --project tsconfig.json && pnpm exec tsc-alias && pnpm exec cpy \"data/**/*\" --cwd=. dist/data",
+    "dev": "tsx watch index.ts",
+    "start": "node -r ./register-tsconfig-paths.js dist/index.js"
+  },
   "dependencies": {
-    "shared": "*",
     "@socket.io/redis-streams-adapter": "^0.2.2",
     "@upstash/redis": "^1.35.1",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.6.0",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.1",
     "helmet": "^8.1.0",
     "ioredis": "^5.6.1",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
     "redis": "^5.6.1",
+    "shared": "*",
     "socket.io": "^4.8.1",
     "xlsx": "^0.18.5",
     "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.19.2",
     "@types/pg": "^8.15.4",
     "@types/socket.io": "^3.0.2",
