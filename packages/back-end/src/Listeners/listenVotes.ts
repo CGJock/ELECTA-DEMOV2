@@ -8,6 +8,9 @@ export async function listenToVotesChanges(pool: Pool, io: Server) {
   await client.query('LISTEN votes_channel');
   console.log(' Listening to channel: votes_channel');
 
+   let debounceTimeout: NodeJS.Timeout | null = null;
+   let latestData: any = null;
+
 
   client.on('notification', async (msg) => {
     console.log(' Notificación recibida desde PostgreSQL');
@@ -16,7 +19,9 @@ export async function listenToVotesChanges(pool: Pool, io: Server) {
       const data = JSON.parse(msg.payload!);
       console.log(' Payload parseado:', data);
 
-      const enhancedData = toPercenData(data)
+      const enhancedData = toPercenData(data);
+
+      latestData = enhancedData;
 
       console.log('datos desde listen votes:', enhancedData);
 
@@ -24,16 +29,20 @@ export async function listenToVotesChanges(pool: Pool, io: Server) {
       console.log(' Intentando guardar en Redis...');
       const redisResult = await redisClient.set(
         'latest:vote:data',
-        JSON.stringify(enhancedData),
+        JSON.stringify(latestData),
         'EX',
         600 // Elimina después de 10 minutos
         // 'NX' // Quita 'NX' si quieres sobreescribir siempre
       );
-      console.log(' Resultado de Redis SET:', redisResult);
 
-      // Emitir por socket
-      console.log('Enviando evento "full-vote-data" por socket...',enhancedData);
-      io.emit('full-vote-data', enhancedData);
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+
+      // Espera 500ms sin nuevas notificaciones para emitir al socket
+      debounceTimeout = setTimeout(() => {
+        io.emit('full-vote-data', latestData);
+        console.log('Emitiendo evento "full-vote-data" por socket con debounce', latestData);
+        debounceTimeout = null;
+      }, 500);
     } catch (e) {
       console.error(' Error procesando NOTIFY payload:', e);
     }

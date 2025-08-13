@@ -9,6 +9,9 @@ const GlobalCounter = dynamic(() => import('@components/GlobalCounter') as any, 
 const Map2 = dynamic(() => import('@components/Map') as any, { ssr: false });
 import StatsContainer from '@components/StatsContainer';
 import { IncidentsFlag } from '@components/IncidentsFlag';
+import { ElectionForm } from '@/components/ADMIN-components/createElection';
+import { ActiveElectionSelector } from '@/components/ADMIN-components/setActiveElection';
+import { ActiveElectionDisplay } from '@/components/activeElectionRead';
 import HeaderWrapper from '@components/components-wrappers/HeaderWrapper';
 import FooterWrapper from '@components/components-wrappers/FooterWrapper';
 
@@ -41,6 +44,10 @@ return (
             marginBottom: '1.5rem' // Increased margin
           }}>
             <GlobalCounter />
+
+            <ElectionForm />
+            <ActiveElectionDisplay />
+            <ActiveElectionSelector />
           </div>
 
           {/* Separator */}

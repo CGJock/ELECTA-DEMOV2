@@ -54,51 +54,51 @@ export async function setupVotesTrigger(): Promise<void> {
     // Crear o reemplazar la función que envía la suma total desde ballots_data
     await pool.query(`
       CREATE OR REPLACE FUNCTION notify_ballots_data()
-        RETURNS TRIGGER AS $$
-        DECLARE
-          payload TEXT;
-          validVotes INTEGER;
-          blankVotes INTEGER;
-          nullVotes INTEGER;
-          totalVotes INTEGER;
-        BEGIN
-          WITH party_votes_per_ballot AS (
-            SELECT
-              id,
-              SUM((party ->> 'votes')::INTEGER) AS validVotes
-            FROM ballots_data,
-            LATERAL jsonb_array_elements(raw_data -> 'parties') AS party
-            WHERE election_round_id = NEW.election_round_id
-            GROUP BY id
-          ),
-          votes_summary AS (
-            SELECT
-              p.validVotes,
-              (b.raw_data ->> 'blankVotes')::INTEGER AS blankVotes,
-              (b.raw_data ->> 'nullVotes')::INTEGER AS nullVotes
-            FROM ballots_data b
-            JOIN party_votes_per_ballot p ON b.id = p.id
-            WHERE b.election_round_id = NEW.election_round_id
-          )
-          SELECT
-            COALESCE(SUM(validVotes), 0),
-            COALESCE(SUM(blankVotes), 0),
-            COALESCE(SUM(nullVotes), 0),
-            COALESCE(SUM(validVotes + blankVotes + nullVotes), 0)
-          INTO validVotes, blankVotes, nullVotes, totalVotes
-          FROM votes_summary;
+  RETURNS TRIGGER AS $$
+  DECLARE
+    payload TEXT;
+    validVotes INTEGER;
+    blankVotes INTEGER;
+    nullVotes INTEGER;
+    totalVotes INTEGER;
+  BEGIN
+    WITH party_votes_per_ballot AS (
+      SELECT
+        id,
+        SUM((party ->> 'votes')::INTEGER) AS validVotes
+      FROM ballots_data,
+      LATERAL jsonb_array_elements(raw_data -> 'parties') AS party
+      WHERE election_round_id = NEW.election_round_id
+      GROUP BY id
+    ),
+    votes_summary AS (
+      SELECT
+        p.validVotes,
+        (b.raw_data ->> 'blankVotes')::INTEGER AS blankVotes,
+        (b.raw_data ->> 'nullVotes')::INTEGER AS nullVotes
+      FROM ballots_data b
+      JOIN party_votes_per_ballot p ON b.id = p.id
+      WHERE b.election_round_id = NEW.election_round_id
+    )
+    SELECT
+      COALESCE(SUM(vs.validVotes), 0),
+      COALESCE(SUM(vs.blankVotes), 0),
+      COALESCE(SUM(vs.nullVotes), 0),
+      COALESCE(SUM(vs.validVotes + vs.blankVotes + vs.nullVotes), 0)
+    INTO validVotes, blankVotes, nullVotes, totalVotes
+    FROM votes_summary vs;
 
-          payload := json_build_object(
-            'validVotes', validVotes,
-            'blankVotes', blankVotes,
-            'nullVotes', nullVotes,
-            'totalVotes', totalVotes
-          )::TEXT;
+    payload := json_build_object(
+      'validVotes', validVotes,
+      'blankVotes', blankVotes,
+      'nullVotes', nullVotes,
+      'totalVotes', totalVotes
+    )::TEXT;
 
-          PERFORM pg_notify('votes_channel', payload);
-          RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
+    PERFORM pg_notify('votes_channel', payload);
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql;
     `);
 
     console.log('Function "notify_ballots_data" created or replaced.');

@@ -80,9 +80,8 @@
 // }
 
 //new location 
-
 import { Pool } from 'pg';
-import { getLatestElectionRoundId } from '@utils/getLastRound.js';
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 import redisClient from '@db/redis.js';
 
 export interface PartySummary {
@@ -100,61 +99,70 @@ export interface LocationSummary {
 }
 
 export async function getLocationSummary(db: Pool, locationCode: string): Promise<LocationSummary> {
+  const key = `location:summary:${locationCode}`;
 
-  const Key = `location:summary:${locationCode}`;
+  const cached = await redisClient.get(key);
+  if (cached) return JSON.parse(cached) as LocationSummary;
 
-  const cached = await redisClient.get(Key);
-  if (cached) {
-    return JSON.parse(cached) as LocationSummary;
+  const roundId = await getActiveElectionRoundId();
+
+  if (!roundId) {
+    return {
+      locationCode,
+      locationName: `ID ${locationCode}`,
+      totalVotes: 0,
+      partyBreakdown: [],
+    };
   }
 
-  const roundId = await getLatestElectionRoundId();
-  if (!roundId) throw new Error('No election round available');
-
-  // Sumar votos válidos, blancos y nulos para el locationCode
+  // Totales
   const totalsResult = await db.query(
     `
     SELECT
-      COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS validVotes,
-      COALESCE(SUM((b.raw_data ->> 'blankVotes')::INTEGER), 0) AS blankVotes,
-      COALESCE(SUM((b.raw_data ->> 'nullVotes')::INTEGER), 0) AS nullVotes
-    FROM ballots_data b,
-    LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party)
+      COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS "validVotes",
+      COALESCE(SUM((b.raw_data ->> 'blankVotes')::INTEGER), 0) AS "blankVotes",
+      COALESCE(SUM((b.raw_data ->> 'nullVotes')::INTEGER), 0) AS "nullVotes"
+    FROM ballots_data b
+    JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party) ON true
     WHERE b.election_round_id = $1
       AND b.department_code = $2
     `,
     [roundId, locationCode]
   );
 
-  const validVotes = Number(totalsResult.rows[0].validvotes);
-  const blankVotes = Number(totalsResult.rows[0].blankvotes);
-  const nullVotes = Number(totalsResult.rows[0].nullvotes);
+  const validVotes = Number(totalsResult.rows[0]?.validVotes || 0);
+  const blankVotes = Number(totalsResult.rows[0]?.blankVotes || 0);
+  const nullVotes = Number(totalsResult.rows[0]?.nullVotes || 0);
   const totalVotes = validVotes + blankVotes + nullVotes;
 
-  // Votos por partido para el locationCode
+  // Votos por partido
   const votesPerPartyResult = await db.query(
     `
     SELECT 
-      p.party ->> 'abbr' AS abbr,
-      COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS count
-    FROM ballots_data b,
-    LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party)
+      COALESCE(pp.name, p.party ->> 'abbr') AS "name",
+      p.party ->> 'abbr' AS "abbr",
+      COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS "count"
+    FROM ballots_data b
+    CROSS JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party)
+    LEFT JOIN political_parties pp ON pp.abbr = p.party ->> 'abbr'
     WHERE b.election_round_id = $1
       AND b.department_code = $2
-    GROUP BY abbr
+    GROUP BY COALESCE(pp.name, p.party ->> 'abbr'), p.party ->> 'abbr'
     ORDER BY count DESC
     `,
     [roundId, locationCode]
   );
 
   const partyBreakdown: PartySummary[] = votesPerPartyResult.rows.map(row => ({
-    name: row.abbr, // No tienes nombre, sólo abreviación en raw_data; si hay otro campo, cambia aquí
+    name: row.name,
     abbr: row.abbr,
     count: Number(row.count),
-    percentage: totalVotes ? ((Number(row.count) / totalVotes) * 100).toFixed(2) : '0.00',
+    percentage: validVotes
+      ? ((Number(row.count) / validVotes) * 100).toFixed(2)
+      : '0.00',
   }));
 
-  // Obtener nombre del departamento
+  // Nombre de ubicación
   const locationNameResult = await db.query(
     `SELECT name FROM departments WHERE code = $1`,
     [locationCode]
@@ -168,7 +176,7 @@ export async function getLocationSummary(db: Pool, locationCode: string): Promis
     partyBreakdown,
   };
 
-  await redisClient.set(Key, JSON.stringify(summary), 'EX', 600);
+  await redisClient.set(key, JSON.stringify(summary), 'EX', 600);
 
   return summary;
 }

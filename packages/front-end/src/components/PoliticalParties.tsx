@@ -2,16 +2,18 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import type { PoliticalParty } from '@/types/election';
-import { mockParties } from '@data/mockData';
-import { useTranslation } from 'react-i18next';
-import { useSocketData } from '@contexts/context';
-import { CandidateModal } from '@components/CandidateModal';
+import type { PoliticalParty } from "@/types/election"
+import { mockParties } from "@data/mockData"
+import { useTranslation } from 'react-i18next'
+import { useSocketData } from '@contexts/context' 
+import { CandidateModal } from '@components/CandidateModal'
 
 interface PoliticalPartiesProps {
-  parties?: PoliticalParty[];
-  onPartiesChange?: (parties: PoliticalParty[]) => void;
+  parties?: PoliticalParty[]
+  onPartiesChange?: (parties: PoliticalParty[]) => void
 }
+
+
 
 export function PoliticalParties({
   parties: initialParties = mockParties,
@@ -24,226 +26,146 @@ export function PoliticalParties({
   const { t } = useTranslation();
   const { selectedLocationCode, globalSummary, breakdownLocData } = useSocketData();
 
-  // Party base (static structure with names, photos, etc.)
+  console.log('globalsummary',globalSummary)
+
+   if (!globalSummary && !breakdownLocData) {
+    return <div className="text-white p-4">{t('loading')}...</div>;
+  }
+
+  // Base de partidos (estructura estática con nombres, fotos, etc.)
   const parties = initialParties;
 
-  // Dynamic source of votes and percentages
-  const source = selectedLocationCode && breakdownLocData
-    ? breakdownLocData
-    : globalSummary;
+  // Fuente dinámica de votos y porcentajes
+  // Fuente dinámica de votos y porcentajes
+  const sourcePartyBreakdown = selectedLocationCode && breakdownLocData
+  ? breakdownLocData?.partyBreakdown
+  : globalSummary?.politicalParties; 
 
-  console.log(`info para political parties ${JSON.stringify(source?.partyBreakdown)}`)
+  console.log('datadelasparties',sourcePartyBreakdown)
 
-  // Enrich parties with updated data from socket
-const enrichedParties = parties.map((party) => {
-  // Use aliases if they exist, otherwise use abbreviation in an array
-  const aliasList = party.aliases && party.aliases.length > 0
-    ? party.aliases
-    : [party.abbreviation];
+  // Enriquecer partidos con datos del backend
+  const enrichedParties = parties.map((party) => {
+  const aliases = party.aliases?.length ? party.aliases : [party.abbreviation];
+  const normalizedAliases = aliases.map(a => a.trim().toLowerCase());
 
-  // Normalize aliases for safe comparison
-  const normalizedAliases = aliasList.map(a => a.trim().toLowerCase());
-
-  // Find match in source.partyBreakdown
-  const match = source?.partyBreakdown?.find(p => {
-    if (!p.abbr) return false;
-    const abbrNormalized = p.abbr.trim().toLowerCase();
-    return normalizedAliases.includes(abbrNormalized);
+  const match = sourcePartyBreakdown?.find(p => {
+    const abbr = p.abbr?.trim().toLowerCase();
+    return normalizedAliases.includes(abbr);
   });
 
   return {
     ...party,
-    count: match?.count ?? 0,
-    percentage: match?.percentage ? Number(match.percentage) : undefined,
+    count: match?.count, // Mantener undefined si no hay data aún
+    percentage: match?.percentage,
   };
 });
 
-  // Filter parties (fases eliminadas)
-  const filteredParties = enrichedParties;
+  // Ordenar por total de votos
+  const sortedParties = [...enrichedParties].sort((a, b) => {
+  const countA = typeof a.count === 'number' ? a.count : -1;
+  const countB = typeof b.count === 'number' ? b.count : -1;
+  return countB - countA;
+});
 
-  // Sort parties by votes
-  const sortedParties = filteredParties.sort((a, b) => (b.count || 0) - (a.count || 0));
-
-  // Determine which parties to show (top 3 when collapsed, all when expanded)
+  // Top 3 si está colapsado
   const visibleParties = isExpanded ? sortedParties : sortedParties.slice(0, 3);
 
-  // Get location name
-  const locationName = selectedLocationCode && breakdownLocData
-    ? breakdownLocData.locationName
-    : t('map.national');
+  // Nombre de la ubicación actual o "Nacionales"
+  const locationName =
+    selectedLocationCode !== null && breakdownLocData?.locationName
+      ? breakdownLocData.locationName
+      : t('map.national');
 
   const handleCandidateClick = (party: PoliticalParty) => {
-    setSelectedCandidate(party);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedCandidate(null);
-  };
-
-  // Mensaje especial de segunda vuelta eliminado
+    setSelectedCandidate(party)
+    setIsModalOpen(true)
+  }
 
   return (
-    <>
-      {/* Contenedor principal con glassmorphism */}
-      <div className="relative backdrop-blur-xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 rounded-2xl border border-slate-600/30 shadow-2xl overflow-hidden">
-        {/* Efectos de fondo decorativos */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-indigo-600/5 pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/80 via-indigo-500/80 to-purple-500/80" />
-        
-        {/* Contenido principal */}
-        <div className="relative z-10 p-6">
-          {/* Título con ubicación */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-slate-700/50 to-slate-600/50 border border-slate-500/30 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 mr-3 animate-pulse" />
-              <span className="text-sm font-semibold text-slate-200 tracking-wide">
-                {t('parties.title')}: <span className="text-white font-bold">{locationName}</span>
-              </span>
-            </div>
-          </div>
+    <div
+        className={`w-full max-w-[350px] bg-[#1e293b] shadow-md rounded-xl p-3 flex flex-col items-center border border-gray-700 mx-auto mt-4 mb-4 transition-all duration-500 ease-in-out overflow-hidden`}
+        style={{
+          maxHeight: isExpanded ? '700px' : '400px',
+        }}
+      >
 
-          {/* Header row: Party and Votes */}
-          <div className="flex justify-between items-center mb-4 px-1">
-            <span className="text-sm font-medium text-slate-300 uppercase tracking-wider">
-              {t('parties.title')}
-            </span>
-            <span className="text-sm font-medium text-slate-300 uppercase tracking-wider">
-              {t('parties.votes')}
-            </span>
-          </div>
-
-          {/* Lista de partidos */}
-          <div className={`space-y-3 transition-all duration-500 ${
-            isExpanded ? "space-y-2" : "space-y-3"
-          }`}>
-            {visibleParties.map((party, index) => (
-              <div
-                key={party.id}
-                className="group relative overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800/40 backdrop-blur-sm transition-all duration-300 hover:border-slate-600/70 hover:bg-slate-800/60"
-                style={{
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-                  animation: `slideIn 0.6s ease-out ${index * 0.1}s both`,
-                  pointerEvents: (party.disqualified || party.withdrawalType) ? 'none' : 'auto',
-                  opacity: (party.disqualified || party.withdrawalType) ? 0.7 : 1,
-                }}
-                onClick={() => !(party.disqualified || party.withdrawalType) && handleCandidateClick(party)}
-              >
-                {/* Efecto hover gradient */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
-                {/* Overlay de descalificación o retiro */}
-                {(party.disqualified || party.withdrawalType) && (
-                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <div className="flex flex-col items-center gap-2 px-2 py-3">
-                      <span className="text-slate-100 font-semibold text-sm text-center">
-                        {party.withdrawalType === 'withdrawn' 
-                          ? t('parties.withdrawn_disclaimer')
-                          : t('parties.disqualified_disclaimer')
-                        }
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Contenido del partido */}
-                <div className="relative z-10 p-4">
-                  <div className="flex items-center justify-between">
-                    {/* Información del candidato */}
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      {/* Foto del candidato */}
-                      <div className="relative flex-shrink-0">
-                        <img
-                          src={party.candidate.photo}
-                          alt={party.candidate.name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-slate-600/50"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/img/default-candidate.svg';
-                          }}
-                        />
-                        {/* Indicador de partido */}
-                        <div 
-                          className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-slate-800"
-                          style={{ backgroundColor: party.color }}
-                        />
-                      </div>
-
-                      {/* Información del candidato */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-semibold text-slate-100 truncate">
-                          {party.candidate.name}
-                        </h3>
-                        <p className="text-xs text-slate-400 truncate">
-                          {party.name}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Votos */}
-                    <div className="flex flex-col items-end gap-1 ml-4">
-                      <span className="text-sm font-bold text-slate-100">
-                        {party.count?.toLocaleString() || '0'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Botón expandir/colapsar */}
-          {sortedParties.length > 3 && (
-            <div className="mt-4 text-center">
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-slate-700/50 to-slate-600/50 border border-slate-500/30 backdrop-blur-sm text-sm font-medium text-slate-200 hover:from-slate-600/60 hover:to-slate-500/60 transition-all duration-200"
-              >
-                {isExpanded ? (
-                  <>
-                    <ChevronUp className="w-4 h-4" />
-                    {t('parties.ver_menos')}
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4" />
-                    {t('parties.ver_mas')}
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-        </div>
+      {/* Título con ubicación */}
+      <div className="w-full text-center text-sm font-semibold text-white mb-2 select-none">
+        {t('result')}: {locationName}
       </div>
 
-      {/* Modal de candidato */}
-      {isModalOpen && selectedCandidate && (
+      {/* Header row: Party and Votes */}
+      <div className="w-full text-sm font-medium text-gray-300 flex justify-between px-2 mb-2">
+        <span>{t('parties.title')}</span>
+        <span>{t('parties.votes')}</span>
+      </div>
+
+      {/* Lista de partidos */}
+      <div className={`flex flex-col items-center justify-center w-full transition-all duration-300 ${
+        isExpanded ? "gap-[2px]" : "gap-4"
+      }`}>
+        {visibleParties.map((party, index) => (
+          <div
+            key={party.id}
+            className={`w-full flex items-center justify-between gap-3 rounded-md border border-gray-700 shadow-sm text-white transition-all duration-300 mb-2
+            ${isExpanded ? "text-sm py-2 px-3" : "text-base py-2 px-4"}`}
+            style={{
+              background: '#22304a',
+              animation: `slideIn 0.3s ease-out ${index * 0.05}s both`,
+            }}
+          >
+            {/* Foto y nombre */}
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => handleCandidateClick(party)}
+            >
+              <img
+                src={party.candidate.photo}
+                alt={party.candidate.name}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <div>
+                <div className="font-semibold leading-tight text-white">{party.name}</div>
+                <div className="text-xs text-gray-400">{party.abbreviation}</div>
+              </div>
+            </div>
+
+            {/* Total de votos */}
+            <div className="text-right font-medium">
+               {typeof party.count === 'number' ? party.count.toLocaleString('es-US') : 'Cargando datos'}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Botón de expandir */}
+      {parties.length > 3 && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`mt-3 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all duration-200
+            ${isExpanded ? 'bg-emerald-600 text-white shadow-lg hover:bg-emerald-700' : 'bg-emerald-500 text-primary hover:bg-emerald-600'}`}
+          style={{
+            fontSize: isExpanded ? '1rem' : '0.9rem',
+            minHeight: '36px',
+            marginBottom: isExpanded ? '1rem' : '0.2rem'
+          }}
+        >
+          <span>{isExpanded ? t('parties.ver_menos') : t('parties.ver_mas')}</span>
+          {isExpanded ? <ChevronUp  size={20} /> : <ChevronDown size={16} />}
+        </button>
+      )}
+
+      {/* Modal */}
+      {selectedCandidate && (
         <CandidateModal
           candidate={selectedCandidate}
           isOpen={isModalOpen}
-          onClose={handleCloseModal}
+          onClose={() => {
+            setIsModalOpen(false)
+            setSelectedCandidate(null)
+          }}
         />
       )}
-
-      {/* Estilos CSS para animaciones */}
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
-    </>
-  );
+    </div>
+  )
 }
-
-
-
-
-

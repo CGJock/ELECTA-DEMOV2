@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import pool from '@db/db.js';
-import { getLatestElectionRoundId } from '@utils/getLastRound.js';
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 import { validateApiKey, votosLimiter } from '@middlerare/security.js';
 import { cleanDateField, cleanNumberField } from '@utils/validations.js';
 import { PartyData } from "../types/PartyData.js";
@@ -175,7 +175,7 @@ router.post('/', validateApiKey,votosLimiter, async (req: Request, res: Response
       return;
     }
 
-    const election_round_id = await getLatestElectionRoundId();
+    const election_round_id = await getActiveElectionRoundId();
     if (!election_round_id) {
       res.status(404).json({error:'There is not active election round'});
     }

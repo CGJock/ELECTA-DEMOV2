@@ -45,8 +45,9 @@
 //new votesfetcher
 
 import { Pool } from 'pg';
-import { getLatestElectionRoundId } from '@utils/getLastRound.js';
-import { getElectionRoundId } from '@utils/getElectionAndRound.js';
+
+
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 import { toPercenData } from '@utils/toPercentage.js';
 
 export interface VotesBreakdown {
@@ -60,8 +61,18 @@ export interface VotesBreakdown {
 }
 
 export async function getVotesSummary(pool: Pool): Promise<VotesBreakdown> {
-  const electionRoundId = await getElectionRoundId();
-  if (!electionRoundId) throw new Error('No valid election round found');
+  const electionRoundId = await getActiveElectionRoundId();
+  if (!electionRoundId) {
+  return {
+    totalVotes: 0,
+    nullVotes: 0,
+    nullPercent: 0,
+    blankVotes: 0,
+    blankPercent: 0,
+    validVotes: 0,
+    validPercent: 0,
+  };
+}
 
   const result = await pool.query(
     `
