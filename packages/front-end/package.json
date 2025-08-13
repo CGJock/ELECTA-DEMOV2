@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Dashboard Electoral Profesional - Plataforma de monitoreo electoral y visualización de datos en tiempo real para Bolivia",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
