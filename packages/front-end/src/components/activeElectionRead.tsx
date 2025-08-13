@@ -9,6 +9,8 @@ interface ActiveElectionInfo {
   round_date: string;
 }
 
+//solamente lee los datos de la eleccion activa
+
 export const ActiveElectionDisplay: React.FC = () => {
   const [activeElection, setActiveElection] = useState<ActiveElectionInfo | null>(null);
   const [loading, setLoading] = useState(true);

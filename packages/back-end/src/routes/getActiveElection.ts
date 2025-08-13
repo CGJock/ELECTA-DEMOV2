@@ -3,7 +3,7 @@ import pool from '@db/db.js';
 
 const router = Router();
 
-router.get('/active-election', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       `SELECT election_round_id FROM active_election ORDER BY updated_at DESC LIMIT 1`
@@ -19,3 +19,5 @@ router.get('/active-election', async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+export default router;

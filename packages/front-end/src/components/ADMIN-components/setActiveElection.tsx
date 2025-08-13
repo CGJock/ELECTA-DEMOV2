@@ -5,6 +5,9 @@ interface ElectionRoundOption {
   label: string; // Ejemplo: "Generales Costa Rica 2025 R1"
 }
 
+
+//setea una eleccion activa
+
 export const ActiveElectionSelector: React.FC = () => {
   const [options, setOptions] = useState<ElectionRoundOption[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -35,7 +38,7 @@ export const ActiveElectionSelector: React.FC = () => {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/active-election', {
+      const res = await fetch('http://localhost:5000/api/post-active-election', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ electionRoundId: selectedId }),

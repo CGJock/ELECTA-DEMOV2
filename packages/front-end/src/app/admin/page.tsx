@@ -31,6 +31,8 @@ import { useAuth } from '@/context/authContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAdminManagement } from '@/context/adminManagementContext';
 import AdminManagement from '@/components/AdminManagement';
+import { ActiveElectionDisplay } from '@/components/activeElectionRead';
+
 
 export default function AdminPage() {
   // Hook de traducción

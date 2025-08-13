@@ -5,6 +5,7 @@ import { getVotesSummary } from '@fetchers/votesDataFetcher.js';
 import { getLocationSummary } from '@fetchers/locationBreakdownSummary.js';
 import { getTotalSummary } from '@fetchers/breakdownSummary.js'; 
 import { startSummaryIntervals, stopSummaryIntervals } from '@utils/intervalManager.js';
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 import redisClient from '@db/redis.js';
 
 let noClientTimer: NodeJS.Timeout | null = null;
@@ -25,7 +26,9 @@ io.on('connection', async(socket) => {
     
    // get the latest data for the global counter component
   try {
-      const raw = await redisClient.get('latest:vote:data');
+      const roundId = await getActiveElectionRoundId();
+      const redisKey = `latest:vote:data:${roundId}`;
+      const raw = await redisClient.get(redisKey);
       if (raw) {
         const data = JSON.parse(raw);
         console.log('getting latestvotedata from redis', JSON.stringify(data))

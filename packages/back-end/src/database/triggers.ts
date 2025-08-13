@@ -122,3 +122,91 @@ export async function setupVotesTrigger(): Promise<void> {
   }
 }
 
+//trigger2
+// import pool from '@db/db.js';
+
+// export async function setupVotesTrigger(): Promise<void> {
+//   try {
+//     // Crear o reemplazar la función que envía la suma total desde ballots_data usando el round activo
+//     await pool.query(`
+//       CREATE OR REPLACE FUNCTION notify_ballots_data()
+//       RETURNS TRIGGER AS $$
+//       DECLARE
+//         payload TEXT;
+//         validVotes INTEGER;
+//         blankVotes INTEGER;
+//         nullVotes INTEGER;
+//         totalVotes INTEGER;
+//         active_round_id INTEGER;
+//       BEGIN
+//         -- Obtener el election_round_id activo
+//         SELECT election_round_id
+//         INTO active_round_id
+//         FROM active_election
+//         ORDER BY updated_at DESC
+//         LIMIT 1;
+
+//         IF active_round_id IS NULL THEN
+//           RAISE NOTICE 'No active election round found.';
+//           RETURN NEW;
+//         END IF;
+
+//         WITH party_votes_per_ballot AS (
+//           SELECT
+//             id,
+//             SUM((party ->> 'votes')::INTEGER) AS validVotes
+//           FROM ballots_data,
+//           LATERAL jsonb_array_elements(raw_data -> 'parties') AS party
+//           WHERE election_round_id = active_round_id
+//           GROUP BY id
+//         ),
+//         votes_summary AS (
+//           SELECT
+//             p.validVotes,
+//             (b.raw_data ->> 'blankVotes')::INTEGER AS blankVotes,
+//             (b.raw_data ->> 'nullVotes')::INTEGER AS nullVotes
+//           FROM ballots_data b
+//           JOIN party_votes_per_ballot p ON b.id = p.id
+//           WHERE b.election_round_id = active_round_id
+//         )
+//         SELECT
+//           COALESCE(SUM(vs.validVotes), 0),
+//           COALESCE(SUM(vs.blankVotes), 0),
+//           COALESCE(SUM(vs.nullVotes), 0),
+//           COALESCE(SUM(vs.validVotes + vs.blankVotes + vs.nullVotes), 0)
+//         INTO validVotes, blankVotes, nullVotes, totalVotes
+//         FROM votes_summary vs;
+
+//         payload := json_build_object(
+//           'validVotes', validVotes,
+//           'blankVotes', blankVotes,
+//           'nullVotes', nullVotes,
+//           'totalVotes', totalVotes
+//         )::TEXT;
+
+//         PERFORM pg_notify('votes_channel', payload);
+//         RETURN NEW;
+//       END;
+//       $$ LANGUAGE plpgsql;
+//     `);
+
+//     console.log('Function "notify_ballots_data" created or replaced.');
+
+//     // Eliminar trigger anterior si existe
+//     await pool.query(`
+//       DROP TRIGGER IF EXISTS trigger_notify_ballots_data ON ballots_data;
+//     `);
+
+//     // Crear nuevo trigger AFTER INSERT OR UPDATE
+//     await pool.query(`
+//       CREATE TRIGGER trigger_notify_ballots_data
+//       AFTER INSERT OR UPDATE ON ballots_data
+//       FOR EACH ROW
+//       EXECUTE FUNCTION notify_ballots_data();
+//     `);
+
+//     console.log('Trigger "trigger_notify_ballots_data" configured successfully.');
+//   } catch (error) {
+//     console.error('Error setting up votes trigger:', (error as Error).message);
+//   }
+// }

@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import { Server } from 'socket.io';
 import redisClient from '@db/redis.js';
 import { toPercenData } from '@utils/toPercentage.js';
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 
 export async function listenToVotesChanges(pool: Pool, io: Server) {
   const client = await pool.connect();
@@ -19,21 +20,21 @@ export async function listenToVotesChanges(pool: Pool, io: Server) {
       const data = JSON.parse(msg.payload!);
       console.log(' Payload parseado:', data);
 
+      // Obtener siempre la ronda activa al momento de la notificación
+      const roundId = await getActiveElectionRoundId();
+      if (!roundId) {
+        console.warn('No hay ronda activa, no se guardarán datos en Redis ni se emitirá por socket.');
+        return;
+      }
+
+      const redisKey = `latest:vote:data:${roundId}`;
       const enhancedData = toPercenData(data);
+      latestData = { election_round_id: roundId, ...enhancedData };
 
-      latestData = enhancedData;
+      console.log('Datos desde listen votes:', latestData);
 
-      console.log('datos desde listen votes:', enhancedData);
-
-      // Guardar en Redis
-      console.log(' Intentando guardar en Redis...');
-      const redisResult = await redisClient.set(
-        'latest:vote:data',
-        JSON.stringify(latestData),
-        'EX',
-        600 // Elimina después de 10 minutos
-        // 'NX' // Quita 'NX' si quieres sobreescribir siempre
-      );
+      // Guardar en Redis con key que incluye roundId
+      await redisClient.set(redisKey, JSON.stringify(latestData), 'EX', 600);
 
       if (debounceTimeout) clearTimeout(debounceTimeout);
 

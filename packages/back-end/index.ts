@@ -20,6 +20,7 @@ import postElection from '@routes/createElection.js'
 import getActiveElectionInfo from '@routes/getActiveElectionFull.js'
 import postActiveRoundandElection from '@routes/setActiveElection.js'
 import getAllElectionRounds from '@routes/getAllElectionRounds.js'
+import getActiveElecRouter from '@routes/getActiveElection.js'
 
 
 
@@ -68,6 +69,7 @@ async function main() {
   app.use('/api/get_full-active_election',getActiveElectionInfo);
   app.use('/api/get-all-election-rounds',getAllElectionRounds)
   app.use('/api/post-active-election',postActiveRoundandElection)
+  app.use('/api/get-active_election',getActiveElecRouter);
 
   // Connect Redis using ioredis
   // const redisClient = new Redis(redis_url, {
@@ -101,7 +103,7 @@ async function main() {
 
   setInterval(() => {
   console.log('Clientes conectados actualmente:', io.sockets.sockets.size);
-}, 6000);
+}, 6000 * 2);
 
   //stops intervals and close all conections
 const ShutdownServer = async () => {
@@ -128,6 +130,7 @@ process.on('SIGINT', ShutdownServer);
   console.log('Preparado para iniciar servidor...');
   httpServer.listen(PORT, () => {
     console.log(`Backend Server running at http://localhost:${PORT}`);
+    
   });
 
   httpServer.on('error', (err) => {
