@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import pool from '@db/db.js';
-import { getLatestElectionRoundId } from '@utils/getLastRound.js';
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 import { validateApiKey, votosLimiter } from '@middlerare/security.js';
 import { cleanDateField, cleanNumberField } from '@utils/validations.js';
 
@@ -157,7 +157,7 @@ router.post('/', validateApiKey, votosLimiter, async (req: Request, res: Respons
     }
 
     // Get latest election round
-    const election_round_id = await getLatestElectionRoundId();
+    const election_round_id = await getActiveElectionRoundId();
     if (!election_round_id) {
       res.status(404).json({ error: 'No active election round found.' });
       await client.query('ROLLBACK');
@@ -181,7 +181,6 @@ router.post('/', validateApiKey, votosLimiter, async (req: Request, res: Respons
       department_code,
       nullVotes: null_votes,
       blankVotes: blank_votes,
-      validVotes: valid_votes,
       parties: partyVotes,
     };
 

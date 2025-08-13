@@ -1,7 +1,7 @@
 'use client'
-import { useEffect, useState, useContext, createContext } from "react";
+import { useEffect,useState,useContext,createContext } from "react";
+import { useSocket, getSocket } from '@contexts/useSocket';
 import io from 'socket.io-client';
-import { processPartyBreakdown } from '@/utils/partyMapper';
 
 interface VoteBreakdown {
   totalVotes: number;
@@ -13,16 +13,18 @@ interface VoteBreakdown {
   validPercent: number;
 }
 
-interface PartyData {
-  name: string;
+export interface PartyData {
+  name: string
   abbr: string;
   count: number;
   percentage: number;
 }
 
-interface GlobalSummary {
-  totalVotes: number;
-  partyBreakdown: PartyData[];
+export interface GlobalSummary {
+  blankVotes: number;
+  nullVotes: number;
+  validVotes: number;
+  politicalParties: PartyData[];
 }
 
 interface LocationSummary {
@@ -39,115 +41,66 @@ interface SocketDataContextValue {
   setbreakdownLocData: (data: LocationSummary | null) => void;
   selectedLocationCode: string | null;
   setSelectedLocationCode: (code: string | null) => void;
-  isConnected: boolean;
+  
   timestamp: string | null;
 }
 
-// Crear el contexto con un valor por defecto completo
-const defaultContextValue: SocketDataContextValue = {
-  globalSummary: null,
-  breakdownData: null,
-  breakdownLocData: null,
-  setbreakdownLocData: () => {},
-  selectedLocationCode: null,
-  setSelectedLocationCode: () => {},
-  isConnected: false,
-  timestamp: null,
-};
+const SocketDataContext = createContext<SocketDataContextValue | undefined>(undefined);
 
-const SocketDataContext = createContext<SocketDataContextValue>(defaultContextValue);
+// const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+// const socket = io(socketUrl, {
+//     withCredentials: true,
+//   });
 
-const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
-const socket = io(socketUrl, {
-  withCredentials: true,
-});
 
-export default socket;
 
-export const SocketDataProvider = ({ children }: { children: React.ReactNode }) => {
+export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [globalSummary, setglobalSummary] = useState<GlobalSummary | null>(null);
   const [breakdownData, setbreakdownData] = useState<VoteBreakdown | null>(null);
   const [breakdownLocData, setbreakdownLocData] = useState<LocationSummary | null>(null);
   const [selectedLocationCode, setSelectedLocationCode] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [timestamp, setTimestamp] = useState<string | null>(null);
+  const [timestamp, setTimestamp] = useState<string | null>(null); //timestamp to check data consistency
+  
 
-  useEffect(() => {
-    function handleConnect() {
-      console.log('Socket connected');
-      setIsConnected(true);
-    }
-
-    function handleDisconnect() {
-      console.log('Socket disconnected');
-      setIsConnected(false);
-    }
-
-    function handleFullVoteData(data: VoteBreakdown) {
+   const handlers = {
+    'full-vote-data': (data: VoteBreakdown) => {
       if (!('error' in data)) {
         setbreakdownData(data);
         setTimestamp(new Date().toISOString());
       }
-    }
-
-    function handleTotalBreakdownSummary(data: GlobalSummary) {
+    },
+    'total-breakdown-summary': (data: GlobalSummary) => {
       if (!('error' in data)) {
         setglobalSummary(data);
         setTimestamp(new Date().toISOString());
       }
-    }
-
-    function handleLocationBreakdownSummary(data: LocationSummary) {
+    },
+    'location-breakdown-summary': (data: LocationSummary) => {
       if (!('error' in data)) {
         setbreakdownLocData(data);
         setTimestamp(new Date().toISOString());
       }
-    }
-
-    socket.on('connect', handleConnect);
-    socket.on('disconnect', handleDisconnect);
-    socket.on('full-vote-data', handleFullVoteData);
-    socket.on('total-breakdown-summary', handleTotalBreakdownSummary);
-    socket.on('location-breakdown-summary', handleLocationBreakdownSummary);
-    socket.on('initial-vote-summary', (data) => {
+    },
+    'initial-vote-summary': (data: GlobalSummary) => {
       setglobalSummary(data);
-    });
+    }
+  };
 
-    socket.emit('get-total-breakdown');
+  // Usar el hook useSocket para manejar el socket y listeners
+  useSocket(handlers, { event: 'get-total-breakdown' });
 
-    return () => {
-      socket.off('connect', handleConnect);
-      socket.off('disconnect', handleDisconnect);
-      socket.off('full-vote-data', handleFullVoteData);
-      socket.off('total-breakdown-summary', handleTotalBreakdownSummary);
-      socket.off('location-breakdown-summary', handleLocationBreakdownSummary);
-    };
-  }, []);
-
+  // Cuando cambia selectedLocationCode, emitimos para obtener datos de esa locación
   useEffect(() => {
     if (selectedLocationCode !== null) {
+      const socket = getSocket();
       socket.emit('get-location-summary', selectedLocationCode);
     }
   }, [selectedLocationCode]);
 
-  const contextValue: SocketDataContextValue = {
-    globalSummary,
-    breakdownData,
-    breakdownLocData,
-    setbreakdownLocData,
-    selectedLocationCode,
-    setSelectedLocationCode,
-    isConnected,
-    timestamp,
-  };
-
-  // Alternativa con JSX y type assertion
-  const Provider = SocketDataContext.Provider as any;
-  
   return (
-    <Provider value={contextValue}>
+    <SocketDataContext.Provider value={{ globalSummary, breakdownData, breakdownLocData, setbreakdownLocData, selectedLocationCode, setSelectedLocationCode, timestamp  }}>
       {children}
-    </Provider>
+    </SocketDataContext.Provider>
   );
 };
 

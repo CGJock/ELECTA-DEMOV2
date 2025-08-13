@@ -79,7 +79,7 @@
 
 import { Pool } from 'pg';
 import redisClient from '@db/redis.js';
-import { getLatestElectionRoundId } from '@utils/getLastRound.js';
+import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 
 export interface PartySummary {
   abbr: string;
@@ -95,27 +95,42 @@ export interface GlobalSummary {
 }
 
 export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
-  // Intenta cargar cache primero
+  // Intentar usar cache
   const cached = await redisClient.get('votes:parties:summary');
   if (cached) return JSON.parse(cached) as GlobalSummary;
 
-  const roundId = await getLatestElectionRoundId();
-  if (!roundId) throw new Error('No election round found.');
+  const roundId = await getActiveElectionRoundId();
 
-  // Query para obtener votos totales y votos por partido en un solo resultado
+  // Si no hay elección activa → devolver datos vacíos
+  if (!roundId) {
+    return {
+      blankVotes: 0,
+      nullVotes: 0,
+      validVotes: 0,
+      politicalParties: [],
+    };
+  }
+
   const result = await db.query(
     `
+    WITH total_valid_votes AS (
+      SELECT COALESCE(SUM((party ->> 'votes')::INTEGER), 0) AS total
+      FROM ballots_data b
+      CROSS JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party)
+      WHERE b.election_round_id = $1
+    )
     SELECT
-      COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS validVotes,
-      COALESCE(SUM((raw_data ->> 'blankVotes')::INTEGER), 0) AS blankVotes,
-      COALESCE(SUM((raw_data ->> 'nullVotes')::INTEGER), 0) AS nullVotes,
-      p.party ->> 'abbr' AS abbr,
-      SUM((p.party ->> 'votes')::INTEGER) AS count
-    FROM ballots_data,
-    LATERAL jsonb_array_elements(raw_data -> 'parties') AS p(party)
-    WHERE election_round_id = $1
-    GROUP BY abbr
-    ORDER BY count DESC
+      tv.total AS "validVotes",
+      COALESCE(SUM((b.raw_data ->> 'blankVotes')::INTEGER), 0) AS "blankVotes",
+      COALESCE(SUM((b.raw_data ->> 'nullVotes')::INTEGER), 0) AS "nullVotes",
+      p.party ->> 'abbr' AS "abbr",
+      SUM((p.party ->> 'votes')::INTEGER) AS "count"
+    FROM ballots_data b
+    CROSS JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party),
+    total_valid_votes tv
+    WHERE b.election_round_id = $1
+    GROUP BY tv.total, abbr
+    ORDER BY count DESC;
     `,
     [roundId]
   );
@@ -131,15 +146,13 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
     };
   }
 
-  // blankVotes, nullVotes y validVotes son iguales en todas las filas (porque es total), tomamos de la primera fila
-  const blankVotes = Number(rows[0].blankvotes);
-  const nullVotes = Number(rows[0].nullvotes);
-  const validVotes = Number(rows[0].validvotes);
+  const validVotes = Number(rows[0].validVotes) || 0;
+  const blankVotes = Number(rows[0].blankVotes) || 0;
+  const nullVotes = Number(rows[0].nullVotes) || 0;
 
-  // Construir array de partidos con porcentaje
   const politicalParties: PartySummary[] = rows.map(row => ({
     abbr: row.abbr,
-    count: Number(row.count),
+    count: Number(row.count) || 0,
     percentage: validVotes
       ? Number(((Number(row.count) / validVotes) * 100).toFixed(2))
       : 0,
@@ -152,8 +165,12 @@ export async function getTotalSummary(db: Pool): Promise<GlobalSummary> {
     politicalParties,
   };
 
-  // Guardar cache
-  await redisClient.set('votes:parties:summary', JSON.stringify(summary), 'EX', 600);
+  await redisClient.set(
+    'votes:parties:summary',
+    JSON.stringify(summary),
+    'EX',
+    600
+  );
 
   return summary;
 }

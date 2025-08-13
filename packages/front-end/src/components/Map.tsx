@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
-import socket from '@contexts/context';
+import { getSocket } from '@contexts/useSocket'; 
 import { useSocketData } from '@contexts/context';
 import { useTranslation } from 'react-i18next'; 
 import { mockIncidents } from '@data/mockIncidents';
@@ -43,17 +43,21 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
 
 
   useEffect(() => {
-  const handleSummary = (data: LocationSummary) => {
-    console.log('Received data by Location:', data);
-    setbreakdownLocData(data);
-    setTimestamp(new Date().toISOString());
-  };
+    const socket = getSocket();
 
+    const handleSummary = (data: LocationSummary) => {
+      console.log('Recieved data by Location:', data);
+      setbreakdownLocData(data);
+      setTimestamp(new Date().toISOString());
+    };
+  
 
-  return () => {
-    socket.off('location-breakdown-summary', handleSummary);
-  };
-}, []);
+    socket.on('location-breakdown-summary', handleSummary);
+
+    return () => {
+      socket.off('location-breakdown-summary', handleSummary);
+    };
+  }, []);
 
  
 
@@ -119,13 +123,15 @@ const Map: React.FC<MapProps> = ({ incidents }) => {
       setFocusedIncidentId(params.data.incidentId);
     } else {
       // Click on map (department)
-      const code = params?.data?.code ?? null; 
-      if (code) {
-        socket.emit('subscribe-to-location', code);
-        setSelectedLocationCode(code);
-      }
+    const code = params?.data?.code ?? null; 
+    if (code) {
+      const socket = getSocket();
+      socket.emit('subscribe-to-location', code);
+      setSelectedLocationCode(code);
     }
+  }
   });
+
 
         // --- INCIDENTS ---
         // Group incidents by department (using the part before the dash in location)
@@ -359,6 +365,7 @@ const getDepartmentName = (code: string | null): string => {
             <button
               onClick={() => {
                   if (selectedLocationCode) {
+                    const socket = getSocket();
                     socket.emit('unsubscribe-location', selectedLocationCode);
                   }
                   setSelectedLocationCode(null);

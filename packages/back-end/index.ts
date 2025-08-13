@@ -6,21 +6,31 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { useHelmet } from '@middlerare/security.js';
 
-// import  redisClient from '@db/redis.js'
+import  redisClient from '@db/redis.js'
 
-
+//endpoint routes
 import depRouter from '@routes/departments.js';
-import voteRouter from '@routes/updateVotes.js';
 import newVoteRouter from '@routes/newUpdate.js'
 import getmailsRouter from '@routes/getMails.js';
 import postmailsRouter from '@routes/postEmail.js';
-import authRouter from '@routes/auth.js';
+import getElectionsTypeRouter from '@routes/getElectionType.js'
+import postElectionRouter from '@routes/createElection.js'
+import getCountriesRouter from '@routes/getCountries.js'
+import postElection from '@routes/createElection.js'
+import getActiveElectionInfo from '@routes/getActiveElectionFull.js'
+import postActiveRoundandElection from '@routes/setActiveElection.js'
+import getAllElectionRounds from '@routes/getAllElectionRounds.js'
+import getActiveElecRouter from '@routes/getActiveElection.js'
+
+
+
 import { runMigrations } from '@db/migrate.js';
-// import { listenToVotesChanges } from '@listeners/listenVotes.js';
-// import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
-// // import { startSummaryIntervals, stopSummaryIntervals } from '@utils/intervalManager.js';
-// import { createAdapter } from '@socket.io/redis-streams-adapter';
+import { listenToVotesChanges } from '@listeners/listenVotes.js';
+import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
+import { stopSummaryIntervals } from '@utils/intervalManager.js';
+import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { Pool } from 'pg';
+import { getActiveResourcesInfo } from 'process';
 
 dotenv.config();
 
@@ -48,11 +58,18 @@ async function main() {
 
   // Routes
   app.use('/api/departments', depRouter);
-  // app.use('/api/votes', voteRouter);
   app.use('/api/votes',newVoteRouter)
   app.use('/api/get-emails', getmailsRouter);
   app.use('/api/post-emails', postmailsRouter)
-  app.use('/api/auth', authRouter);
+  // app.use('/api/auth', authRouter);
+  app.use('/api/post-emails', postmailsRouter);
+  app.use('/api/get-election-types', getElectionsTypeRouter);
+  app.use('/api/post-election', postElection);
+  app.use('/api/get-countries',getCountriesRouter);
+  app.use('/api/get_full-active_election',getActiveElectionInfo);
+  app.use('/api/get-all-election-rounds',getAllElectionRounds);
+  app.use('/api/post-active-election',postActiveRoundandElection)
+  app.use('/api/get-active_election',getActiveElecRouter);
 
   // Connect Redis using ioredis
   // const redisClient = new Redis(redis_url, {
@@ -62,9 +79,9 @@ async function main() {
 
 
 
-  
 
-  // Setup Socket.IO server
+
+   // Setup Socket.IO server
   const io = new Server(httpServer, {
     // adapter: createAdapter(redisClient),
     cors: {
@@ -74,22 +91,27 @@ async function main() {
     },
   });
 
+
   // Use the redis-streams-adapter
-  // io.adapter(createAdapter(redisClient));
+  io.adapter(createAdapter(redisClient));
 
   // Custom handlers
-  // startSummaryIntervals(io,pool)//starts server intervals
-  // setupSocketHandlers(io,pool);
-  // listenToVotesChanges(pool,io);
+  // // startSummaryIntervals(io,pool) //starts server intervals
+  setupSocketHandlers(io,pool);
+  listenToVotesChanges(pool,io);
   // setupGlobalBroadcaster(io,pool);
+
+  setInterval(() => {
+  console.log('Clientes conectados actualmente:', io.sockets.sockets.size);
+}, 6000 * 2);
 
   //stops intervals and close all conections
 const ShutdownServer = async () => {
   console.log('Cerrando servidor...');
 
-  // stopSummaryIntervals(); // stops intervals
+  stopSummaryIntervals(); // stops intervals
 
-  // await redisClient.quit(); // closes redis conection
+  await redisClient.quit(); // closes redis conection
   await pool.end(); // closes Postgres conection
 
   httpServer.close(() => {
@@ -107,7 +129,8 @@ process.on('SIGINT', ShutdownServer);
   
   console.log('Preparado para iniciar servidor...');
   httpServer.listen(PORT, () => {
-    console.log(`✅ Backend Server running at http://localhost:${PORT}`);
+    console.log(`Backend Server running at http://localhost:${PORT}`);
+    
   });
 
   httpServer.on('error', (err) => {

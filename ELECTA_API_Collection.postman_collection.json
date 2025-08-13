@@ -102,7 +102,7 @@
               "raw": "http://localhost:4000/api/breakdown-summary",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "4000",
+              "port": "5000",
               "path": ["api", "breakdown-summary"]
             },
             "description": "Obtener resumen de breakdown de votos (si existe endpoint REST)"
