@@ -12,49 +12,32 @@ interface CandidateModalProps {
   onClose: () => void
 }
 
-function useMockCandidateProposals(candidateId: number) {
+function useMockCandidateProposals(candidateId?: string) {
   const { i18n } = useTranslation();
   const language = i18n.language;
-  // Search for the party by candidate ID
-  const party = mockParties.find(p => Number(p.candidate.id) === candidateId);
-  if (!party) return [];
-  // Select proposals based on the current language
-  return party.candidate.proposals.map(p => p[language === 'en' ? 'en' : 'es']);
+
+  if (!candidateId) return [];
+
+  const party = mockParties.find(p => p.candidate?.id === candidateId);
+  if (!party?.candidate?.proposals) return [];
+
+  return party.candidate.proposals.map(p => p[language === "en" ? "en" : "es"]);
 }
 
 export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalProps) {
-  const proposals = useMockCandidateProposals(Number(candidate.candidate.id));
   const { t, i18n } = useTranslation();
   const language = i18n.language;
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [imageLoaded, setImageLoaded] = useState(false);
-  
-  // Close modal on Escape key
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
+  const candidateId = candidate.candidate?.id;
+  const proposals = useMockCandidateProposals(candidateId);
 
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
-  console.log('[CandidateModal] Render', { candidate, proposals });
-
-  // Get translated experience and education
-  const experience = candidate.candidate.experience[language === 'en' ? 'en' : 'es'];
-  const education = candidate.candidate.education[language === 'en' ? 'en' : 'es'];
+  const experience = candidate.candidate?.experience?.[language === "en" ? "en" : "es"] || "";
+  const education = candidate.candidate?.education?.[language === "en" ? "en" : "es"] || "";
+  const photo = candidate.candidate?.photo || "";
+  const name = candidate.candidate?.name || "Desconocido";
+  const socials = candidate.candidate?.socials;
 
   const socialIcons: Record<string, any> = {
     web: Globe,
@@ -63,15 +46,34 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
     threads: MessageCircle
   };
 
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Enhanced Backdrop */}
-      <div 
+      {/* Backdrop */}
+      <div
         className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-slate-800/60 to-slate-900/80 backdrop-blur-2xl"
         onClick={onClose}
       />
-      
-      {/* Floating particles effect */}
+
+      {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <div
@@ -86,15 +88,14 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
           />
         ))}
       </div>
-      
-      {/* Main Card Container */}
+
+      {/* Main Card */}
       <div className="relative w-full max-w-sm transform transition-all duration-700 hover:scale-105">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90 backdrop-blur-3xl border border-slate-600/30 shadow-2xl">
-          
-          {/* Animated gradient border */}
+          {/* Animated border */}
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/15 via-slate-500/20 to-cyan-400/15 rounded-2xl blur-xl animate-pulse" />
           <div className="absolute inset-[1px] bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 rounded-2xl" />
-          
+
           {/* Close button */}
           <button
             onClick={onClose}
@@ -105,35 +106,34 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
 
           {/* Content */}
           <div className="relative z-10 p-6">
-            
             {/* Hero Section */}
             <div className="text-center mb-6">
-              {/* Profile Image with enhanced effects */}
+              {/* Profile Image */}
               <div className="relative mx-auto mb-4 group">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-slate-500 to-cyan-400 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500 animate-pulse" />
                 <div className="relative w-20 h-20 mx-auto">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-full" />
                   <img
-                    src={candidate.candidate.photo}
-                    alt={candidate.candidate.name}
-                    className={`w-full h-full object-cover rounded-full border-3 border-slate-500/50 shadow-xl transition-all duration-700 ${imageLoaded ? 'scale-100 opacity-100' : 'scale-110 opacity-0'}`}
+                    src={photo}
+                    alt={name}
+                    className={`w-full h-full object-cover rounded-full border-3 border-slate-500/50 shadow-xl transition-all duration-700 ${imageLoaded ? "scale-100 opacity-100" : "scale-110 opacity-0"}`}
                     onLoad={() => setImageLoaded(true)}
                   />
                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 via-transparent to-slate-900/10" />
                 </div>
               </div>
 
-              {/* Name and Title */}
+              {/* Name & Title */}
               <div className="space-y-2">
                 <h1 className="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-white bg-clip-text text-transparent leading-tight">
-                  {candidate.candidate.name}
+                  {name}
                 </h1>
                 <div className="inline-flex items-center px-3 py-1.5 rounded-full border border-slate-500/30 bg-slate-700/50 backdrop-blur-md">
-                  <div 
+                  <div
                     className="w-2 h-2 rounded-full mr-2 shadow-lg"
-                    style={{ 
-                      backgroundColor: candidate.color,
-                      boxShadow: `0 0 10px ${candidate.color}60`
+                    style={{
+                      backgroundColor: candidate.color || "#00ffff",
+                      boxShadow: `0 0 10px ${candidate.color || "#00ffff"}60`
                     }}
                   />
                   <span className="text-slate-200 font-medium text-xs">
@@ -143,11 +143,11 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
               </div>
             </div>
 
-            {/* Tab Navigation */}
+            {/* Tabs */}
             <div className="flex mb-4 p-1 bg-slate-700/30 rounded-xl border border-slate-600/30">
               {[
-                { id: 'overview', label: 'Perfil', icon: Briefcase },
-                { id: 'proposals', label: 'Propuestas', icon: Target }
+                { id: "overview", label: "Perfil", icon: Briefcase },
+                { id: "proposals", label: "Propuestas", icon: Target }
               ].map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -156,8 +156,8 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-medium text-xs transition-all duration-300 ${
                       activeTab === tab.id
-                        ? 'bg-cyan-400/15 text-cyan-200 shadow-lg border border-cyan-400/25'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-600/30'
+                        ? "bg-cyan-400/15 text-cyan-200 shadow-lg border border-cyan-400/25"
+                        : "text-slate-300 hover:text-white hover:bg-slate-600/30"
                     }`}
                   >
                     <Icon size={14} />
@@ -169,12 +169,12 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
 
             {/* Tab Content */}
             <div className="min-h-[200px]">
-              {activeTab === 'overview' && (
+              {activeTab === "overview" && (
                 <div className="space-y-4 animate-fadeIn">
                   {/* Basic Info */}
                   <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-700/30 border border-slate-600/30">
                     <Calendar className="text-cyan-300" size={16} />
-                    <span className="text-slate-200 text-sm">{candidate.candidate.age} años</span>
+                    <span className="text-slate-200 text-sm">{candidate.candidate?.age || "N/A"} años</span>
                   </div>
 
                   {/* Education */}
@@ -201,34 +201,30 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
                 </div>
               )}
 
-              {activeTab === 'proposals' && (
+              {activeTab === "proposals" && (
                 <div className="space-y-3 animate-fadeIn">
                   <div className="flex items-center gap-2 mb-4">
                     <Target className="text-cyan-300" size={16} />
                     <h3 className="text-white font-semibold text-sm">Propuestas Principales</h3>
                   </div>
-                  
+
                   {proposals.length === 0 ? (
                     <div className="p-3 rounded-xl bg-gradient-to-br from-slate-700/30 to-slate-600/20 border border-slate-600/30">
-                      <p className="text-slate-400 italic text-xs text-center">
-                        {t('candidate.no_proposals')}
-                      </p>
+                      <p className="text-slate-400 italic text-xs text-center">{t("candidate.no_proposals")}</p>
                     </div>
                   ) : (
                     proposals.map((proposal, index) => (
                       <div
                         key={index}
                         className="group p-3 rounded-xl bg-gradient-to-br from-slate-700/30 to-slate-600/20 border border-slate-600/30 hover:border-cyan-400/25 transition-all duration-300 hover:bg-slate-600/30"
-                        style={{
-                          animationDelay: `${index * 100}ms`
-                        }}
+                        style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="flex items-start gap-2">
-                          <div 
+                          <div
                             className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 shadow-lg"
                             style={{
-                              backgroundColor: candidate.color,
-                              boxShadow: `0 0 8px ${candidate.color}60`
+                              backgroundColor: candidate.color || "#00ffff",
+                              boxShadow: `0 0 8px ${candidate.color || "#00ffff"}60`
                             }}
                           />
                           <p className="text-slate-200 text-xs leading-relaxed group-hover:text-white transition-colors duration-300">
@@ -242,11 +238,12 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
               )}
             </div>
 
-            {/* Social Media */}
-            {candidate.candidate.socials && (
+            {/* Socials */}
+            {socials && (
               <div className="mt-6 pt-4 border-t border-slate-600/30">
                 <div className="flex justify-center gap-3">
-                  {Object.entries(candidate.candidate.socials).map(([platform, url]) => {
+                  {Object.entries(socials).map(([platform, url]) => {
+                    if (!url) return null;
                     const Icon = socialIcons[platform] || Globe;
                     return (
                       <a
@@ -272,7 +269,6 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        
         .animate-fadeIn {
           animation: fadeIn 0.5s ease-out forwards;
         }
@@ -280,4 +276,3 @@ export function CandidateModal({ candidate, isOpen, onClose }: CandidateModalPro
     </div>
   );
 }
-
