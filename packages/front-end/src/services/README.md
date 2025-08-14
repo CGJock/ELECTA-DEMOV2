@@ -20,8 +20,8 @@ services/
 Crea un archivo `.env.local` en `packages/front-end/react/` con:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:4000/api
-NEXT_PUBLIC_SOCKET_URL=http://localhost:4000
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
 NEXT_PUBLIC_API_KEY=9700caf11b5140a62c7cad1eda831d3ed9026f03eec4d0459f89357d6c3e21c3
 ```
 
@@ -157,7 +157,7 @@ cleanup();
 ## 🐛 Troubleshooting
 
 ### WebSocket no conecta
-- Verificar que el backend esté corriendo en `http://localhost:4000`
+- Verificar que el backend esté corriendo en `http://localhost:5000`
 - Verificar variables de entorno
 - Revisar consola del navegador para errores
 

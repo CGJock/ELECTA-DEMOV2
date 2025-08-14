@@ -9,6 +9,7 @@ import { insertElection } from '@db/seeding/seedElections.js'
 import { seedElectionTypes } from '@db/seeding/seedElectionTypes.js'
 import { setupVotesTrigger } from '@db/triggers.js';
 import  { seedFirstElectionRound } from '@db/seeding/seedFirstRound.js'
+import { seedComponentVisibility } from '@db/seeding/seedComponentVisibility.js'
 
  
 export async function runMigrations() {
@@ -16,6 +17,9 @@ export async function runMigrations() {
 
   console.log('➤ initTables()');
   await initTables();
+  
+  console.log('➤ seedComponentVisibility()');
+  await seedComponentVisibility();
   
   console.log('➤ seedDepartments()');
   await seedDepartments();

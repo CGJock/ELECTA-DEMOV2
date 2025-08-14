@@ -1,23 +1,32 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
+import { useAdminManagement as useBackendAdminManagement } from '@/hooks/useAdminManagement';
 
-interface AdminUser {
+export interface AdminUser {
   id: number;
   username: string;
   email?: string;
-  role?: string;
-  createdAt: string;
-  isActive: boolean;
+  full_name?: string;
+  created_at: string;
+}
+
+interface AdminCreateData {
+  username: string;
+  password: string;
+  email?: string;
+  full_name?: string;
 }
 
 interface AdminManagementContextType {
   admins: AdminUser[];
-  addAdmin: (admin: Omit<AdminUser, 'id' | 'createdAt'>) => boolean;
-  updateAdmin: (id: number, updates: Partial<AdminUser>) => boolean;
-  deleteAdmin: (id: number) => boolean;
-  toggleAdminStatus: (id: number) => boolean;
-  getAdminById: (id: number) => AdminUser | undefined;
+  isLoading: boolean;
+  error: string | null;
+  addAdmin: (adminData: AdminCreateData) => Promise<boolean>;
+  updateAdmin: (id: number, updates: Partial<AdminUser>) => Promise<boolean>;
+  deleteAdmin: (id: number) => Promise<boolean>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
+  resetPassword: (id: number, newPassword: string) => Promise<boolean>;
 }
 
 const AdminManagementContext = createContext<AdminManagementContextType | undefined>(undefined);
@@ -35,129 +44,106 @@ interface AdminManagementProviderProps {
 }
 
 export const AdminManagementProvider: React.FC<AdminManagementProviderProps> = ({ children }) => {
-  const [admins, setAdmins] = useState<AdminUser[]>([]);
+  const {
+    admins,
+    isLoading,
+    error,
+    addAdmin: backendAddAdmin,
+    updateAdmin: backendUpdateAdmin,
+    deleteAdmin: backendDeleteAdmin,
+    changePassword: backendChangePassword,
+    resetPassword: backendResetPassword,
+    refreshAdmins
+  } = useBackendAdminManagement();
 
-  // Cargar administradores desde localStorage al inicializar
-  useEffect(() => {
-    const savedAdmins = localStorage.getItem('adminUsers');
-    if (savedAdmins) {
-      try {
-        const parsedAdmins = JSON.parse(savedAdmins);
-        setAdmins(parsedAdmins);
-      } catch (error) {
-        console.error('Error parsing saved admins:', error);
-        // Si hay error, crear admin por defecto
-        const defaultAdmin: AdminUser = {
-          id: 1,
-          username: 'admin',
-          email: 'admin@electa.com',
-          role: 'Super Admin',
-          createdAt: new Date().toISOString(),
-          isActive: true
-        };
-        setAdmins([defaultAdmin]);
-        localStorage.setItem('adminUsers', JSON.stringify([defaultAdmin]));
+  // Adaptar la función addAdmin para que coincida con la interfaz esperada
+  const addAdmin = async (adminData: AdminCreateData): Promise<boolean> => {
+    try {
+      const success = await backendAddAdmin({
+        username: adminData.username,
+        password: adminData.password,
+        email: adminData.email || '',
+        full_name: adminData.full_name || ''
+      });
+      
+      if (success) {
+        await refreshAdmins(); // Recargar la lista
       }
-    } else {
-      // Crear admin por defecto si no hay ninguno
-      const defaultAdmin: AdminUser = {
-        id: 1,
-        username: 'admin',
-        email: 'admin@electa.com',
-        role: 'Super Admin',
-        createdAt: new Date().toISOString(),
-        isActive: true
-      };
-      setAdmins([defaultAdmin]);
-      localStorage.setItem('adminUsers', JSON.stringify([defaultAdmin]));
-    }
-  }, []);
-
-  // Función para generar ID único
-  const generateId = (): number => {
-    const maxId = admins.reduce((max, admin) => Math.max(max, admin.id), 0);
-    return maxId + 1;
-  };
-
-  // Agregar nuevo administrador
-  const addAdmin = (adminData: Omit<AdminUser, 'id' | 'createdAt'>): boolean => {
-    // Verificar que el username no exista
-    if (admins.some(admin => admin.username === adminData.username)) {
+      
+      return success;
+    } catch (error) {
+      console.error('Error adding admin:', error);
       return false;
     }
-
-    const newAdmin: AdminUser = {
-      ...adminData,
-      id: generateId(),
-      createdAt: new Date().toISOString()
-    };
-
-    const updatedAdmins = [...admins, newAdmin];
-    setAdmins(updatedAdmins);
-    localStorage.setItem('adminUsers', JSON.stringify(updatedAdmins));
-    return true;
   };
 
-  // Actualizar administrador existente
-  const updateAdmin = (id: number, updates: Partial<AdminUser>): boolean => {
-    const adminIndex = admins.findIndex(admin => admin.id === id);
-    if (adminIndex === -1) return false;
-
-    // Verificar que el username no exista en otros admins
-    if (updates.username && admins.some(admin => admin.id !== id && admin.username === updates.username)) {
+  // Adaptar la función updateAdmin
+  const updateAdmin = async (id: number, updates: Partial<AdminUser>): Promise<boolean> => {
+    try {
+      const success = await backendUpdateAdmin(id, {
+        username: updates.username || '',
+        email: updates.email || '',
+        full_name: updates.full_name || ''
+      });
+      
+      if (success) {
+        await refreshAdmins(); // Recargar la lista
+      }
+      
+      return success;
+    } catch (error) {
+      console.error('Error updating admin:', error);
       return false;
     }
-
-    const updatedAdmins = [...admins];
-    updatedAdmins[adminIndex] = { ...updatedAdmins[adminIndex], ...updates };
-    
-    setAdmins(updatedAdmins);
-    localStorage.setItem('adminUsers', JSON.stringify(updatedAdmins));
-    return true;
   };
 
-  // Eliminar administrador
-  const deleteAdmin = (id: number): boolean => {
-    // No permitir eliminar el admin principal
-    if (id === 1) return false;
-
-    const updatedAdmins = admins.filter(admin => admin.id !== id);
-    setAdmins(updatedAdmins);
-    localStorage.setItem('adminUsers', JSON.stringify(updatedAdmins));
-    return true;
+  // Adaptar la función deleteAdmin
+  const deleteAdmin = async (id: number): Promise<boolean> => {
+    try {
+      const success = await backendDeleteAdmin(id);
+      
+      if (success) {
+        await refreshAdmins(); // Recargar la lista
+      }
+      
+      return success;
+    } catch (error) {
+      console.error('Error deleting admin:', error);
+      return false;
+    }
   };
 
-  // Cambiar estado activo/inactivo
-  const toggleAdminStatus = (id: number): boolean => {
-    // No permitir desactivar el admin principal
-    if (id === 1) return false;
-
-    const adminIndex = admins.findIndex(admin => admin.id === id);
-    if (adminIndex === -1) return false;
-
-    const updatedAdmins = [...admins];
-    updatedAdmins[adminIndex] = { 
-      ...updatedAdmins[adminIndex], 
-      isActive: !updatedAdmins[adminIndex].isActive 
-    };
-    
-    setAdmins(updatedAdmins);
-    localStorage.setItem('adminUsers', JSON.stringify(updatedAdmins));
-    return true;
+  // Función para cambiar contraseña del propio admin
+  const changePassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
+    try {
+      const success = await backendChangePassword(currentPassword, newPassword);
+      return success;
+    } catch (error) {
+      console.error('Error changing password:', error);
+      return false;
+    }
   };
 
-  // Obtener administrador por ID
-  const getAdminById = (id: number): AdminUser | undefined => {
-    return admins.find(admin => admin.id === id);
+  // Función para resetear contraseña de otro admin
+  const resetPassword = async (id: number, newPassword: string): Promise<boolean> => {
+    try {
+      const success = await backendResetPassword(id, newPassword);
+      return success;
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      return false;
+    }
   };
 
   const value: AdminManagementContextType = {
     admins,
+    isLoading,
+    error,
     addAdmin,
     updateAdmin,
     deleteAdmin,
-    toggleAdminStatus,
-    getAdminById
+    changePassword,
+    resetPassword
   };
 
   return (

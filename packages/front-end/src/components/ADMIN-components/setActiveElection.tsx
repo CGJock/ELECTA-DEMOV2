@@ -6,17 +6,14 @@ interface ElectionRoundOption {
   label: string; // Ejemplo: "Generales Costa Rica 2025 R1"
 }
 
-
-//setea una eleccion activa
-
+// Cambié el nombre para evitar conflictos
 export const ActiveElectionSelector: React.FC = () => {
   const [options, setOptions] = useState<ElectionRoundOption[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Cargar opciones disponibles
-    fetch(`${API_BASE_URL}/get-all-election-rounds`) // Cambia la ruta si es necesario
+    fetch(`${API_BASE_URL}/get-all-election-rounds`)
       .then(res => res.json())
       .then(data => {
         const opts = data.map((item: any) => ({
@@ -57,13 +54,15 @@ export const ActiveElectionSelector: React.FC = () => {
   };
 
   return (
-    <div>
-      <label>
-        Selecciona elección activa:
+    <div className="max-w-lg mx-auto p-6 bg-slate-800 rounded-xl shadow-lg space-y-6">
+      <div>
+        <label className="block text-sm font-semibold text-white mb-3">
+          Selecciona elección activa:
+        </label>
         <select
           onChange={handleChange}
           value={selectedId ?? ''}
-          style={{ color: 'black', marginLeft: 10, marginRight: 10 }}
+          className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
         >
           <option value="" disabled>-- Selecciona una opción --</option>
           {options.map(opt => (
@@ -72,10 +71,24 @@ export const ActiveElectionSelector: React.FC = () => {
             </option>
           ))}
         </select>
-      </label>
-      <button onClick={handleSetActive} disabled={loading || !selectedId}>
-        {loading ? 'Actualizando...' : 'Establecer'}
-      </button>
+      </div>
+      
+      <div>
+        <button 
+          onClick={handleSetActive} 
+          disabled={loading || !selectedId}
+          className="w-full px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors font-semibold shadow-md"
+        >
+          {loading ? 'Actualizando...' : 'Establecer como activa'}
+        </button>
+      </div>
+      
+      {options.length === 0 && (
+        <div className="text-center py-8 bg-slate-700 rounded-lg">
+          <p className="text-slate-300 font-medium">No hay elecciones disponibles para seleccionar</p>
+          <p className="text-sm text-slate-400 mt-2">Primero crea una elección en la pestaña "Crear Elección"</p>
+        </div>
+      )}
     </div>
   );
 };

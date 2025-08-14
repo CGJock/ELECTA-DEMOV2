@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { authService, LoginCredentials, LoginResponse } from '@/services/authService';
 
 interface Admin {
   id: number;
@@ -12,7 +13,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   login: (token: string, admin: Admin) => void;
-  loginTemporary: (username: string, password: string) => boolean;
+  loginAdmin: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
   verifyToken: () => Promise<boolean>;
 }
@@ -75,42 +76,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('adminData');
   };
 
-  // Función temporal para login sin backend
-  const loginTemporary = (username: string, password: string): boolean => {
-    // Primero verificar si existe un admin con ese username en la lista de administradores
-    const savedAdmins = localStorage.getItem('adminUsers');
-    
-    if (savedAdmins) {
-      try {
-        const admins = JSON.parse(savedAdmins);
-        const foundAdmin = admins.find((admin: any) => 
-          admin.username === username && admin.isActive === true
-        );
-        
-        if (foundAdmin) {
-          // Para simplificar, aceptamos cualquier contraseña por ahora
-          // En el futuro esto se conectará con el backend real
-          const tempAdmin = { id: foundAdmin.id, username: foundAdmin.username };
-          const tempToken = 'temp-jwt-token-' + Date.now();
-          
-          login(tempToken, tempAdmin);
-          return true;
-        }
-      } catch (error) {
-        console.error('Error al verificar administradores:', error);
-      }
-    }
-    
-    // Fallback a credenciales hardcodeadas por compatibilidad
-    if (username === 'admin' && password === 'admin123') {
-      const tempAdmin = { id: 1, username };
-      const tempToken = 'temp-jwt-token-' + Date.now();
+  // Función para login con backend
+  const loginAdmin = async (credentials: LoginCredentials): Promise<boolean> => {
+    try {
+      const response: LoginResponse = await authService.loginAdmin(credentials);
       
-      login(tempToken, tempAdmin);
+      // Login exitoso, guardar datos
+      const adminData = {
+        id: response.admin.id,
+        username: response.admin.username,
+        email: response.admin.email,
+        full_name: response.admin.full_name
+      };
+      
+      login(response.token, adminData);
       return true;
+    } catch (error) {
+      console.error('Error en loginAdmin:', error);
+      return false;
     }
-    
-    return false;
   };
 
   const verifyToken = async (): Promise<boolean> => {
@@ -132,7 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     token,
     isAuthenticated,
     login,
-    loginTemporary,
+    loginAdmin,
     logout,
     verifyToken
   };

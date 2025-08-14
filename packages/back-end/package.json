@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm exec tsc --project tsconfig.json && pnpm exec tsc-alias && pnpm exec cpy \"data/**/*\" --cwd=. dist/data",
+    "build": "pnpm exec tsc --project tsconfig.json && pnpm exec tsc-alias && pnpm exec cpy \"data/**/*\" --cwd=. dist/data && copy register-tsconfig-paths.js dist\\",
     "dev": "tsx watch index.ts",
     "start": "node -r ./register-tsconfig-paths.js dist/index.js"
   },

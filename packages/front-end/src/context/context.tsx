@@ -1,7 +1,7 @@
 'use client'
+
 import { useEffect,useState,useContext,createContext } from "react";
 import { useSocket, getSocket } from '@contexts/useSocket';
-import io from 'socket.io-client';
 
 interface VoteBreakdown {
   totalVotes: number;
