@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/services/apiService';
 import React, { useEffect, useState } from 'react';
 
 interface ActiveElectionInfo {
@@ -17,7 +18,7 @@ export const ActiveElectionDisplay: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/get_full-active_election')
+    fetch(`${API_BASE_URL}/api/get_full-active_election`)
       .then(res => {
         if (!res.ok) throw new Error('No active election set or error fetching');
         return res.json();

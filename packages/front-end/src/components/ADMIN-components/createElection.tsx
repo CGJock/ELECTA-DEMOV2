@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/services/apiService';
 
 interface ElectionType {
   typeId: number;
@@ -31,13 +32,13 @@ export const ElectionForm: React.FC = () => {
 
   useEffect(() => {
     // Obtener tipos de elección desde backend
-    fetch('http://localhost:5000/api/get-election-types')
+    fetch(`${API_BASE_URL}/api/get-election-types`)
       .then((res) => res.json())
       .then(setElectionTypes)
       .catch((err) => console.error('Error fetching election types:', err));
 
     // Obtener países desde backend (cacheados en Redis)
-    fetch('http://localhost:5000/api/get-countries')
+    fetch(`${API_BASE_URL}/api/get-countries`)
       .then((res) => res.json())
       .then(setCountries)
       .catch((err) => console.error('Error fetching countries:', err));
@@ -68,7 +69,7 @@ export const ElectionForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:5000/api/post-election', {
+      const res = await fetch(`${API_BASE_URL}/api/post-election`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
