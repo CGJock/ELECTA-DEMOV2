@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/services/apiService';
 
 interface ElectionRoundOption {
   election_round_id: number;
@@ -15,7 +16,7 @@ export const ActiveElectionSelector: React.FC = () => {
 
   useEffect(() => {
     // Cargar opciones disponibles
-    fetch('http://localhost:5000/api/get-all-election-rounds') // Cambia la ruta si es necesario
+    fetch(`${API_BASE_URL}/get-all-election-rounds`) // Cambia la ruta si es necesario
       .then(res => res.json())
       .then(data => {
         const opts = data.map((item: any) => ({
@@ -38,7 +39,7 @@ export const ActiveElectionSelector: React.FC = () => {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/post-active-election', {
+      const res = await fetch(`${API_BASE_URL}/post-active-election`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ electionRoundId: selectedId }),

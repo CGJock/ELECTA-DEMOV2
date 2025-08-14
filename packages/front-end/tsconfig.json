@@ -16,7 +16,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@shared/*": ["../../../../shared/*"],
       "@wrappers/*": ["./src/components/components-wrappers/*"],
       "@components/*": ["./src/components/*"],
       "@contexts/*": ["./src/context/*"],
