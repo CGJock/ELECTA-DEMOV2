@@ -1,5 +1,5 @@
 // API Service para consumir endpoints REST del backend
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export interface Department {
   code: string;

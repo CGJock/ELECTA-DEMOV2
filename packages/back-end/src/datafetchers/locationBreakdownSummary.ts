@@ -99,13 +99,11 @@ export interface LocationSummary {
 }
 
 export async function getLocationSummary(db: Pool, locationCode: string): Promise<LocationSummary> {
-  const key = `location:summary:${locationCode}`;
-
+  const key = `votes:parties:summary:${locationCode}`;
   const cached = await redisClient.get(key);
   if (cached) return JSON.parse(cached) as LocationSummary;
 
   const roundId = await getActiveElectionRoundId();
-
   if (!roundId) {
     return {
       locationCode,
@@ -115,54 +113,66 @@ export async function getLocationSummary(db: Pool, locationCode: string): Promis
     };
   }
 
-  // Totales
-  const totalsResult = await db.query(
+  // Query corregida: agregamos primero y luego hacemos json_agg
+  const result = await db.query(
     `
-    SELECT
-      COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS "validVotes",
-      COALESCE(SUM((b.raw_data ->> 'blankVotes')::INTEGER), 0) AS "blankVotes",
-      COALESCE(SUM((b.raw_data ->> 'nullVotes')::INTEGER), 0) AS "nullVotes"
-    FROM ballots_data b
-    JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party) ON true
-    WHERE b.election_round_id = $1
-      AND b.department_code = $2
+    -- Totales generales
+    SELECT tg.validVotes, tg.blankVotes, tg.nullVotes,
+           tbp.party_array AS totals_by_party
+    FROM
+      (
+        SELECT
+          COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS validVotes,
+          COALESCE(SUM((b.raw_data ->> 'blankVotes')::INTEGER), 0) AS blankVotes,
+          COALESCE(SUM((b.raw_data ->> 'nullVotes')::INTEGER), 0) AS nullVotes
+        FROM ballots_data b
+        CROSS JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party)
+        WHERE b.election_round_id = $1
+          AND b.department_code = $2
+      ) tg,
+      (
+        SELECT json_agg(t)
+        FROM (
+          SELECT
+            p.party ->> 'abbr' AS name,
+            p.party ->> 'abbr' AS abbr,
+            SUM((p.party ->> 'votes')::INTEGER) AS count
+          FROM ballots_data b
+          CROSS JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party)
+          WHERE b.election_round_id = $1
+            AND b.department_code = $2
+          GROUP BY p.party ->> 'abbr'
+          ORDER BY count DESC
+        ) t
+      ) tbp(party_array);
     `,
     [roundId, locationCode]
   );
 
-  const validVotes = Number(totalsResult.rows[0]?.validVotes || 0);
-  const blankVotes = Number(totalsResult.rows[0]?.blankVotes || 0);
-  const nullVotes = Number(totalsResult.rows[0]?.nullVotes || 0);
+  const row = result.rows[0];
+  if (!row) {
+    return {
+      locationCode,
+      locationName: `ID ${locationCode}`,
+      totalVotes: 0,
+      partyBreakdown: [],
+    };
+  }
+
+  const validVotes = Number(row.validVotes) || 0;
+  const blankVotes = Number(row.blankVotes) || 0;
+  const nullVotes = Number(row.nullVotes) || 0;
   const totalVotes = validVotes + blankVotes + nullVotes;
 
-  // Votos por partido
-  const votesPerPartyResult = await db.query(
-    `
-    SELECT 
-      COALESCE(pp.name, p.party ->> 'abbr') AS "name",
-      p.party ->> 'abbr' AS "abbr",
-      COALESCE(SUM((p.party ->> 'votes')::INTEGER), 0) AS "count"
-    FROM ballots_data b
-    CROSS JOIN LATERAL jsonb_array_elements(b.raw_data -> 'parties') AS p(party)
-    LEFT JOIN political_parties pp ON pp.abbr = p.party ->> 'abbr'
-    WHERE b.election_round_id = $1
-      AND b.department_code = $2
-    GROUP BY COALESCE(pp.name, p.party ->> 'abbr'), p.party ->> 'abbr'
-    ORDER BY count DESC
-    `,
-    [roundId, locationCode]
-  );
-
-  const partyBreakdown: PartySummary[] = votesPerPartyResult.rows.map(row => ({
-    name: row.name,
-    abbr: row.abbr,
-    count: Number(row.count),
+  const partyBreakdown: PartySummary[] = (row.totals_by_party || []).map((party: any) => ({
+    name: party.name,
+    abbr: party.abbr,
+    count: Number(party.count) || 0,
     percentage: validVotes
-      ? ((Number(row.count) / validVotes) * 100).toFixed(2)
+      ? ((Number(party.count) / validVotes) * 100).toFixed(2)
       : '0.00',
   }));
 
-  // Nombre de ubicación
   const locationNameResult = await db.query(
     `SELECT name FROM departments WHERE code = $1`,
     [locationCode]
@@ -180,4 +190,3 @@ export async function getLocationSummary(db: Pool, locationCode: string): Promis
 
   return summary;
 }
-
