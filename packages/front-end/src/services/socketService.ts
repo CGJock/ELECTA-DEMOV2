@@ -2,7 +2,7 @@
 // import { io, Socket } from 'socket.io-client';
 // import type { VoteSummary, GlobalSummary, LocationSummary } from './apiService';
 
-// const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000';
+// const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 
 // export interface SocketEvents {
 //   'vote-breakdown': (data: VoteSummary) => void;

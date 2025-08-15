@@ -2,19 +2,17 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ADMIN_CONFIG } from '@/config/admin';
 import { useAuth } from '@/context/authContext';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../LanguageSwitcher';
+import Image from 'next/image';
 
 interface LoginForm {
   username: string;
   password: string;
 }
 
-interface AdminLoginProps {
-  onLoginSuccess: (token: string, admin: any) => void;
-}
-
-const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
+const AdminLogin: React.FC = () => {
   const [formData, setFormData] = useState<LoginForm>({
     username: '',
     password: ''
@@ -22,7 +20,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const router = useRouter();
-  const { loginTemporary } = useAuth();
+  const { loginAdmin } = useAuth();
+  const { t } = useTranslation();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -38,17 +37,18 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
     setError('');
 
     try {
-      // Login temporal sin backend
-      const success = loginTemporary(formData.username, formData.password);
-      
+      const success = await loginAdmin({
+        username: formData.username,
+        password: formData.password
+      });
+
       if (success) {
-        onLoginSuccess('temp-token', { id: 1, username: formData.username });
-        router.push('/admin');
+        router.push('/admin'); // redirige al dashboard
       } else {
-        setError('Credenciales inválidas o código de acceso incorrecto');
+        setError(t('admin.sections.login.invalid_credentials'));
       }
     } catch (err) {
-      setError('Error en el login');
+      setError(t('admin.sections.login.login_error'));
     } finally {
       setIsLoading(false);
     }
@@ -57,26 +57,44 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <div className="max-w-md w-full space-y-8 p-8 bg-gray-800 rounded-lg shadow-2xl border border-gray-700">
+        {/* Header con logo y toggle de idioma */}
+        <div className="flex justify-between items-start">
+          <div className="flex items-center space-x-3">
+            <Image
+              src="/img/LogoDesigner.png"
+              alt="ELECTA Logo"
+              width={40}
+              height={40}
+              className="w-10 h-10"
+            />
+            <div>
+              <h1 className="text-xl font-bold text-white">ELECTA</h1>
+              <p className="text-xs text-gray-400">Dashboard Electoral</p>
+            </div>
+          </div>
+          <LanguageSwitcher small={true} />
+        </div>
+
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Acceso Administrativo
+            {t('admin.sections.login.title')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
-            Ingresa tus credenciales para acceder al panel
+            {t('admin.sections.login.subtitle')}
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded">
               {error}
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-300">
-                Usuario
+                {t('admin.sections.login.username')}
               </label>
               <input
                 id="username"
@@ -86,13 +104,13 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                 value={formData.username}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Nombre de usuario"
+                placeholder={t('admin.sections.login.username_placeholder')}
               />
             </div>
-            
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Contraseña
+                {t('admin.sections.login.password')}
               </label>
               <input
                 id="password"
@@ -102,11 +120,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                 value={formData.password}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contraseña"
+                placeholder={t('admin.sections.login.password_placeholder')}
               />
             </div>
-            
-
           </div>
 
           <div>
@@ -115,7 +131,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              {isLoading ? t('admin.sections.login.logging_in') : t('admin.sections.login.login_button')}
             </button>
           </div>
         </form>

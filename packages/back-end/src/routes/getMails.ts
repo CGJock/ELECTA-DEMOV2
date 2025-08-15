@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import pool from '@db/db.js';
-import { validateApiKey, votosLimiter } from '@middlerare/security.js';
+import { validateApiKey, votosLimiter } from '../middlewares/security.js';
 
 const router = Router();
 

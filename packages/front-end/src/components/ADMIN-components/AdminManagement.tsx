@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAdminManagement } from '@/context/adminManagementContext';
+import { useAdminManagement, AdminUser } from '@/context/adminManagementContext';
 import { useTranslation } from 'react-i18next';
 import { 
   Plus, 
@@ -10,23 +10,22 @@ import {
   UserPlus, 
   Users, 
   Shield, 
-  CheckCircle, 
-  XCircle,
   Save,
-  X
+  X,
+  Key
 } from 'lucide-react';
 
 interface AdminFormData {
   username: string;
   email: string;
-  role: string;
-  isActive: boolean;
+  full_name: string;
+  password: string;
 }
 
 interface NotificationFunctions {
-  showSuccess: (title: string, message?: string) => void;
-  showError: (title: string, message?: string) => void;
-  showWarning: (title: string, message?: string) => void;
+  showSuccess: (title: string, message: string) => void;
+  showError: (title: string, message: string) => void;
+  showWarning: (title: string, message: string) => void;
 }
 
 interface AdminManagementProps {
@@ -35,15 +34,15 @@ interface AdminManagementProps {
 
 const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
   const { t } = useTranslation();
-  const { admins, addAdmin, updateAdmin, deleteAdmin, toggleAdminStatus } = useAdminManagement();
+  const { admins, addAdmin, updateAdmin, deleteAdmin, resetPassword, isLoading, error } = useAdminManagement();
   const { showSuccess, showError, showWarning } = notifications;
   const [showForm, setShowForm] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<number | null>(null);
   const [formData, setFormData] = useState<AdminFormData>({
     username: '',
     email: '',
-    role: '',
-    isActive: true
+    full_name: '',
+    password: ''
   });
   const [errors, setErrors] = useState<Partial<AdminFormData>>({});
 
@@ -51,8 +50,8 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
     setFormData({
       username: '',
       email: '',
-      role: '',
-      isActive: true
+      full_name: '',
+      password: ''
     });
     setErrors({});
     setEditingAdmin(null);
@@ -60,12 +59,11 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, value } = e.target;
     
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     }));
 
     // Limpiar error del campo
@@ -89,49 +87,68 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
       newErrors.email = t('admin.sections.admin_management.form.email_invalid');
     }
 
-    if (!formData.role.trim()) {
-      newErrors.role = t('admin.sections.admin_management.form.role_required');
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = t('admin.sections.admin_management.form.full_name_required');
+    }
+
+    if (!editingAdmin && !formData.password.trim()) {
+      newErrors.password = t('admin.sections.admin_management.form.password_required');
+    } else if (formData.password && formData.password.length < 6) {
+      newErrors.password = t('admin.sections.admin_management.form.password_min_length');
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
 
-    if (editingAdmin) {
-      // Actualizar admin existente
-      const success = updateAdmin(editingAdmin, formData);
-      if (success) {
-        showSuccess(
-          t('admin.sections.admin_management.update_success_title'),
-          t('admin.sections.admin_management.update_success_message', { username: formData.username })
-        );
-        resetForm();
+    try {
+      if (editingAdmin) {
+        // Actualizar admin existente
+        const updateData: Partial<AdminUser> = {
+          username: formData.username,
+          email: formData.email,
+          full_name: formData.full_name
+        };
+        
+        const success = await updateAdmin(editingAdmin, updateData);
+        if (success) {
+          showSuccess(
+            t('admin.sections.admin_management.messages.update_success_title'),
+            t('admin.sections.admin_management.messages.update_success_message', { username: formData.username })
+          );
+          resetForm();
+        } else {
+          showError(
+            t('admin.sections.admin_management.messages.update_error_title'),
+            t('admin.sections.admin_management.messages.update_error_message')
+          );
+        }
       } else {
-        showError(
-          t('admin.sections.admin_management.update_error_title'),
-          t('admin.sections.admin_management.update_error_message')
-        );
+        // Agregar nuevo admin
+        const success = await addAdmin(formData);
+        if (success) {
+          showSuccess(
+            t('admin.sections.admin_management.messages.create_success_title'),
+            t('admin.sections.admin_management.messages.create_success_message', { username: formData.username })
+          );
+          resetForm();
+        } else {
+          showError(
+            t('admin.sections.admin_management.messages.create_error_title'),
+            t('admin.sections.admin_management.messages.create_error_message')
+          );
+        }
       }
-    } else {
-      // Agregar nuevo admin
-      const success = addAdmin(formData);
-      if (success) {
-        showSuccess(
-          t('admin.sections.admin_management.create_success_title'),
-          t('admin.sections.admin_management.create_success_message', { username: formData.username })
-        );
-        resetForm();
-      } else {
-        showError(
-          t('admin.sections.admin_management.create_error_title'),
-          t('admin.sections.admin_management.create_error_message')
-        );
-      }
+    } catch (error) {
+      showError(
+        t('admin.sections.admin_management.messages.general_error_title'),
+        t('admin.sections.admin_management.messages.general_error_message')
+      );
     }
   };
 
@@ -139,59 +156,75 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
     setFormData({
       username: admin.username,
       email: admin.email || '',
-      role: admin.role || '',
-      isActive: admin.isActive
+      full_name: admin.full_name || '',
+      password: ''
     });
     setEditingAdmin(admin.id);
     setShowForm(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     const admin = admins.find(a => a.id === id);
     if (!admin) return;
     
     // Mostrar notificación de confirmación
     showWarning(
-      t('admin.sections.admin_management.delete_confirm_title'),
-      t('admin.sections.admin_management.delete_confirm_message', { username: admin.username })
+      t('admin.sections.admin_management.messages.delete_confirm_title'),
+      t('admin.sections.admin_management.messages.delete_confirm_message', { username: admin.username })
     );
     
     // Simular confirmación automática después de 2 segundos
     // En el futuro esto se puede reemplazar con un modal de confirmación real
-    setTimeout(() => {
-      const success = deleteAdmin(id);
-      if (success) {
-        showSuccess(
-          t('admin.sections.admin_management.delete_success_title'),
-          t('admin.sections.admin_management.delete_success_message', { username: admin.username })
-        );
-      } else {
+    setTimeout(async () => {
+      try {
+        const success = await deleteAdmin(id);
+        if (success) {
+          showSuccess(
+            t('admin.sections.admin_management.messages.delete_success_title'),
+            t('admin.sections.admin_management.messages.delete_success_message', { username: admin.username })
+          );
+        } else {
+          showError(
+            t('admin.sections.admin_management.messages.delete_error_title'),
+            t('admin.sections.admin_management.messages.delete_error_message')
+          );
+        }
+      } catch (error) {
         showError(
-          t('admin.sections.admin_management.delete_error_title'),
-          t('admin.sections.admin_management.delete_error_message')
+          t('admin.sections.admin_management.messages.general_error_title'),
+          t('admin.sections.admin_management.messages.general_error_message')
         );
       }
     }, 2000);
   };
 
-  const handleToggleStatus = (id: number) => {
+  const handleResetPassword = async (id: number) => {
     const admin = admins.find(a => a.id === id);
     if (!admin) return;
     
-    const success = toggleAdminStatus(id);
-    if (success) {
-      const newStatus = !admin.isActive;
-      showSuccess(
-        t('admin.sections.admin_management.status_change_success_title'),
-        t('admin.sections.admin_management.status_change_success_message', { 
-          username: admin.username,
-          status: newStatus ? t('admin.sections.admin_management.table.active') : t('admin.sections.admin_management.table.inactive')
-        })
-      );
-    } else {
+    // Contraseña temporal por defecto
+    const tempPassword = 'electa1234';
+    
+    try {
+      const success = await resetPassword(id, tempPassword);
+      if (success) {
+        showSuccess(
+          t('admin.sections.admin_management.messages.reset_password_success_title'),
+          t('admin.sections.admin_management.messages.reset_password_success_message', { 
+            username: admin.username,
+            password: tempPassword
+          })
+        );
+      } else {
+        showError(
+          t('admin.sections.admin_management.messages.reset_password_error_title'),
+          t('admin.sections.admin_management.messages.reset_password_error_message')
+        );
+      }
+    } catch (error) {
       showError(
-        t('admin.sections.admin_management.status_change_error_title'),
-        t('admin.sections.admin_management.status_change_error_message')
+        t('admin.sections.admin_management.messages.general_error_title'),
+        t('admin.sections.admin_management.messages.general_error_message')
       );
     }
   };
@@ -206,6 +239,22 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
       minute: '2-digit'
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-white">{t('admin.sections.admin_management.messages.loading')}</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-400 text-center py-8">
+        {t('admin.sections.admin_management.messages.error_loading')}: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -288,38 +337,40 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-white mb-2">
-                  {t('admin.sections.admin_management.form.role')} *
+                  {t('admin.sections.admin_management.form.full_name')} *
                 </label>
-                <select
-                  name="role"
-                  value={formData.role}
+                <input
+                  type="text"
+                  name="full_name"
+                  value={formData.full_name}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
-                    errors.role ? 'border-red-500' : 'border-slate-600'
+                  className={`w-full px-3 py-2 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
+                    errors.full_name ? 'border-red-500' : 'border-slate-600'
                   }`}
-                >
-                  <option value="">{t('admin.sections.admin_management.form.role_placeholder')}</option>
-                  <option value="Super Admin">{t('admin.sections.admin_management.roles.super_admin')}</option>
-                  <option value="Admin">{t('admin.sections.admin_management.roles.admin')}</option>
-                  <option value="Moderador">{t('admin.sections.admin_management.roles.moderator')}</option>
-                  <option value="Editor">{t('admin.sections.admin_management.roles.editor')}</option>
-                </select>
-                {errors.role && (
-                  <p className="text-red-400 text-sm mt-1">{errors.role}</p>
+                  placeholder={t('admin.sections.admin_management.form.full_name_placeholder')}
+                />
+                {errors.full_name && (
+                  <p className="text-red-400 text-sm mt-1">{errors.full_name}</p>
                 )}
               </div>
 
-              <div className="flex items-center">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={formData.isActive}
-                    onChange={handleInputChange}
-                    className="w-4 h-4 text-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500 focus:ring-2"
-                  />
-                  <span className="ml-2 text-sm text-white">{t('admin.sections.admin_management.form.is_active')}</span>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  {editingAdmin ? t('admin.sections.admin_management.form.password_optional') : t('admin.sections.admin_management.form.password')} *
                 </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`w-full px-3 py-2 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
+                    errors.password ? 'border-red-500' : 'border-slate-600'
+                  }`}
+                  placeholder={editingAdmin ? t('admin.sections.admin_management.form.password_optional_placeholder') : t('admin.sections.admin_management.form.password_placeholder')}
+                />
+                {errors.password && (
+                  <p className="text-red-400 text-sm mt-1">{errors.password}</p>
+                )}
               </div>
             </div>
 
@@ -351,8 +402,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
               <tr>
                 <th className="text-left py-3 px-4 text-white font-medium">{t('admin.sections.admin_management.table.username')}</th>
                 <th className="text-left py-3 px-4 text-white font-medium">{t('admin.sections.admin_management.table.email')}</th>
-                <th className="text-left py-3 px-4 text-white font-medium">{t('admin.sections.admin_management.table.role')}</th>
-                <th className="text-left py-3 px-4 text-white font-medium">{t('admin.sections.admin_management.table.status')}</th>
+                <th className="text-left py-3 px-4 text-white font-medium">{t('admin.sections.admin_management.table.full_name')}</th>
                 <th className="text-left py-3 px-4 text-white font-medium">{t('admin.sections.admin_management.table.created')}</th>
                 <th className="text-left py-3 px-4 text-white font-medium">{t('admin.sections.admin_management.table.actions')}</th>
               </tr>
@@ -372,55 +422,34 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ notifications }) => {
                     </div>
                   </td>
                   <td className="py-3 px-4 text-slate-300">{admin.email || '-'}</td>
-                  <td className="py-3 px-4 text-slate-300">{admin.role || '-'}</td>
-                  <td className="py-3 px-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      admin.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                    }`}>
-                      {admin.isActive ? (
-                                                 <>
-                           <CheckCircle className="w-3 h-3 mr-1" />
-                           {t('admin.sections.admin_management.table.active')}
-                         </>
-                       ) : (
-                         <>
-                           <XCircle className="w-3 h-3 mr-1" />
-                           {t('admin.sections.admin_management.table.inactive')}
-                         </>
-                       )}
-                    </span>
-                  </td>
+                  <td className="py-3 px-4 text-slate-300">{admin.full_name || '-'}</td>
                   <td className="py-3 px-4 text-sm text-slate-400">
-                    {formatDate(admin.createdAt)}
+                    {formatDate(admin.created_at)}
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(admin)}
                         className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
-                                                 title={t('admin.sections.admin_management.actions.edit_title')}
+                        title={t('admin.sections.admin_management.actions.edit_title')}
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       
                       {admin.id !== 1 && (
                         <>
-                                                           <button
-                                   onClick={() => handleToggleStatus(admin.id)}
-                                   className={`p-2 transition-colors ${
-                                     admin.isActive
-                                       ? 'text-yellow-400 hover:text-yellow-300'
-                                       : 'text-green-400 hover:text-green-300'
-                                   }`}
-                                   title={admin.isActive ? t('admin.sections.admin_management.actions.deactivate_title') : t('admin.sections.admin_management.actions.activate_title')}
-                                 >
-                                   {admin.isActive ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
-                                 </button>
+                          <button
+                            onClick={() => handleResetPassword(admin.id)}
+                            className="p-2 text-yellow-400 hover:text-yellow-300 transition-colors"
+                            title={t('admin.sections.admin_management.actions.reset_password_title')}
+                          >
+                            <Key className="w-4 h-4" />
+                          </button>
                           
                           <button
                             onClick={() => handleDelete(admin.id)}
                             className="p-2 text-red-400 hover:text-red-300 transition-colors"
-                                                         title={t('admin.sections.admin_management.actions.delete_title')}
+                            title={t('admin.sections.admin_management.actions.delete_title')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

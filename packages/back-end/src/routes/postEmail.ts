@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import pool from '@db/db.js';
 import { z } from 'zod';
-import { validateApiKey, votosLimiter } from '@middlerare/security.js';
+import { validateApiKey, votosLimiter } from '../middlewares/security.js';
 
 const mailSchema = z.object({
      user_email: z.string().email()

@@ -5,25 +5,27 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 interface Admin {
   id: number;
   username: string;
+  email?: string;
+  full_name?: string;
+}
+
+interface LoginCredentials {
+  username: string;
+  password: string;
 }
 
 interface AuthContextType {
   admin: Admin | null;
-  token: string | null;
   isAuthenticated: boolean;
-  login: (token: string, admin: Admin) => void;
-  loginTemporary: (username: string, password: string) => boolean;
+  loginAdmin: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  verifyToken: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
 
@@ -33,112 +35,80 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [admin, setAdmin] = useState<Admin | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // Opcional: al montar el provider, verificamos si hay sesión activa
   useEffect(() => {
-    // Verificar si hay un token guardado al cargar la página
-    const savedToken = localStorage.getItem('adminToken');
-    const savedAdmin = localStorage.getItem('adminData');
-    
-    if (savedToken && savedAdmin) {
+    const checkSession = async () => {
       try {
-        const adminData = JSON.parse(savedAdmin);
-        setToken(savedToken);
-        setAdmin(adminData);
-        setIsAuthenticated(true);
-      } catch (error) {
-        // Si hay error al parsear, limpiar datos corruptos
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('adminData');
+        const res = await fetch(`${API_URL}/api/auth/verify`, {
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.admin) {
+            setAdmin(data.admin);
+            setIsAuthenticated(true);
+          }
+        }
+      } catch (err) {
+        console.log('No active session');
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    checkSession();
   }, []);
 
-  const login = (newToken: string, adminData: Admin) => {
-    setToken(newToken);
-    setAdmin(adminData);
-    setIsAuthenticated(true);
-    
-    // Guardar en localStorage
-    localStorage.setItem('adminToken', newToken);
-    localStorage.setItem('adminData', JSON.stringify(adminData));
-  };
+  const loginAdmin = async (credentials: LoginCredentials): Promise<boolean> => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+        credentials: 'include'
+      });
 
-  const logout = () => {
-    setToken(null);
-    setAdmin(null);
-    setIsAuthenticated(false);
-    
-    // Limpiar localStorage
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminData');
-  };
+      if (!res.ok) return false;
 
-  // Función temporal para login sin backend
-  const loginTemporary = (username: string, password: string): boolean => {
-    // Primero verificar si existe un admin con ese username en la lista de administradores
-    const savedAdmins = localStorage.getItem('adminUsers');
-    
-    if (savedAdmins) {
-      try {
-        const admins = JSON.parse(savedAdmins);
-        const foundAdmin = admins.find((admin: any) => 
-          admin.username === username && admin.isActive === true
-        );
-        
-        if (foundAdmin) {
-          // Para simplificar, aceptamos cualquier contraseña por ahora
-          // En el futuro esto se conectará con el backend real
-          const tempAdmin = { id: foundAdmin.id, username: foundAdmin.username };
-          const tempToken = 'temp-jwt-token-' + Date.now();
-          
-          login(tempToken, tempAdmin);
-          return true;
-        }
-      } catch (error) {
-        console.error('Error al verificar administradores:', error);
-      }
-    }
-    
-    // Fallback a credenciales hardcodeadas por compatibilidad
-    if (username === 'admin' && password === 'admin123') {
-      const tempAdmin = { id: 1, username };
-      const tempToken = 'temp-jwt-token-' + Date.now();
-      
-      login(tempToken, tempAdmin);
+      // Backend setea cookie HttpOnly, opcionalmente devuelve admin info
+      const data = await res.json();
+      if (data.admin) setAdmin(data.admin);
+      setIsAuthenticated(true);
       return true;
-    }
-    
-    return false;
-  };
-
-  const verifyToken = async (): Promise<boolean> => {
-    if (!token) return false;
-
-    // Verificación temporal: si hay token en localStorage, es válido
-    const savedToken = localStorage.getItem('adminToken');
-    if (savedToken && savedToken === token) {
-      return true;
-    } else {
-      // Token inválido, hacer logout
-      logout();
+    } catch (err) {
+      console.error(err);
       return false;
     }
   };
 
-  const value: AuthContextType = {
-    admin,
-    token,
-    isAuthenticated,
-    login,
-    loginTemporary,
-    logout,
-    verifyToken
-  };
+  const logout = async () => {
+  setAdmin(null);
+  setIsAuthenticated(false);
+
+  try {
+    await fetch(`${API_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
+
+  // Redirección sin router
+  window.location.href = "/";
+};
+
+  if (loading) return null;
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ admin, isAuthenticated, loginAdmin, logout }}>
       {children}
     </AuthContext.Provider>
   );

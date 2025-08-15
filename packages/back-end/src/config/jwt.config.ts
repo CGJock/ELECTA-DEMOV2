@@ -1,6 +1,6 @@
 export const JWT_CONFIG = {
-  SECRET_KEY: 'your-super-secret-jwt-key-change-in-production',
-  EXPIRES_IN: '24h',
+  SECRET_KEY : process.env.JWT_TOKEN ,
+  EXPIRES_IN: process.env.JWT_EXPIRES,
   ACCESS_CODE: 'ELECTA2024'
 };
 
