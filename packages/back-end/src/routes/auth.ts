@@ -3,18 +3,29 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '@db/db.js';
 import { JWT_CONFIG, JWTPayload } from '../config/jwt.config.js';
+import  { SignOptions } from 'jsonwebtoken';
+import { tr } from 'zod/locales';
+
+
+const secretKey = JWT_CONFIG.SECRET_KEY;
+
+if (!secretKey) {
+  throw new Error('JWT_SECRET no definido');
+}
+
+
+const expiredValue = JWT_CONFIG.EXPIRES_IN;
+
+if (!expiredValue) {
+  throw new Error('JWT_EXPIRES_IN not defined')
+}
 
 const router = Router();
 
 // Registro de administrador (solo para crear el primer admin)
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { username, password, accessCode } = req.body;
-
-    // Verificar que el código de acceso sea correcto
-    if (accessCode !== JWT_CONFIG.ACCESS_CODE) {
-      return res.status(403).json({ error: 'Código de acceso inválido' });
-    }
+    const { username, password, email, full_name } = req.body;
 
     // Verificar que el usuario no exista
     const existingUser = await pool.query(
@@ -32,15 +43,17 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // Insertar nuevo admin
     const result = await pool.query(
-      'INSERT INTO admins (username, password_hash, access_code) VALUES ($1, $2, $3) RETURNING id, username',
-      [username, passwordHash, accessCode]
+      'INSERT INTO admins (username, password_hash, email, full_name) VALUES ($1, $2, $3, $4) RETURNING id, username, email, full_name',
+      [username, passwordHash, email || null, full_name || null]
     );
 
     res.status(201).json({
       message: 'Administrador creado exitosamente',
       admin: {
         id: result.rows[0].id,
-        username: result.rows[0].username
+        username: result.rows[0].username,
+        email: result.rows[0].email,
+        full_name: result.rows[0].full_name
       }
     });
   } catch (error) {
@@ -52,12 +65,7 @@ router.post('/register', async (req: Request, res: Response) => {
 // Login de administrador
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { username, password, accessCode } = req.body;
-
-    // Verificar que el código de acceso sea correcto
-    if (accessCode !== JWT_CONFIG.ACCESS_CODE) {
-      return res.status(403).json({ error: 'Código de acceso inválido' });
-    }
+    const { username, password } = req.body;
 
     // Buscar el usuario
     const result = await pool.query(
@@ -77,40 +85,70 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Generar token JWT
+    // Validar variables de entorno
+    if (!JWT_CONFIG.SECRET_KEY) throw new Error('JWT_TOKEN no definido');
+    if (!JWT_CONFIG.EXPIRES_IN) throw new Error('JWT_EXPIRES no definido');
+
+    // Payload compatible con JWTPayload
     const payload: JWTPayload = {
       adminId: admin.id,
       username: admin.username,
-      accessCode
+      accessCode: JWT_CONFIG.ACCESS_CODE
     };
 
-    const token = jwt.sign(payload, JWT_CONFIG.SECRET_KEY);
+    // SignOptions
+    const options: SignOptions = {
+      expiresIn: JWT_CONFIG.EXPIRES_IN as any // forzamos string
+    };
 
-    res.json({
-      message: 'Login exitoso',
-      token,
-      admin: {
-        id: admin.id,
-        username: admin.username
-      }
+    // Generar token
+    const token = jwt.sign(payload, JWT_CONFIG.SECRET_KEY as string, options);
+
+    // Enviar cookie HttpOnly
+    res.cookie('adminToken', token, {
+      httpOnly: true,
+      secure: false, //camibiar en prod
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000, // 1 hora
     });
+
+    res.json({ message: 'Login exitoso' });
   } catch (error) {
     console.error('Error en login:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
+  function isJWTPayload(obj: any): obj is JWTPayload {
+  return obj && typeof obj === 'object' &&
+         'adminId' in obj &&
+         'username' in obj &&
+         'accessCode' in obj;
+}
+
+
+
 // Verificar token (para verificar si el token es válido)
 router.get('/verify', (req: Request, res: Response) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.cookies?.adminToken;
+
+
 
   if (!token) {
     return res.status(401).json({ error: 'Token no proporcionado' });
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_CONFIG.SECRET_KEY) as JWTPayload;
+    
+    const decodedRaw = jwt.verify(token, secretKey) as unknown;
+
+    if (!isJWTPayload(decodedRaw)) {
+      return res.status(403).json({ error: 'Token inválido o expirado' });
+    }
+
+    // Ahora sí casteamos a JWTPayload
+    const decoded = decodedRaw as JWTPayload;
+
     res.json({
       valid: true,
       admin: {
@@ -120,6 +158,21 @@ router.get('/verify', (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(403).json({ error: 'Token inválido o expirado' });
+  }
+});
+
+
+router.post('/logout', (req: Request, res: Response) => {
+  try {
+    res.clearCookie('adminToken', {
+      httpOnly: true,
+      secure: false, // cambiar a true en producción si usas HTTPS
+      sameSite: 'lax',
+    });
+    res.json({ message: 'Logout exitoso' });
+  } catch (error) {
+    console.error('Error en logout:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 

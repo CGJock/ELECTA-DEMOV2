@@ -1,102 +1,101 @@
 'use client'
 import React from 'react';
-import dynamic from 'next/dynamic';
+import Header from '@/components/Header';
+import GlobalCounter from '@/components/GlobalCounter';
+import Map from '@/components/Map';
+import StatsContainer from '@/components/StatsContainer';
+import { IncidentsFlag } from '@/components/IncidentsFlag';
+import Footer from '@/components/Footer';
+import WinnerBanner from '@/components/WinnerBanner';
+// import SecondRoundBanner from '@/components/SecondRoundBanner';
+// import ElectionReportTable from '@/components/ElectionReportTable';
+import VisibilityWrapper from '@components/VisibilityWrapper';
+import ComponentVisibilityProvider from '@/context/componentVisibilityContext';
+
+// ===== CÓDIGO DE DEVELOPER (COMENTADO) =====
+
+// ===========================================
 
 // Componentes
-import { Suspense } from 'react';
+// import { Suspense } from 'react';
 // import GlobalCounter from '../components/GlobalCounter';
-const GlobalCounter = dynamic(() => import('@components/GlobalCounter') as any, { ssr: false });
-const Map2 = dynamic(() => import('@components/Map') as any, { ssr: false });
-import StatsContainer from '@components/StatsContainer';
-import { IncidentsFlag } from '@components/IncidentsFlag';
-import { ElectionForm } from '@/components/ADMIN-components/createElection';
-import { ActiveElectionSelector } from '@/components/ADMIN-components/setActiveElection';
-import { ActiveElectionDisplay } from '@/components/activeElectionRead';
-import HeaderWrapper from '@components/components-wrappers/HeaderWrapper';
-import FooterWrapper from '@components/components-wrappers/FooterWrapper';
+// const GlobalCounter = dynamic(() => import('@components/GlobalCounter') as any, { ssr: false });
+// const Map2 = dynamic(() => import('@components/Map') as any, { ssr: false });
+// import StatsContainer from '@components/StatsContainer';
+// import { IncidentsFlag } from '@components/IncidentsFlag';
+// import { ElectionForm } from '@/components/ADMIN-components/createElection';
+// import { ActiveElectionSelector } from '@/components/ADMIN-components/setActiveElection';
+// import { ActiveElectionDisplay } from '@/components/activeElectionRead';
+// import HeaderWrapper from '@components/components-wrappers/HeaderWrapper';
+// import FooterWrapper from '@components/components-wrappers/FooterWrapper';
 
-export default function Page() {
+export default function Home() {
+  return (
+    <ComponentVisibilityProvider>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        {/* Header */}
+        <VisibilityWrapper componentName="Header">
+          <Header />
+        </VisibilityWrapper>
 
-return (
-  <>
-    <HeaderWrapper />
-    <Suspense fallback={<div>Loading translations...</div>}>
-      <div style={{
-        flex: 1, // Allow this container to grow
-        display: 'flex',
-        flexDirection: 'column',
-        fontFamily: 'Inter, sans-serif',
-        maxWidth: '1600px'
-      }}>
+        {/* Global Counter */}
+        <VisibilityWrapper componentName="GlobalCounter">
+          <GlobalCounter />
+        </VisibilityWrapper>
+
         {/* Main Content */}
-        <div style={{
-          flex: 1, // Allow main content to grow
-          maxWidth: '1400px',
-          width: '100%',
-          margin: '0 auto',
-          padding: '1rem 2rem',
-          justifyContent: 'center'
-        }}>
-          {/* Global Counter Section */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginBottom: '1.5rem' // Increased margin
-          }}>
-            <GlobalCounter />
+        {/* ===== CÓDIGO DE DEVELOPER (COMENTADO) ===== */}
+        {/* Este código incluye layout con CSS inline y componentes de elecciones */}
+        {/* NO ELIMINAR - Solo comentar para mantener funcionalidad */}
+        {/* =========================================== */}
+        
+        {/* 
+        CÓDIGO DE DEVELOPER COMENTADO:
+        - Layout con CSS inline
+        - Componentes de elecciones (ElectionForm, ActiveElectionSelector, etc.)
+        - Grid layout personalizado
+        - Este código se moverá al admin page después
+        */}
 
-            <ElectionForm />
-            <ActiveElectionDisplay />
-            <ActiveElectionSelector />
-          </div>
-
-          {/* Separator */}
-          <div style={{
-            height: '2px',
-            background: 'linear-gradient(90deg, transparent 0%, #374151 50%, transparent 100%)',
-            margin: '1.5rem 0', // Increased margin
-            borderRadius: '1px'
-          }} />
-
-          {/* Map and Stats Section */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1.5fr', // mitad y mitad, puedes hacer 1fr 1.2fr si quieres
-            gap: '1rem',
-            alignItems: 'start',
-            maxWidth: '1200px',
-            width: '100%',
-            margin: '0 auto',
-            padding: '1rem',
-          }}>
-            {/* Map Section */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              height: '100%',
-            }}>
-              <Map2 incidents={[]} {...({} as any)} />
+        <div className="container mx-auto px-4 py-8">
+          {/* Map Section */}
+          <VisibilityWrapper componentName="Map">
+            <div className="mb-8">
+              <Map incidents={[]} />
             </div>
+          </VisibilityWrapper>
 
-            {/* Stats Section */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'start',
-              height: '100%', // Ensure it takes full height
-              marginLeft: '0 auto',
-            }}>
-              <div style={{ marginTop: '14px', width: '100%' }}>
-                <StatsContainer />
-              </div>
-            </div>
-          </div>
+          {/* Stats Section */}
+          <VisibilityWrapper componentName="StatsContainer">
+            <StatsContainer />
+          </VisibilityWrapper>
+
+          {/* Election Report Table */}
+          {/* <VisibilityWrapper componentName="ElectionReportTable">
+            <ElectionReportTable />
+          </VisibilityWrapper> */}
+
+          {/* Incidents Flag */}
+          <VisibilityWrapper componentName="IncidentsFlag">
+            <IncidentsFlag />
+          </VisibilityWrapper>
+
+          {/* Winner Banner */}
+          <VisibilityWrapper componentName="WinnerBanner">
+            <WinnerBanner isVisible={true} />
+          </VisibilityWrapper>
+
+          {/* Second Round Banner */}
+          {/* <VisibilityWrapper componentName="SecondRoundBanner">
+            <SecondRoundBanner />
+          </VisibilityWrapper> */}
         </div>
-        <IncidentsFlag />
+
+        {/* Footer */}
+        <VisibilityWrapper componentName="Footer">
+          <Footer onAddIncident={() => {}} />
+        </VisibilityWrapper>
       </div>
-      </Suspense>
-      <FooterWrapper onAddIncident={() => {}} />
-    </>
+    </ComponentVisibilityProvider>
   );
 }

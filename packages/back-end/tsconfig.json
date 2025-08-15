@@ -21,6 +21,7 @@
       "@data/*": ["data/*"],
       "@listeners/*": ["src/Listeners/*"],
       "@socket/*": ["src/Socketio/*"],
+      "@middlewares/*": ["src/middlewares/*"],
       "@middlerare/*": ["src/middlewares/*"],
       "@configuration/*": ["src/config/*"]
     }

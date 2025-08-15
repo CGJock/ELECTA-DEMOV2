@@ -88,14 +88,16 @@ export const ElectionForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Tipo de elección:
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-white mb-2">
+          Tipo de elección:
+        </label>
         <select
           name="election_type"
           value={form.election_type}
           onChange={handleChange}
-          style={{ color: 'black' }}
+          className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
           required
         >
           {electionTypes.map((et) => (
@@ -104,16 +106,17 @@ export const ElectionForm: React.FC = () => {
             </option>
           ))}
         </select>
-      </label>
-      <br />
+      </div>
 
-      <label>
-        País:
+      <div>
+        <label className="block text-sm font-medium text-white mb-2">
+          País:
+        </label>
         <select
           name="country"
           value={form.country}
           onChange={handleChange}
-          style={{ color: 'black' }}
+          className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
           required
         >
           <option value="">--Selecciona país--</option>
@@ -123,38 +126,44 @@ export const ElectionForm: React.FC = () => {
             </option>
           ))}
         </select>
-      </label>
-      <br />
+      </div>
 
-      <label>
-        Ronda:
+      <div>
+        <label className="block text-sm font-medium text-white mb-2">
+          Ronda:
+        </label>
         <select
           name="round_number"
           value={form.round_number}
           onChange={handleChange}
-          style={{ color: 'black' }}
+          className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
           required
         >
           <option value="1">1</option>
           <option value="2">2</option>
         </select>
-      </label>
-      <br />
+      </div>
 
-      <label>
-        Fecha de ronda:
+      <div>
+        <label className="block text-sm font-medium text-white mb-2">
+          Fecha de ronda:
+        </label>
         <input
           type="date"
           name="round_date"
           value={form.round_date}
           onChange={handleChange}
           required
-          style={{ color: 'black' }}
+          className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
         />
-      </label>
-      <br />
+      </div>
 
-      <button type="submit">Crear elección</button>
+      <button 
+        type="submit" 
+        className="w-full px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors font-medium"
+      >
+        Crear elección
+      </button>
     </form>
   );
 };

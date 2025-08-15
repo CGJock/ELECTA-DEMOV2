@@ -49,13 +49,18 @@ export default function VoteChart({ active }: VoteChartProps) {
   })).sort((a, b) => b.percentage - a.percentage);
 
   function generateTicks(max: number, step: number): number[] {
-    const ticks = [];
-    for (let i = 0; i <= max; i += step) ticks.push(i);
-    if (ticks[ticks.length - 1] !== max) ticks.push(max);
-    return ticks;
-  }
+  if (!Number.isFinite(max) || max <= 0) return [0];
+  if (!Number.isFinite(step) || step <= 0) step = 1;
 
-  const tickValues = generateTicks(totalVotes, Math.ceil(totalVotes / 5));
+  const ticks = [];
+  for (let i = 0; i <= max; i += step) {
+    ticks.push(i);
+  }
+  if (ticks[ticks.length - 1] !== max) ticks.push(max);
+  return ticks;
+}
+
+const tickValues = generateTicks(totalVotes, Math.ceil(totalVotes / 5));
 
   useEffect(() => {
     if (active) window.dispatchEvent(new Event('resize'));

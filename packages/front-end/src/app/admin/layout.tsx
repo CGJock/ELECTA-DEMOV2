@@ -3,6 +3,7 @@
 import React from 'react';
 import { AuthProvider } from '@/context/authContext';
 import { AdminManagementProvider } from '@/context/adminManagementContext';
+import { ComponentVisibilityProvider } from '@/context/componentVisibilityContext';
 
 export default function AdminLayout({
   children,
@@ -12,7 +13,9 @@ export default function AdminLayout({
   return (
     <AuthProvider>
       <AdminManagementProvider>
-        {children}
+        <ComponentVisibilityProvider>
+          {children}
+        </ComponentVisibilityProvider>
       </AdminManagementProvider>
     </AuthProvider>
   );

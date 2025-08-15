@@ -131,7 +131,7 @@
 //       <div className="text-sm text-gray-600 bg-yellow-50 p-3 rounded">
 //         <p><strong>Instrucciones:</strong></p>
 //         <ol className="list-decimal list-inside space-y-1 mt-2">
-//           <li>Asegúrate de que el backend esté corriendo en puerto 4000</li>
+//           <li>Asegúrate de que el backend esté corriendo en puerto 5000</li>
 //           <li>Verifica que las variables de entorno estén correctas</li>
 //           <li>Usa los botones para probar las conexiones</li>
 //           <li>Los datos se actualizan automáticamente via WebSocket</li>

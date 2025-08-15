@@ -1,4 +1,5 @@
 import pool from '@db/db.js';
+// import { createFirstAdmin } from './createFirstAdmin.js';
 
 export async function initTables(): Promise<void> {
   const queries = [
@@ -157,56 +158,58 @@ export async function initTables(): Promise<void> {
     //     );
     //   `
     // },
-    //  {
-    //   name: 'political_parties',
-    //   sql: `
-    //     CREATE TABLE IF NOT EXISTS political_parties (
-    //       id SERIAL PRIMARY KEY,
-    //       election_round_id INT UNIQUE REFERENCES election_rounds(id) ON DELETE CASCADE,
-    //       name TEXT DEFAULT 'UNDEFINED',
-    //       abbr TEXT DEFAULT 'UNDEFINED'
-    //     );
-    //   `
-    // },
-    // {
-    //   name: 'department_votes',
-    //   sql: `
-    //     CREATE TABLE IF NOT EXISTS department_votes (
-    //       id SERIAL PRIMARY KEY,
-    //       election_round_id INT NOT NULL REFERENCES election_rounds(id) ON DELETE CASCADE,
-    //       department_code TEXT NOT NULL REFERENCES departments(code) ON DELETE CASCADE,
-    //       party_id INT NOT NULL REFERENCES political_parties(id) ON DELETE CASCADE,
-    //       votes INT DEFAULT 0,
-    //       UNIQUE (election_round_id, department_code, party_id)
-    //     );
-    //   `
-    // },
-    // {
-    //   name: 'uninominal_deputies_votes',
-    //   sql: `
-    //     CREATE TABLE IF NOT EXISTS uninominal_deputies_votes (
-    //       id SERIAL PRIMARY KEY,
-    //       election_round_id INT NOT NULL REFERENCES election_rounds(id),
-    //       department_code TEXT NOT NULL REFERENCES departments(code) ON DELETE CASCADE,
-    //       party_id INT NOT NULL REFERENCES political_parties(id) ON DELETE CASCADE,
-    //       votes INT DEFAULT 0,
-    //       UNIQUE (election_round_id, department_code, party_id)
-    //     );
-    //   `
-    // },
-    // {
-    //   name: 'plurinominal_deputies_votes',
-    //   sql: `
-    //     CREATE TABLE IF NOT EXISTS plurinominal_deputies_votes (
-    //       id SERIAL PRIMARY KEY,
-    //       election_round_id INT NOT NULL REFERENCES election_rounds(id),
-    //       department_code TEXT NOT NULL REFERENCES departments(code) ON DELETE CASCADE,
-    //       party_id INT NOT NULL REFERENCES political_parties(id) ON DELETE CASCADE,
-    //       votes INT DEFAULT 0,
-    //       UNIQUE (election_round_id, department_code, party_id)
-    //     );
-    //   `
-    // },
+    {
+      name: 'political_parties',
+      sql: `
+        CREATE TABLE IF NOT EXISTS political_parties (
+          id SERIAL PRIMARY KEY,
+          abbr TEXT NOT NULL UNIQUE,
+          name TEXT,
+          color TEXT,
+          logo_url TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `
+    },
+    {
+      name: 'presidential_votes',
+      sql: `
+        CREATE TABLE IF NOT EXISTS presidential_votes (
+          id SERIAL PRIMARY KEY,
+          election_round_id INT NOT NULL REFERENCES election_rounds(id),
+          department_code TEXT NOT NULL REFERENCES departments(code) ON DELETE CASCADE,
+          party_id INT NOT NULL REFERENCES political_parties(id) ON DELETE CASCADE,
+          votes INT DEFAULT 0,
+          UNIQUE (election_round_id, department_code, party_id)
+        );
+      `
+    },
+    {
+      name: 'deputy_votes',
+      sql: `
+        CREATE TABLE IF NOT EXISTS deputy_votes (
+          id SERIAL PRIMARY KEY,
+          election_round_id INT NOT NULL REFERENCES election_rounds(id),
+          department_code TEXT NOT NULL REFERENCES departments(code) ON DELETE CASCADE,
+          party_id INT NOT NULL REFERENCES political_parties(id) ON DELETE CASCADE,
+          votes INT DEFAULT 0,
+          UNIQUE (election_round_id, department_code, party_id)
+        );
+      `
+    },
+    {
+      name: 'plurinominal_deputies_votes',
+      sql: `
+        CREATE TABLE IF NOT EXISTS plurinominal_deputies_votes (
+          id SERIAL PRIMARY KEY,
+          election_round_id INT NOT NULL REFERENCES election_rounds(id),
+          department_code TEXT NOT NULL REFERENCES departments(code) ON DELETE CASCADE,
+          party_id INT NOT NULL REFERENCES political_parties(id) ON DELETE CASCADE,
+          votes INT DEFAULT 0,
+          UNIQUE (election_round_id, department_code, party_id)
+        );
+      `
+    },
     {
       name: 'newsletter_mails',
       sql: `
@@ -214,6 +217,102 @@ export async function initTables(): Promise<void> {
           id SERIAL PRIMARY KEY,
           email TEXT NOT NULL UNIQUE
         );
+      `
+    },
+    {
+      name: 'component_visibility',
+      sql: `
+        CREATE TABLE IF NOT EXISTS component_visibility (
+          id SERIAL PRIMARY KEY,
+          phase_name TEXT NOT NULL UNIQUE,
+          phase_display_name TEXT NOT NULL,
+          is_active BOOLEAN DEFAULT false,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `
+    },
+    {
+      name: 'phase_components',
+      sql: `
+        CREATE TABLE IF NOT EXISTS phase_components (
+          id SERIAL PRIMARY KEY,
+          phase_id INTEGER NOT NULL REFERENCES component_visibility(id) ON DELETE CASCADE,
+          component_name TEXT NOT NULL,
+          component_display_name TEXT NOT NULL,
+          is_visible BOOLEAN DEFAULT true,
+          sort_order INTEGER DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(phase_id, component_name)
+        );
+      `
+    },
+    {
+      name: 'component_visibility_index',
+      sql: `
+        CREATE INDEX IF NOT EXISTS idx_component_visibility_phase_name ON component_visibility(phase_name);
+        CREATE INDEX IF NOT EXISTS idx_component_visibility_is_active ON component_visibility(is_active);
+      `
+    },
+    {
+      name: 'phase_components_index',
+      sql: `
+        CREATE INDEX IF NOT EXISTS idx_phase_components_phase_id ON phase_components(phase_id);
+        CREATE INDEX IF NOT EXISTS idx_phase_components_component_name ON phase_components(component_name);
+      `
+    },
+    {
+      name: 'whitelist_users',
+      sql: `
+        CREATE TABLE IF NOT EXISTS whitelist_users (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL UNIQUE,
+          status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('approved', 'denied', 'pending')),
+          notes TEXT,
+          created_by INTEGER REFERENCES admins(id),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `
+    },
+    {
+      name: 'whitelist_users_index',
+      sql: `
+        CREATE INDEX IF NOT EXISTS idx_whitelist_users_email ON whitelist_users(email);
+        CREATE INDEX IF NOT EXISTS idx_whitelist_users_status ON whitelist_users(status);
+      `
+    },
+    {
+      name: 'admins',
+      sql: `
+        CREATE TABLE IF NOT EXISTS admins (
+          id SERIAL PRIMARY KEY,
+          username TEXT NOT NULL UNIQUE,
+          password_hash TEXT NOT NULL,
+          email TEXT,
+          full_name TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `
+    },
+    {
+      name: 'site_status',
+      sql: `
+        CREATE TABLE IF NOT EXISTS site_status (
+          id SERIAL PRIMARY KEY,
+          is_maintenance BOOLEAN DEFAULT FALSE,
+          maintenance_message TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `
+    },
+    {
+      name: 'admins_index',
+      sql: `
+        CREATE INDEX IF NOT EXISTS idx_admins_username ON admins(username);
       `
     }
   ];
@@ -226,4 +325,5 @@ export async function initTables(): Promise<void> {
       console.error(`Error al crear tabla '${query.name}':`, (error as Error).message);
     }
   }
+  // await createFirstAdmin();
 }

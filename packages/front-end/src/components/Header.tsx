@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@components/LanguageSwitcher';
 // import SubscriptionBanner from '@components/SubscriptionBanner';
+import WhitelistUserInfo from '@components/WhitelistUserInfo';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
@@ -39,6 +40,11 @@ const Header: React.FC = () => {
 
         <div className="relative z-10">
           <div className="max-w-7xl mx-auto px-6">
+            {/* WhitelistUserInfo en la esquina superior izquierda (solo desktop) */}
+            <div className="hidden md:block absolute top-4 left-8 z-20">
+              <WhitelistUserInfo />
+            </div>
+            
             {/* LanguageSwitcher en la esquina superior derecha (solo desktop) */}
             <div className="hidden md:block absolute top-4 right-8 z-20">
               <LanguageSwitcher small />
@@ -147,7 +153,8 @@ const Header: React.FC = () => {
                   {t(`nav.${key}`)}
                 </Link>
               ))}
-              <div className="mt-6">
+              <div className="mt-6 space-y-4">
+                <WhitelistUserInfo />
                 <LanguageSwitcher small />
               </div>
             </div>

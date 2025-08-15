@@ -27,11 +27,12 @@ export interface PoliticalParty {
   id: string
   name: string
   abbreviation: string
-  aliases: string[];
-  color: string
+  aliases?: string[]      // <- opcional
+  color?: string 
   votes?: number
-  percentage?: number 
-  candidate: Candidate
+  count?: number      // <- agregado
+  percentage?: string | number
+  candidate: Partial<Candidate> 
   disqualified?: boolean
   disqualifiedReason?: string
   withdrawalType?: 'disqualified' | 'withdrawn'
