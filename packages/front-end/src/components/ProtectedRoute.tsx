@@ -2,40 +2,33 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/authContext';
-import AdminLogin from './ADMIN-components/AdminLogin';
+import AdminContent from './ADMIN-components/AdminLogin';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, verifyToken } = useAuth();
+  const { isAuthenticated, admin } = useAuth();
   const [isVerifying, setIsVerifying] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      if (isAuthenticated) {
-        const isValid = await verifyToken();
-        if (!isValid) {
-          // Token inválido, ya se hizo logout en verifyToken
-        }
-      }
-      setIsVerifying(false);
-    };
-
-    checkAuth();
-  }, [isAuthenticated, verifyToken]);
+    // Como el AuthProvider ya verifica la sesión al montar,
+    // aquí solo esperamos un tick para actualizar el estado local
+    setIsVerifying(false);
+  }, []);
 
   if (isVerifying) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-white text-xl">Verificando autenticación...</div>
+        <div className="text-white text-xl">Verificando sesión...</div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    return <AdminLogin onLoginSuccess={(token, admin) => {}} />;
+  if (!isAuthenticated || !admin) {
+    // Mostrar el login si no hay sesión activa
+    return <AdminContent />;
   }
 
   return <>{children}</>;

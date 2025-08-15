@@ -6,6 +6,7 @@ import pool from '@db/db.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { useHelmet } from './src/middlewares/security.js';
+import cookieParser from 'cookie-parser';
 
 import  redisClient from '@db/redis.js'
 
@@ -17,7 +18,6 @@ import postmailsRouter from '@routes/postEmail.js';
 
 // Sistema de Elecciones (Developer)
 import getElectionsTypeRouter from '@routes/getElectionType.js'
-import postElectionRouter from '@routes/createElection.js'
 import getCountriesRouter from '@routes/getCountries.js'
 import postElection from '@routes/createElection.js'
 import getActiveElectionInfo from '@routes/getActiveElectionFull.js'
@@ -38,8 +38,6 @@ import { listenToVotesChanges } from '@listeners/listenVotes.js';
 import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
 import { stopSummaryIntervals } from '@utils/intervalManager.js';
 import { createAdapter } from '@socket.io/redis-streams-adapter';
-import { Pool } from 'pg';
-import { getActiveResourcesInfo } from 'process';
 
 
 dotenv.config();
@@ -55,9 +53,11 @@ async function main() {
   console.log('Migraciones completadas.');
 
   // Create Express app
+  
   const app = express();
   const httpServer = createServer(app);
-
+  
+  app.use(cookieParser());
   app.set('trust proxy', 1);
   app.use(express.json());
   app.use(cors({
@@ -73,9 +73,9 @@ async function main() {
   try {
     // Verificar que Redis esté disponible
     await redisClient.ping();
-    console.log('✅ [Redis] Conexión establecida correctamente');
+    console.log('Redis Conexión establecida correctamente');
   } catch (error) {
-    console.warn('⚠️ [Redis] No se pudo conectar a Redis, continuando sin Redis:', (error as Error).message);
+    console.warn('redis not conected, :', (error as Error).message);
   }
   app.use('/api/get-emails', getmailsRouter);
   app.use('/api/post-emails', postmailsRouter)
@@ -95,12 +95,6 @@ async function main() {
   app.use('/api/get-all-election-rounds',getAllElectionRounds);
   app.use('/api/post-active-election',postActiveRoundandElection)
   app.use('/api/get-active_election',getActiveElecRouter);
-
-  console.log('✅ [Routes] Ruta /api/auth registrada');
-  console.log('✅ [Routes] Ruta /api/site-status registrada');
-  console.log('✅ [Routes] Ruta /api/admin-management registrada');
-  console.log('✅ [Routes] Ruta /api/component-visibility registrada');
-  console.log('✅ [Routes] Rutas de elecciones registradas');
 
   // Setup Socket.IO server
   const io = new Server(httpServer, {

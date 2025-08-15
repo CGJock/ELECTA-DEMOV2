@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ADMIN_CONFIG } from '@/config/admin';
 import { useAuth } from '@/context/authContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -13,11 +12,7 @@ interface LoginForm {
   password: string;
 }
 
-interface AdminLoginProps {
-  onLoginSuccess: (token: string, admin: any) => void;
-}
-
-const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
+const AdminLogin: React.FC = () => {
   const [formData, setFormData] = useState<LoginForm>({
     username: '',
     password: ''
@@ -42,15 +37,13 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
     setError('');
 
     try {
-      // Login con backend
       const success = await loginAdmin({
         username: formData.username,
         password: formData.password
       });
-      
+
       if (success) {
-        onLoginSuccess('temp-token', { id: 1, username: formData.username });
-        router.push('/admin');
+        router.push('/admin'); // redirige al dashboard
       } else {
         setError(t('admin.sections.login.invalid_credentials'));
       }
@@ -90,14 +83,14 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             {t('admin.sections.login.subtitle')}
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded">
               {error}
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-300">
@@ -114,7 +107,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                 placeholder={t('admin.sections.login.username_placeholder')}
               />
             </div>
-            
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 {t('admin.sections.login.password')}

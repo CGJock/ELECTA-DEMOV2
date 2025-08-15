@@ -3,6 +3,22 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '@db/db.js';
 import { JWT_CONFIG, JWTPayload } from '../config/jwt.config.js';
+import  { SignOptions } from 'jsonwebtoken';
+import { tr } from 'zod/locales';
+
+
+const secretKey = JWT_CONFIG.SECRET_KEY;
+
+if (!secretKey) {
+  throw new Error('JWT_SECRET no definido');
+}
+
+
+const expiredValue = JWT_CONFIG.EXPIRES_IN;
+
+if (!expiredValue) {
+  throw new Error('JWT_EXPIRES_IN not defined')
+}
 
 const router = Router();
 
@@ -50,87 +66,89 @@ router.post('/register', async (req: Request, res: Response) => {
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
-    
-    console.log('🔐 [LOGIN] Intento de login:', { username, password: password ? '***' : 'undefined' });
 
     // Buscar el usuario
     const result = await pool.query(
-      'SELECT id, username, password_hash, email, full_name FROM admins WHERE username = $1',
+      'SELECT id, username, password_hash FROM admins WHERE username = $1',
       [username]
     );
 
-    console.log('🔍 [LOGIN] Resultado de búsqueda:', { 
-      encontrado: result.rows.length > 0, 
-      cantidad: result.rows.length 
-    });
-
     if (result.rows.length === 0) {
-      console.log('❌ [LOGIN] Usuario no encontrado:', username);
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
     const admin = result.rows[0];
-    console.log('👤 [LOGIN] Admin encontrado:', { 
-      id: admin.id, 
-      username: admin.username,
-      email: admin.email,
-      password_hash_preview: admin.password_hash ? admin.password_hash.substring(0, 20) + '...' : 'undefined'
-    });
 
     // Verificar contraseña
-    console.log('🔑 [LOGIN] Verificando contraseña...');
     const isValidPassword = await bcrypt.compare(password, admin.password_hash);
-    console.log('🔑 [LOGIN] Resultado de verificación:', { 
-      password_provided: !!password, 
-      password_hash_exists: !!admin.password_hash,
-      is_valid: isValidPassword 
-    });
-    
     if (!isValidPassword) {
-      console.log('❌ [LOGIN] Contraseña inválida para usuario:', username);
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Generar token JWT
+    // Validar variables de entorno
+    if (!JWT_CONFIG.SECRET_KEY) throw new Error('JWT_TOKEN no definido');
+    if (!JWT_CONFIG.EXPIRES_IN) throw new Error('JWT_EXPIRES no definido');
+
+    // Payload compatible con JWTPayload
     const payload: JWTPayload = {
       adminId: admin.id,
       username: admin.username,
-      accessCode: JWT_CONFIG.ACCESS_CODE // Mantenemos esto por compatibilidad
+      accessCode: JWT_CONFIG.ACCESS_CODE
     };
 
-    const token = jwt.sign(payload, JWT_CONFIG.SECRET_KEY);
-    
-    console.log('✅ [LOGIN] Login exitoso para usuario:', username);
-    console.log('🎫 [LOGIN] Token generado:', token.substring(0, 20) + '...');
+    // SignOptions
+    const options: SignOptions = {
+      expiresIn: JWT_CONFIG.EXPIRES_IN as any // forzamos string
+    };
 
-    res.json({
-      message: 'Login exitoso',
-      token,
-      admin: {
-        id: admin.id,
-        username: admin.username,
-        email: admin.email,
-        full_name: admin.full_name
-      }
+    // Generar token
+    const token = jwt.sign(payload, JWT_CONFIG.SECRET_KEY as string, options);
+
+    // Enviar cookie HttpOnly
+    res.cookie('adminToken', token, {
+      httpOnly: true,
+      secure: false, //camibiar en prod
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000, // 1 hora
     });
+
+    res.json({ message: 'Login exitoso' });
   } catch (error) {
-    console.error('💥 [LOGIN] Error en login:', error);
-    console.error('💥 [LOGIN] Stack trace:', (error as Error).stack);
+    console.error('Error en login:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
+  function isJWTPayload(obj: any): obj is JWTPayload {
+  return obj && typeof obj === 'object' &&
+         'adminId' in obj &&
+         'username' in obj &&
+         'accessCode' in obj;
+}
+
+
+
 // Verificar token (para verificar si el token es válido)
 router.get('/verify', (req: Request, res: Response) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.cookies?.adminToken;
+
+
 
   if (!token) {
     return res.status(401).json({ error: 'Token no proporcionado' });
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_CONFIG.SECRET_KEY) as JWTPayload;
+    
+    const decodedRaw = jwt.verify(token, secretKey) as unknown;
+
+    if (!isJWTPayload(decodedRaw)) {
+      return res.status(403).json({ error: 'Token inválido o expirado' });
+    }
+
+    // Ahora sí casteamos a JWTPayload
+    const decoded = decodedRaw as JWTPayload;
+
     res.json({
       valid: true,
       admin: {
@@ -140,6 +158,21 @@ router.get('/verify', (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(403).json({ error: 'Token inválido o expirado' });
+  }
+});
+
+
+router.post('/logout', (req: Request, res: Response) => {
+  try {
+    res.clearCookie('adminToken', {
+      httpOnly: true,
+      secure: false, // cambiar a true en producción si usas HTTPS
+      sameSite: 'lax',
+    });
+    res.json({ message: 'Logout exitoso' });
+  } catch (error) {
+    console.error('Error en logout:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 

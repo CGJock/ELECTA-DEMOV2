@@ -6,26 +6,41 @@ export interface AuthenticatedRequest extends Request {
   admin?: JWTPayload;
 }
 
+
+const secretKey = JWT_CONFIG.SECRET_KEY;
+
+if (!secretKey) {
+  throw new Error('JWT_SECRET no definido');
+}
+
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  const token = req.cookies?.adminToken;
 
   if (!token) {
-    return res.status(401).json({ error: 'Token de acceso requerido' });
+    return res.status(401).json({ error: 'Token access required' });
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_CONFIG.SECRET_KEY) as JWTPayload;
-    req.admin = decoded;
-    next();
-  } catch (error) {
-    return res.status(403).json({ error: 'Token inválido o expirado' });
-  }
+    if (!JWT_CONFIG.SECRET_KEY) throw new Error('JWT_SECRET Not defined');
+
+    const decodedRaw = jwt.verify(token, secretKey);
+
+    if (!decodedRaw || typeof decodedRaw !== 'object') {
+      return res.status(403).json({ error: 'Invalid or expired Token' });
+    }
+
+ 
+  const decoded = decodedRaw as JWTPayload;
+  req.admin = decoded;
+  next();
+} catch (error) {
+  return res.status(403).json({ error: 'Invalid or expired Token' });
+}
 };
 
-export const requireAccessCode = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  if (!req.admin || req.admin.accessCode !== JWT_CONFIG.ACCESS_CODE) {
-    return res.status(403).json({ error: 'Código de acceso inválido' });
-  }
-  next();
-};
+// export const requireAccessCode = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+//   if (!req.admin || req.admin.accessCode !== JWT_CONFIG.ACCESS_CODE) {
+//     return res.status(403).json({ error: 'Token not valid' });
+//   }
+//   next();
+// };

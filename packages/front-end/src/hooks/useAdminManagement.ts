@@ -32,30 +32,40 @@ export function useAdminManagement(): UseAdminManagementReturn {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { token } = useAuth();
+  const {  logout } = useAuth();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-  // Cargar administradores desde la API
-  const loadAdmins = async (): Promise<void> => {
-    if (!token) return;
+  // Función genérica para manejar fetch con cookie HttpOnly
+  const fetchWithCredentials = async (url: string, options: RequestInit = {}) => {
+    const response = await fetch(url, {
+      ...options,
+      credentials: 'include', // <-- envía cookie HttpOnly
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      }
+    });
 
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        logout(); // sesión inválida
+      }
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Error en la solicitud');
+    }
+
+    return response.json();
+  };
+
+  // Cargar administradores
+  const loadAdmins = async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin-management`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
 
-      if (!response.ok) {
-        throw new Error('Error al cargar administradores');
-      }
-
-      const data = await response.json();
+      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management`);
       if (data.success) {
         setAdmins(data.admins);
       } else {
@@ -68,38 +78,22 @@ export function useAdminManagement(): UseAdminManagementReturn {
     }
   };
 
-  // Cargar administradores al inicializar
   useEffect(() => {
-    if (token) {
-      loadAdmins();
-    }
-  }, [token]);
+    loadAdmins();
+  }, []);
 
   // Agregar nuevo administrador
   const addAdmin = async (adminData: AdminCreateData): Promise<boolean> => {
-    if (!token) return false;
-
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin-management`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify(adminData)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al crear administrador');
-      }
-
-      const data = await response.json();
       if (data.success) {
-        // Recargar la lista de administradores
         await loadAdmins();
         return true;
       } else {
@@ -113,31 +107,17 @@ export function useAdminManagement(): UseAdminManagementReturn {
     }
   };
 
-  // Actualizar administrador existente
   const updateAdmin = async (id: number, updates: Partial<AdminUser>): Promise<boolean> => {
-    if (!token) return false;
-
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin-management/${id}`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/${id}`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify(updates)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al actualizar administrador');
-      }
-
-      const data = await response.json();
       if (data.success) {
-        // Recargar la lista de administradores
         await loadAdmins();
         return true;
       } else {
@@ -151,30 +131,16 @@ export function useAdminManagement(): UseAdminManagementReturn {
     }
   };
 
-  // Eliminar administrador
   const deleteAdmin = async (id: number): Promise<boolean> => {
-    if (!token) return false;
-
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin-management/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/${id}`, {
+        method: 'DELETE'
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al eliminar administrador');
-      }
-
-      const data = await response.json();
       if (data.success) {
-        // Recargar la lista de administradores
         await loadAdmins();
         return true;
       } else {
@@ -188,34 +154,17 @@ export function useAdminManagement(): UseAdminManagementReturn {
     }
   };
 
-  // Cambiar contraseña
   const changePassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
-    if (!token) return false;
-
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin-management/change-password`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/change-password`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify({ currentPassword, newPassword })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al cambiar contraseña');
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        return true;
-      } else {
-        throw new Error(data.error || 'Error desconocido');
-      }
+      return data.success;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
       return false;
@@ -224,34 +173,17 @@ export function useAdminManagement(): UseAdminManagementReturn {
     }
   };
 
-  // Resetear contraseña de otro admin
   const resetPassword = async (id: number, newPassword: string): Promise<boolean> => {
-    if (!token) return false;
-
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin-management/reset-password/${id}`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/reset-password/${id}`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify({ newPassword })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al resetear contraseña');
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        return true;
-      } else {
-        throw new Error(data.error || 'Error desconocido');
-      }
+      return data.success;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
       return false;
@@ -260,7 +192,6 @@ export function useAdminManagement(): UseAdminManagementReturn {
     }
   };
 
-  // Recargar administradores
   const refreshAdmins = async (): Promise<void> => {
     await loadAdmins();
   };

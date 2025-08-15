@@ -1,30 +1,31 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService, LoginCredentials, LoginResponse } from '@/services/authService';
 
 interface Admin {
   id: number;
   username: string;
+  email?: string;
+  full_name?: string;
+}
+
+interface LoginCredentials {
+  username: string;
+  password: string;
 }
 
 interface AuthContextType {
   admin: Admin | null;
-  token: string | null;
   isAuthenticated: boolean;
-  login: (token: string, admin: Admin) => void;
   loginAdmin: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  verifyToken: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
 
@@ -34,95 +35,80 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [admin, setAdmin] = useState<Admin | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // Opcional: al montar el provider, verificamos si hay sesión activa
   useEffect(() => {
-    // Verificar si hay un token guardado al cargar la página
-    const savedToken = localStorage.getItem('adminToken');
-    const savedAdmin = localStorage.getItem('adminData');
-    
-    if (savedToken && savedAdmin) {
+    const checkSession = async () => {
       try {
-        const adminData = JSON.parse(savedAdmin);
-        setToken(savedToken);
-        setAdmin(adminData);
-        setIsAuthenticated(true);
-      } catch (error) {
-        // Si hay error al parsear, limpiar datos corruptos
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('adminData');
+        const res = await fetch(`${API_URL}/api/auth/verify`, {
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.admin) {
+            setAdmin(data.admin);
+            setIsAuthenticated(true);
+          }
+        }
+      } catch (err) {
+        console.log('No active session');
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    checkSession();
   }, []);
 
-  const login = (newToken: string, adminData: Admin) => {
-    setToken(newToken);
-    setAdmin(adminData);
-    setIsAuthenticated(true);
-    
-    // Guardar en localStorage
-    localStorage.setItem('adminToken', newToken);
-    localStorage.setItem('adminData', JSON.stringify(adminData));
-  };
-
-  const logout = () => {
-    setToken(null);
-    setAdmin(null);
-    setIsAuthenticated(false);
-    
-    // Limpiar localStorage
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminData');
-  };
-
-  // Función para login con backend
   const loginAdmin = async (credentials: LoginCredentials): Promise<boolean> => {
     try {
-      const response: LoginResponse = await authService.loginAdmin(credentials);
-      
-      // Login exitoso, guardar datos
-      const adminData = {
-        id: response.admin.id,
-        username: response.admin.username,
-        email: response.admin.email,
-        full_name: response.admin.full_name
-      };
-      
-      login(response.token, adminData);
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+        credentials: 'include'
+      });
+
+      if (!res.ok) return false;
+
+      // Backend setea cookie HttpOnly, opcionalmente devuelve admin info
+      const data = await res.json();
+      if (data.admin) setAdmin(data.admin);
+      setIsAuthenticated(true);
       return true;
-    } catch (error) {
-      console.error('Error en loginAdmin:', error);
+    } catch (err) {
+      console.error(err);
       return false;
     }
   };
 
-  const verifyToken = async (): Promise<boolean> => {
-    if (!token) return false;
+  const logout = async () => {
+  setAdmin(null);
+  setIsAuthenticated(false);
 
-    // Verificación temporal: si hay token en localStorage, es válido
-    const savedToken = localStorage.getItem('adminToken');
-    if (savedToken && savedToken === token) {
-      return true;
-    } else {
-      // Token inválido, hacer logout
-      logout();
-      return false;
-    }
-  };
+  try {
+    await fetch(`${API_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
 
-  const value: AuthContextType = {
-    admin,
-    token,
-    isAuthenticated,
-    login,
-    loginAdmin,
-    logout,
-    verifyToken
-  };
+  // Redirección sin router
+  window.location.href = "/";
+};
+
+  if (loading) return null;
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ admin, isAuthenticated, loginAdmin, logout }}>
       {children}
     </AuthContext.Provider>
   );

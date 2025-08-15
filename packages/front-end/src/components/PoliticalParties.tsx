@@ -8,11 +8,11 @@ import { useTranslation } from 'react-i18next'
 import { useSocketData } from '@contexts/context' 
 import { CandidateModal } from '@components/CandidateModal'
 
+
 interface PoliticalPartiesProps {
   parties?: PoliticalParty[]
   onPartiesChange?: (parties: PoliticalParty[]) => void
 }
-
 
 
 export function PoliticalParties({
@@ -25,6 +25,8 @@ export function PoliticalParties({
 
   const { t } = useTranslation();
   const { selectedLocationCode, globalSummary, breakdownLocData } = useSocketData();
+
+  
 
   console.log('globalsummary',globalSummary)
 
@@ -44,19 +46,30 @@ export function PoliticalParties({
   console.log('datadelasparties',sourcePartyBreakdown)
 
   // Enriquecer partidos con datos del backend
-  const enrichedParties = parties.map((party) => {
-  const aliases = party.aliases?.length ? party.aliases : [party.abbreviation];
-  const normalizedAliases = aliases.map(a => a.trim().toLowerCase());
+  const defaultPhoto = '/img/default-candidate.svg';
 
-  const match = sourcePartyBreakdown?.find(p => {
-    const abbr = p.abbr?.trim().toLowerCase();
-    return normalizedAliases.includes(abbr);
+// Partidos que vienen del backend
+const backendParties = sourcePartyBreakdown || [];
+
+// Enriquecer con data del mock (foto, nombre extra), o usar defaults
+const enrichedParties = backendParties.map((backendParty) => {
+  // Buscar coincidencia en mockParties
+  const match = parties.find((p) => {
+    const aliases = p.aliases?.length ? p.aliases : [p.abbreviation];
+    const normalizedAliases = aliases.map(a => a.trim().toLowerCase());
+    return normalizedAliases.includes((backendParty.abbr || '').trim().toLowerCase());
   });
 
   return {
-    ...party,
-    count: match?.count, // Mantener undefined si no hay data aún
-    percentage: match?.percentage,
+    id: backendParty.abbr || backendParty.name, // por si el backend no tiene id
+    name: match?.name || backendParty.name,
+    abbreviation: backendParty.abbr || '',
+    count: backendParty.count,
+    percentage: backendParty.percentage,
+    candidate: {
+      name: match?.candidate.name || backendParty.name,
+      photo: match?.candidate.photo || defaultPhoto
+    }
   };
 });
 
@@ -156,7 +169,7 @@ export function PoliticalParties({
       )}
 
       {/* Modal */}
-      {selectedCandidate && (
+      {/* {selectedCandidate && (
         <CandidateModal
           candidate={selectedCandidate}
           isOpen={isModalOpen}
@@ -165,7 +178,7 @@ export function PoliticalParties({
             setSelectedCandidate(null)
           }}
         />
-      )}
+      )} */}
     </div>
   )
 }

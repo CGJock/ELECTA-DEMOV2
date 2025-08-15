@@ -25,23 +25,17 @@ export interface SiteConfig {
 
 class ComponentVisibilityService {
 
-  private getAuthHeaders(): HeadersInit {
-    const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` })
-    };
-  }
-
   // Obtener todas las fases disponibles
   async getPhases(): Promise<string[]> {
     try {
       const response = await fetch(`${API_BASE_URL}/component-visibility/phases`, {
-        headers: this.getAuthHeaders()
+        method: 'GET',
+        credentials: 'include', // Enviar cookies
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
       console.error('Error fetching phases:', error);
@@ -53,11 +47,11 @@ class ComponentVisibilityService {
   async getActivePhase(): Promise<string> {
     try {
       const response = await fetch(`${API_BASE_URL}/component-visibility/active-phase`, {
-        headers: this.getAuthHeaders()
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       return data.phase_name;
     } catch (error) {
@@ -71,12 +65,11 @@ class ComponentVisibilityService {
     try {
       const response = await fetch(`${API_BASE_URL}/component-visibility/activate-phase`, {
         method: 'PUT',
-        headers: this.getAuthHeaders(),
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phase_name: phaseName })
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     } catch (error) {
       console.error('Error activating phase:', error);
       throw error;
@@ -87,11 +80,11 @@ class ComponentVisibilityService {
   async getPhaseComponents(phaseName: string): Promise<ComponentVisibility[]> {
     try {
       const response = await fetch(`${API_BASE_URL}/component-visibility/phase-components/${phaseName}`, {
-        headers: this.getAuthHeaders()
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
       console.error('Error fetching phase components:', error);
@@ -108,16 +101,11 @@ class ComponentVisibilityService {
     try {
       const response = await fetch(`${API_BASE_URL}/component-visibility/update-component`, {
         method: 'PUT',
-        headers: this.getAuthHeaders(),
-        body: JSON.stringify({
-          component_name: componentName,
-          phase_name: phaseName,
-          is_visible: isVisible
-        })
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ component_name: componentName, phase_name: phaseName, is_visible: isVisible })
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
       console.error('Error updating component visibility:', error);
@@ -130,15 +118,11 @@ class ComponentVisibilityService {
     try {
       const response = await fetch(`${API_BASE_URL}/component-visibility/apply-changes`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
-        body: JSON.stringify({
-          phase_name: phaseName,
-          components: components
-        })
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phase_name: phaseName, components })
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     } catch (error) {
       console.error('Error applying changes:', error);
       throw error;
@@ -149,13 +133,13 @@ class ComponentVisibilityService {
   async getSiteConfig(): Promise<SiteConfig[]> {
     try {
       const response = await fetch(`${API_BASE_URL}/component-visibility/site-config`, {
-        headers: this.getAuthHeaders()
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
-      } catch (error) {
+    } catch (error) {
       console.error('Error fetching site config:', error);
       throw error;
     }

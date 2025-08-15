@@ -8,7 +8,7 @@ export async function createFirstAdmin(): Promise<void> {
     const adminCount = parseInt(existingAdmins.rows[0].count);
     
     if (adminCount > 0) {
-      console.log('✅ Ya existen administradores en la base de datos');
+      console.log('Ya existen administradores en la base de datos');
       return;
     }
     
@@ -28,26 +28,8 @@ export async function createFirstAdmin(): Promise<void> {
       [username, passwordHash, email, full_name]
     );
     
-    console.log('✅ Primer administrador creado exitosamente:');
-    console.log(`   ID: ${result.rows[0].id}`);
-    console.log(`   Username: ${result.rows[0].username}`);
-    console.log(`   Password: ${password}`);
-    console.log('⚠️  IMPORTANTE: Cambia la contraseña después del primer login');
     
   } catch (error) {
-    console.error('❌ Error al crear el primer administrador:', error);
+    console.error(' Error al crear el primer administrador:', error);
   }
-}
-
-// Si se ejecuta directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
-  createFirstAdmin()
-    .then(() => {
-      console.log('Script completado');
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error('Error en el script:', error);
-      process.exit(1);
-    });
 }
