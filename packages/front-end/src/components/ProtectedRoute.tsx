@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/authContext';
-import AdminLogin from './AdminLogin';
+import AdminLogin from './ADMIN-components/AdminLogin';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

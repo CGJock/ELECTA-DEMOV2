@@ -1,48 +1,52 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useSiteStatus } from './useSiteStatus';
 
 export function useMaintenance() {
-  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
-  const [isPrivateAccess, setIsPrivateAccess] = useState(false);
+  const { 
+    siteStatus, 
+    loading, 
+    error, 
+    updateSiteStatus, 
+    refreshStatus
+  } = useSiteStatus();
 
-  // Cargar estado inicial desde localStorage
-  useEffect(() => {
-    const savedMaintenance = localStorage.getItem('maintenanceMode');
-    const savedPrivateAccess = localStorage.getItem('privateAccess');
-    
-    if (savedMaintenance) {
-      setIsMaintenanceMode(JSON.parse(savedMaintenance));
-    }
-    
-    if (savedPrivateAccess) {
-      setIsPrivateAccess(JSON.parse(savedPrivateAccess));
-    }
-  }, []);
+  // Usar directamente el estado de la API
+  const isMaintenanceMode = siteStatus?.maintenance_mode || false;
+  const isPrivateAccess = siteStatus?.private_access || false;
 
   // Función para activar/desactivar modo mantenimiento
-  const toggleMaintenanceMode = () => {
+  const toggleMaintenanceMode = async () => {
     const newState = !isMaintenanceMode;
-    setIsMaintenanceMode(newState);
-    localStorage.setItem('maintenanceMode', JSON.stringify(newState));
+    const result = await updateSiteStatus({ maintenance_mode: newState });
+    if (!result.success) {
+      console.error('Error al cambiar modo mantenimiento:', result.message);
+    }
   };
 
   // Función para activar/desactivar acceso privado
-  const togglePrivateAccess = () => {
+  const togglePrivateAccess = async () => {
     const newState = !isPrivateAccess;
-    setIsPrivateAccess(newState);
-    localStorage.setItem('privateAccess', JSON.stringify(newState));
+    const result = await updateSiteStatus({ private_access: newState });
+    if (!result.success) {
+      console.error('Error al cambiar acceso privado:', result.message);
+    }
   };
 
   // Función para establecer estado específico (para el admin panel)
-  const setMaintenanceMode = (state: boolean) => {
-    setIsMaintenanceMode(state);
-    localStorage.setItem('maintenanceMode', JSON.stringify(state));
+  const setMaintenanceMode = async (state: boolean) => {
+    const result = await updateSiteStatus({ maintenance_mode: state });
+    if (!result.success) {
+      console.error('Error al establecer modo mantenimiento:', result.message);
+    }
   };
 
-  const setPrivateAccess = (state: boolean) => {
-    setIsPrivateAccess(state);
-    localStorage.setItem('privateAccess', JSON.stringify(state));
+  const setPrivateAccess = async (state: boolean) => {
+    const result = await updateSiteStatus({ private_access: state });
+    if (!result.success) {
+      console.error('Error al establecer acceso privado:', result.message);
+    }
   };
 
   return {
@@ -51,6 +55,9 @@ export function useMaintenance() {
     toggleMaintenanceMode,
     togglePrivateAccess,
     setMaintenanceMode,
-    setPrivateAccess
+    setPrivateAccess,
+    loading,
+    error,
+    refreshStatus
   };
 }

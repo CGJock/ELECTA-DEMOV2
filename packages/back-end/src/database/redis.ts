@@ -14,6 +14,10 @@ if (!process.env.REDIS_URL) {
 const redisClient = new Redis(process.env.REDIS_URL!, {
   maxRetriesPerRequest: 3,
   enableReadyCheck: false,
+  lazyConnect: true,
+  keepAlive: 30000,
+  connectTimeout: 10000,
+  commandTimeout: 5000,
 });
 
 redisClient.on('connect', () => console.log('Redis conectado con Upstash.'));
@@ -23,5 +27,8 @@ redisClient.on('error', (err: Error) => {
     console.error('Verifica que tu REDIS_URL sea correcta y que la base de datos esté activa en Upstash');
   }
 });
+
+redisClient.on('close', () => console.log('🔌 Conexión Redis cerrada.'));
+redisClient.on('reconnecting', () => console.log('🔄 Reconectando a Redis...'));
 
 export default redisClient;

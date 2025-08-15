@@ -22,8 +22,8 @@
 // setupSocketHandlers(io, db);
 
 
-// server.listen(4000, () => {
-//   console.log('✅ Servidor en http://localhost:4000');
+// server.listen(5000, () => {
+//   console.log('✅ Servidor en http://localhost:5000');
 // });
 
 // server.js
@@ -67,6 +67,6 @@ app.get('/api/candidate/:id/proposals', async (req, res) => {
   }
 });
 
-server.listen(4000, () => {
-  console.log('✅ Servidor en http://localhost:4000');
+server.listen(5000, () => {
+  console.log('✅ Servidor en http://localhost:5000');
 });

@@ -1,5 +1,5 @@
 // Script para probar la API de ELECTA
-const API_BASE = 'http://localhost:4000';
+const API_BASE = 'http://localhost:5000';
 
 async function testAPI() {
   console.log('🧪 Probando API de ELECTA...\n');

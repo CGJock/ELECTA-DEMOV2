@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const SERVER_URL = 'http://localhost:4000'; // your Socket.IO backend
+const SERVER_URL = 'http://localhost:5000'; // your Socket.IO backend
 const TOTAL_CLIENTS = 10;                   // number of fake clients
 const LOCATION_IDS = ['BO01','BO02','BO03','BO04','BO05','BO06','BO07','BO08','BO09',];       // valid location IDs from your DB
 

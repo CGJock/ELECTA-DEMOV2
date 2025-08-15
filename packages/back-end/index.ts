@@ -1,10 +1,11 @@
+import './register-tsconfig-paths.js';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import pool from '@db/db.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { useHelmet } from '@middlerare/security.js';
+import { useHelmet } from './src/middlewares/security.js';
 
 import  redisClient from '@db/redis.js'
 
@@ -13,6 +14,8 @@ import depRouter from '@routes/departments.js';
 import newVoteRouter from '@routes/newUpdate.js'
 import getmailsRouter from '@routes/getMails.js';
 import postmailsRouter from '@routes/postEmail.js';
+
+// Sistema de Elecciones (Developer)
 import getElectionsTypeRouter from '@routes/getElectionType.js'
 import postElectionRouter from '@routes/createElection.js'
 import getCountriesRouter from '@routes/getCountries.js'
@@ -22,8 +25,14 @@ import postActiveRoundandElection from '@routes/setActiveElection.js'
 import getAllElectionRounds from '@routes/getAllElectionRounds.js'
 import getActiveElecRouter from '@routes/getActiveElection.js'
 
+// Sistema de Autenticación y Admin (Tus cambios)
+import authRouter from '@routes/auth.js';
+import whitelistRouter from '@routes/whitelist.js';
+import siteStatusRouter from '@routes/siteStatus.js';
+import adminManagementRouter from '@routes/adminManagement.js';
+import componentVisibilityRouter from '@routes/componentVisibility.js';
 
-
+// Utilidades y Configuración
 import { runMigrations } from '@db/migrate.js';
 import { listenToVotesChanges } from '@listeners/listenVotes.js';
 import { setupSocketHandlers } from '@socket/setupSocketHandlers.js'
@@ -31,6 +40,7 @@ import { stopSummaryIntervals } from '@utils/intervalManager.js';
 import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { Pool } from 'pg';
 import { getActiveResourcesInfo } from 'process';
+
 
 dotenv.config();
 
@@ -59,10 +69,25 @@ async function main() {
   // Routes
   app.use('/api/departments', depRouter);
   app.use('/api/votes',newVoteRouter)
+  // Connect Redis using ioredis
+  try {
+    // Verificar que Redis esté disponible
+    await redisClient.ping();
+    console.log('✅ [Redis] Conexión establecida correctamente');
+  } catch (error) {
+    console.warn('⚠️ [Redis] No se pudo conectar a Redis, continuando sin Redis:', (error as Error).message);
+  }
   app.use('/api/get-emails', getmailsRouter);
   app.use('/api/post-emails', postmailsRouter)
-  // app.use('/api/auth', authRouter);
-  app.use('/api/post-emails', postmailsRouter);
+  
+  // Sistema de Autenticación y Admin (Tus cambios)
+  app.use('/api/auth', authRouter);
+  app.use('/api/whitelist', whitelistRouter);
+  app.use('/api/site-status', siteStatusRouter);
+  app.use('/api/admin-management', adminManagementRouter);
+  app.use('/api/component-visibility', componentVisibilityRouter);
+
+  // Sistema de Elecciones (Developer)
   app.use('/api/get-election-types', getElectionsTypeRouter);
   app.use('/api/post-election', postElection);
   app.use('/api/get-countries',getCountriesRouter);
@@ -71,19 +96,14 @@ async function main() {
   app.use('/api/post-active-election',postActiveRoundandElection)
   app.use('/api/get-active_election',getActiveElecRouter);
 
-  // Connect Redis using ioredis
-  // const redisClient = new Redis(redis_url, {
-  //   maxRetriesPerRequest: null,
-  //   enableReadyCheck: false,
-  // });
+  console.log('✅ [Routes] Ruta /api/auth registrada');
+  console.log('✅ [Routes] Ruta /api/site-status registrada');
+  console.log('✅ [Routes] Ruta /api/admin-management registrada');
+  console.log('✅ [Routes] Ruta /api/component-visibility registrada');
+  console.log('✅ [Routes] Rutas de elecciones registradas');
 
-
-
-
-
-   // Setup Socket.IO server
+  // Setup Socket.IO server
   const io = new Server(httpServer, {
-    // adapter: createAdapter(redisClient),
     cors: {
       origin: [client_url,'http://localhost:3001','http://localhost:3000'],
       methods: ['GET', 'POST'],
@@ -96,10 +116,8 @@ async function main() {
   io.adapter(createAdapter(redisClient));
 
   // Custom handlers
-  // // startSummaryIntervals(io,pool) //starts server intervals
   setupSocketHandlers(io,pool);
   listenToVotesChanges(pool,io);
-  // setupGlobalBroadcaster(io,pool);
 
   setInterval(() => {
   console.log('Clientes conectados actualmente:', io.sockets.sockets.size);
@@ -111,7 +129,12 @@ const ShutdownServer = async () => {
 
   stopSummaryIntervals(); // stops intervals
 
-  await redisClient.quit(); // closes redis conection
+  try {
+    await redisClient.quit(); // closes redis connection
+    console.log('✅ [Redis] Conexión cerrada correctamente');
+  } catch (error) {
+    console.warn('⚠️ [Redis] Error al cerrar conexión Redis:', (error as Error).message);
+  }
   await pool.end(); // closes Postgres conection
 
   httpServer.close(() => {
@@ -129,8 +152,12 @@ process.on('SIGINT', ShutdownServer);
   
   console.log('Preparado para iniciar servidor...');
   httpServer.listen(PORT, () => {
-    console.log(`Backend Server running at http://localhost:${PORT}`);
-    
+    console.log(`✅ Backend Server running at http://localhost:${PORT}`);
+    console.log(`🌐 [Routes] Endpoints disponibles:`);
+    console.log(`   - GET  http://localhost:${PORT}/api/site-status`);
+    console.log(`   - PUT  http://localhost:${PORT}/api/site-status`);
+    console.log(`   - GET  http://localhost:${PORT}/api/whitelist`);
+    console.log(`   - POST http://localhost:${PORT}/api/whitelist`);
   });
 
   httpServer.on('error', (err) => {
