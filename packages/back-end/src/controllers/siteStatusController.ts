@@ -13,22 +13,42 @@ export const getSiteStatus = async (req: Request, res: Response): Promise<void> 
       console.log('📝 [SiteStatus] No hay estado, creando uno por defecto...');
       // Si no hay estado, crear uno por defecto
       const defaultStatus = await pool.query(
-        'INSERT INTO site_status (maintenance_mode, private_access) VALUES (FALSE, FALSE) RETURNING *'
+        'INSERT INTO site_status (is_maintenance, maintenance_message) VALUES (FALSE, \'Sitio funcionando normalmente\') RETURNING *'
       );
       
       console.log('✅ [SiteStatus] Estado por defecto creado:', defaultStatus.rows[0]);
+      
+      // Adaptar la respuesta para el frontend
+      const adaptedDefaultData = {
+        id: defaultStatus.rows[0].id,
+        maintenance_mode: defaultStatus.rows[0].is_maintenance,
+        private_access: false, // Por defecto no está en acceso privado
+        updated_at: defaultStatus.rows[0].updated_at,
+        updated_by: undefined
+      };
+      
       res.json({
         success: true,
-        data: defaultStatus.rows[0],
+        data: adaptedDefaultData,
         message: 'Estado del sitio creado por defecto'
       });
       return;
     }
 
     console.log('✅ [SiteStatus] Estado obtenido de la BD:', result.rows[0]);
+    
+    // Adaptar la respuesta para el frontend
+    const adaptedData = {
+      id: result.rows[0].id,
+      maintenance_mode: result.rows[0].is_maintenance,
+      private_access: result.rows[0].maintenance_message === 'Sitio en acceso privado',
+      updated_at: result.rows[0].updated_at,
+      updated_by: undefined // Campo no existe en tu tabla
+    };
+    
     res.json({
       success: true,
-      data: result.rows[0],
+      data: adaptedData,
       message: 'Estado del sitio obtenido exitosamente'
     });
   } catch (error) {
@@ -64,20 +84,23 @@ export const updateSiteStatus = async (req: Request, res: Response): Promise<voi
     let paramCount = 1;
 
     if (maintenance_mode !== undefined) {
-      query += `, maintenance_mode = $${paramCount}`;
+      query += `, is_maintenance = $${paramCount}`;
       values.push(maintenance_mode);
       paramCount++;
     }
 
     if (private_access !== undefined) {
-      query += `, private_access = $${paramCount}`;
-      values.push(private_access);
+      // Para private_access, actualizamos el maintenance_message
+      query += `, maintenance_message = $${paramCount}`;
+      const message = private_access ? 'Sitio en acceso privado' : 'Sitio funcionando normalmente';
+      values.push(message);
       paramCount++;
     }
 
     if (adminId) {
-      query += `, updated_by = $${paramCount}`;
-      values.push(adminId);
+      // Nota: updated_by no existe en tu tabla, lo omitimos
+      // query += `, updated_by = $${paramCount}`;
+      // values.push(adminId);
     }
 
     query += ' WHERE id = (SELECT id FROM site_status ORDER BY id DESC LIMIT 1) RETURNING *';
@@ -93,9 +116,18 @@ export const updateSiteStatus = async (req: Request, res: Response): Promise<voi
       return;
     }
 
+    // Adaptar la respuesta para el frontend
+    const adaptedUpdatedData = {
+      id: result.rows[0].id,
+      maintenance_mode: result.rows[0].is_maintenance,
+      private_access: result.rows[0].maintenance_message === 'Sitio en acceso privado',
+      updated_at: result.rows[0].updated_at,
+      updated_by: undefined
+    };
+    
     res.json({
       success: true,
-      data: result.rows[0],
+      data: adaptedUpdatedData,
       message: 'Estado del sitio actualizado exitosamente'
     });
   } catch (error) {
