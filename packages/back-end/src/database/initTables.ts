@@ -298,6 +298,18 @@ export async function initTables(): Promise<void> {
       `
     },
     {
+      name: 'site_status',
+      sql: `
+        CREATE TABLE IF NOT EXISTS site_status (
+          id SERIAL PRIMARY KEY,
+          is_maintenance BOOLEAN DEFAULT FALSE,
+          maintenance_message TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `
+    },
+    {
       name: 'admins_index',
       sql: `
         CREATE INDEX IF NOT EXISTS idx_admins_username ON admins(username);
