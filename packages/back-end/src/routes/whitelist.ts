@@ -9,88 +9,81 @@ import {
   WhitelistVerificationRequest,
   WhitelistVerificationResponse
 } from '../types/WhitelistUser.js';
+import { authenticateToken, AuthenticatedRequest } from '@middlewares/auth.js';
 
 const router = Router();
 
 // Middleware para verificar si el usuario es admin
-const requireAdmin = (req: Request, res: Response, next: Function) => {
-  // Aquí deberías verificar el token JWT del admin
-  // Por ahora lo dejamos simple, pero deberías implementar la verificación completa
-  const adminToken = req.headers.authorization?.replace('Bearer ', '');
+// const requireAdmin = (req: Request, res: Response, next: Function) => {
+//   // Aquí deberías verificar el token JWT del admin
+//   // Por ahora lo dejamos simple, pero deberías implementar la verificación completa
+//   const adminToken = req.headers.authorization?.replace('Bearer ', '');
   
-  if (!adminToken) {
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Token de administrador requerido' 
-    });
-  }
+//   if (!adminToken) {
+//     return res.status(401).json({ 
+//       success: false, 
+//       error: 'Token de administrador requerido' 
+//     });
+//   }
   
   // TODO: Implementar verificación JWT completa
-  next();
-};
+//   next();
+// };
 
 // GET /api/whitelist - Obtener lista de usuarios con filtros y paginación
-router.get('/', requireAdmin, async (req: Request, res: Response) => {
+router.get('/', authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
     const { status, search, page = 1, limit = 10 } = req.query as WhitelistUserFilters;
-    
+
     let whereClause = 'WHERE 1=1';
     const params: any[] = [];
     let paramIndex = 1;
-    
-    // Filtro por status
+
     if (status) {
       whereClause += ` AND status = $${paramIndex}`;
       params.push(status);
       paramIndex++;
     }
-    
-    // Filtro de búsqueda
+
     if (search) {
       whereClause += ` AND (name ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`;
       params.push(`%${search}%`);
       paramIndex++;
     }
-    
-    // Calcular offset para paginación
-    const offset = (page - 1) * limit;
-    
-    // Query para contar total de registros
+
+    const offset = (Number(page) - 1) * Number(limit);
+
     const countQuery = `SELECT COUNT(*) FROM whitelist_users ${whereClause}`;
     const countResult = await pool.query(countQuery, params);
     const total = parseInt(countResult.rows[0].count);
-    
-    // Query principal con paginación
+
     const mainQuery = `
-      SELECT * FROM whitelist_users 
+      SELECT * FROM whitelist_users
       ${whereClause}
-      ORDER BY created_at DESC 
+      ORDER BY created_at DESC
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
     params.push(limit, offset);
-    
+
     const result = await pool.query(mainQuery, params);
-    
+
     const response: WhitelistUserResponse = {
       success: true,
       data: result.rows,
       total,
-      page,
-      totalPages: Math.ceil(total / limit)
+      page: Number(page),
+      totalPages: Math.ceil(total / Number(limit))
     };
-    
+
     res.json(response);
   } catch (error) {
     console.error('Error al obtener usuarios de whitelist:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Error interno del servidor' 
-    });
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 });
 
 // POST /api/whitelist - Crear nuevo usuario en whitelist
-router.post('/', requireAdmin, async (req: Request, res: Response) => {
+router.post('/', authenticateToken, async (req: Request, res: Response) => {
   try {
     const { name, email, notes }: CreateWhitelistUserRequest = req.body;
     
@@ -149,7 +142,7 @@ router.post('/', requireAdmin, async (req: Request, res: Response) => {
 });
 
 // PUT /api/whitelist/:id - Actualizar usuario de whitelist
-router.put('/:id', requireAdmin, async (req: Request, res: Response) => {
+router.put('/:id', authenticateToken, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updateData: UpdateWhitelistUserRequest = req.body;
@@ -245,7 +238,7 @@ router.put('/:id', requireAdmin, async (req: Request, res: Response) => {
 });
 
 // DELETE /api/whitelist/:id - Eliminar usuario de whitelist
-router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
+router.delete('/:id', authenticateToken, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     
