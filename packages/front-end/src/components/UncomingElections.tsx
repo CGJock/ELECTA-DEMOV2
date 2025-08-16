@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mockParties } from '@data/mockData';
 
+
 const elections = [
   {
     flag: '🇧🇴',

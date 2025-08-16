@@ -30,6 +30,8 @@ import ComponentVisibilityProvider from '@/context/componentVisibilityContext';
 // import HeaderWrapper from '@components/components-wrappers/HeaderWrapper';
 // import FooterWrapper from '@components/components-wrappers/FooterWrapper';
 
+
+
 export default function Home() {
   return (
     <ComponentVisibilityProvider>

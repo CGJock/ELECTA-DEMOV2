@@ -115,6 +115,7 @@ const elections: Election[] = [
   },
 ];
 
+
 export function useNextElectionBanner() {
   const nextElection = useMemo(() => {
     const today = new Date();
