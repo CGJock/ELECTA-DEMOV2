@@ -385,11 +385,11 @@ const getDepartmentName = (code: string | null): string => {
         ref={chartRef}
         style={{
           height: '440px',
-          width: '300px',
+          width: '350px',
           alignItems: 'center',
-          marginTop: '1.5rem',
           border: '2px solid #374151',
           padding: '15px',
+          margin: '5px',
           borderRadius: '12px',
           background: 'none',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',

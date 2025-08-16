@@ -263,7 +263,7 @@ export default function Page() {
           )}
         </div>
         
-        Línea divisoria moderna (fases eliminadas)
+        
         {!hasWinner && (
           <div style={{
             height: '3px',

@@ -283,8 +283,36 @@ router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
 // POST /api/whitelist/verify - Verificar acceso de usuario
 router.post('/verify', async (req: Request, res: Response) => {
   try {
-    const { name, email }: WhitelistVerificationRequest = req.body;
+    const { name, email, password }: any = req.body;
     
+    // TEMPORAL: Solo verificar contraseña
+    const GENERAL_PASSWORD = process.env.GENERAL_ACCESS_PASSWORD;
+    
+    if (!GENERAL_PASSWORD) {
+      return res.status(500).json({
+        success: false,
+        allowed: false,
+        message: 'Error de configuración del servidor'
+      });
+    }
+    
+    if (!password || password !== GENERAL_PASSWORD) {
+      return res.json({
+        success: true,
+        allowed: false,
+        message: 'Contraseña incorrecta'
+      });
+    }
+    
+    // TEMPORAL: Acceso directo con contraseña
+    return res.json({
+      success: true,
+      allowed: true,
+      message: 'Acceso permitido',
+      user: { id: 0, name: 'Usuario Temporal', email: 'temp@electa.com', status: 'approved' }
+    });
+    
+    /* CÓDIGO ORIGINAL COMENTADO - RESTAURAR PRÓXIMA SEMANA
     // Validaciones básicas
     if (!name || !email) {
       return res.status(400).json({
@@ -335,6 +363,7 @@ router.post('/verify', async (req: Request, res: Response) => {
       };
       res.json(response);
     }
+    */
   } catch (error) {
     console.error('Error al verificar acceso:', error);
     res.status(500).json({

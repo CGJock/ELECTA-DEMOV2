@@ -22,6 +22,9 @@ interface FormValues {
 export const ElectionForm: React.FC = () => {
   const [electionTypes, setElectionTypes] = useState<ElectionType[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>(''); // búsqueda de país
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+
   const [form, setForm] = useState<FormValues>({
     election_type: 1,
     country: '',
@@ -31,14 +34,14 @@ export const ElectionForm: React.FC = () => {
   });
 
   useEffect(() => {
-    // Obtener tipos de elección desde backend
-    fetch(`${API_BASE_URL}/get-election-types`)
+    // Obtener tipos de elección
+    fetch(`${API_BASE_URL}/api/get-election-types`)
       .then((res) => res.json())
       .then(setElectionTypes)
       .catch((err) => console.error('Error fetching election types:', err));
 
-    // Obtener países desde backend (cacheados en Redis)
-    fetch(`${API_BASE_URL}/get-countries`)
+    // Obtener países
+    fetch(`${API_BASE_URL}/api/get-countries`)
       .then((res) => res.json())
       .then(setCountries)
       .catch((err) => console.error('Error fetching countries:', err));
@@ -51,7 +54,6 @@ export const ElectionForm: React.FC = () => {
 
     setForm((prev) => {
       if (name === 'round_date') {
-        // Cuando cambia la fecha, actualizar también el año
         const year = new Date(value).getFullYear();
         return { ...prev, round_date: value, year };
       }
@@ -65,11 +67,24 @@ export const ElectionForm: React.FC = () => {
     });
   };
 
+  const handleCountryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setForm((prev) => ({ ...prev, country: value }));
+    setShowSuggestions(true);
+  };
+
+  const handleSelectCountry = (name: string) => {
+    setForm((prev) => ({ ...prev, country: name }));
+    setSearchTerm(name);
+    setShowSuggestions(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${API_BASE_URL}/post-election`, {
+      const res = await fetch(`${API_BASE_URL}/api/post-election`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -87,8 +102,13 @@ export const ElectionForm: React.FC = () => {
     }
   };
 
+  // Filtrado de países según búsqueda
+  const filteredCountries = countries.filter((c) =>
+    c.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 relative">
       <div>
         <label className="block text-sm font-medium text-white mb-2">
           Tipo de elección:
@@ -108,24 +128,37 @@ export const ElectionForm: React.FC = () => {
         </select>
       </div>
 
-      <div>
+      <div className="relative">
         <label className="block text-sm font-medium text-white mb-2">
           País:
         </label>
-        <select
+        <input
+          type="text"
           name="country"
-          value={form.country}
-          onChange={handleChange}
+          value={searchTerm}
+          onChange={handleCountryInput}
+          onFocus={() => setShowSuggestions(true)}
           className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          placeholder="Escribe o selecciona un país"
           required
-        >
-          <option value="">--Selecciona país--</option>
-          {countries.map((c) => (
-            <option key={c.code ?? c.name} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        />
+        {showSuggestions && searchTerm && (
+          <ul className="absolute z-10 w-full max-h-40 overflow-y-auto bg-slate-800 border border-slate-600 rounded-lg mt-1">
+            {filteredCountries.length > 0 ? (
+              filteredCountries.map((c) => (
+                <li
+                  key={c.code ?? c.name}
+                  onClick={() => handleSelectCountry(c.name)}
+                  className="px-3 py-2 cursor-pointer hover:bg-slate-700 text-white"
+                >
+                  {c.name}
+                </li>
+              ))
+            ) : (
+              <li className="px-3 py-2 text-gray-400">No encontrado</li>
+            )}
+          </ul>
+        )}
       </div>
 
       <div>

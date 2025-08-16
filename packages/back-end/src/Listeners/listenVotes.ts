@@ -7,7 +7,10 @@ import { getActiveElectionRoundId } from '@utils/getActiveElectionAndRound.js';
 export async function listenToVotesChanges(pool: Pool, io: Server) {
   const client = await pool.connect();
   await client.query('LISTEN votes_channel');
-  console.log(' Listening to channel: votes_channel');
+  
+    if (process.env.NODE_ENV !== 'production') {
+            console.log(' Listening to channel: votes_channel');
+        }
 
    let debounceTimeout: NodeJS.Timeout | null = null;
    let latestData: any = null;
@@ -23,7 +26,10 @@ export async function listenToVotesChanges(pool: Pool, io: Server) {
       // Obtener siempre la ronda activa al momento de la notificación
       const roundId = await getActiveElectionRoundId();
       if (!roundId) {
-        console.warn('No hay ronda activa, no se guardarán datos en Redis ni se emitirá por socket.');
+         if (process.env.NODE_ENV !== 'production') {
+            console.warn('No hay ronda activa, no se guardarán datos en Redis ni se emitirá por socket.');
+        }
+        
         return;
       }
 
@@ -41,7 +47,10 @@ export async function listenToVotesChanges(pool: Pool, io: Server) {
       // Espera 500ms sin nuevas notificaciones para emitir al socket
       debounceTimeout = setTimeout(() => {
         io.emit('full-vote-data', latestData);
-        console.log('Emitiendo evento "full-vote-data" por socket con debounce', latestData);
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('Emitiendo evento "full-vote-data" por socket con debounce', latestData);
+        }
+        
         debounceTimeout = null;
       }, 500);
     } catch (e) {

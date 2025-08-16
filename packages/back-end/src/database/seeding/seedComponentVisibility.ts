@@ -12,10 +12,12 @@ export async function seedComponentVisibility(): Promise<void> {
       { name: 'results', display_name: 'Resultados Finales' }
     ];
 
-    console.log(`📋 Procesando ${phases.length} fases...`);
+   
 
     for (const phase of phases) {
-      console.log(`🔄 Procesando fase: ${phase.name}`);
+      if (process.env.NODE_ENV !== 'production') {
+      console.log(` Procesando fase: ${phase.name}`);
+      }
       
       // Insertar o obtener la fase existente
       let result = await pool.query(
@@ -52,7 +54,7 @@ export async function seedComponentVisibility(): Promise<void> {
         { name: 'WinnerBanner', display_name: 'Banner del ganador', visible: false, order: 9 }
       ];
 
-      console.log(`📦 Insertando ${components.length} componentes para fase '${phase.name}'...`);
+      
 
       for (const component of components) {
         try {
@@ -65,21 +67,26 @@ export async function seedComponentVisibility(): Promise<void> {
           console.error(`  ❌ Error insertando componente '${component.name}':`, error);
         }
       }
-      
-      console.log(`✅ Componentes insertados para fase '${phase.name}'`);
+      if (process.env.NODE_ENV !== 'production') {
+      console.log(` Componentes insertados para fase '${phase.name}'`);
+      }
     }
 
     // Verificar que se insertaron los datos
     const phaseCount = await pool.query('SELECT COUNT(*) FROM component_visibility');
     const componentCount = await pool.query('SELECT COUNT(*) FROM phase_components');
-    
-    console.log(`📊 Verificación final:`);
-    console.log(`  - Fases creadas: ${phaseCount.rows[0].count}`);
-    console.log(`  - Componentes creados: ${componentCount.rows[0].count}`);
-
-    console.log('✅ Seeding de component_visibility completado exitosamente');
+    if (process.env.NODE_ENV !== 'production') {
+    console.log(` Verificación final:`);
+    console.log(`Fases creadas: ${phaseCount.rows[0].count}`);
+    console.log(`Componentes creados: ${componentCount.rows[0].count}`);
+    }
+    if (process.env.NODE_ENV !== 'production') {
+    console.log('Seeding de component_visibility completado exitosamente');
+    }
   } catch (error) {
-    console.error('❌ Error durante el seeding de component_visibility:', error);
+    if (process.env.NODE_ENV !== 'production') {
+    console.error(' Error durante el seeding de component_visibility:', error);
+    }
     throw error;
   }
 }

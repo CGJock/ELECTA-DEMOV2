@@ -730,11 +730,13 @@
       "maintenance": {
         "private_access": "Acceso Privado",
         "verification_title": "Verificación de Acceso",
-        "verification_description": "Ingresa tu nombre y email para verificar acceso al sitio",
+        "verification_description": "Ingresa la contraseña de acceso para verificar acceso al sitio",
         "full_name": "Nombre Completo",
         "full_name_placeholder": "Tu nombre completo",
         "email": "Email",
         "email_placeholder": "tu@email.com",
+        "password": "Contraseña de Acceso",
+        "password_placeholder": "Ingresa la contraseña de acceso",
         "verify_access": "Verificar Acceso",
         "verifying": "Verificando...",
         "access_granted": "Acceso Permitido",
@@ -747,6 +749,7 @@
         "maintenance_subtitle": "Volveremos pronto con una mejor experiencia.",
         "maintenance_status": "Sitio en mantenimiento",
         "complete_fields": "Por favor completa todos los campos",
+        "password_required": "Por favor ingresa la contraseña de acceso",
         "connection_error": "Error de conexión. Por favor intenta nuevamente.",
         "disclaimer": {
           "title": "Acceso Restringido",

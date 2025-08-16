@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
 
   // Paquetes externos que se usan en server components (si los hubiera)
   serverExternalPackages: []
+
+  
 };
+
+
 
 export default nextConfig;

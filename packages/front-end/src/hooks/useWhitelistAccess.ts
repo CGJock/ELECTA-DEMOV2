@@ -18,7 +18,7 @@ interface UseWhitelistAccessReturn {
   isLoading: boolean;
   user: WhitelistUser | null;
   error: string | null;
-  verifyAccess: (name: string, email: string) => Promise<boolean>;
+  verifyAccess: (name: string, email: string, password: string) => Promise<boolean>;
   clearVerification: () => void;
 }
 
@@ -44,7 +44,7 @@ export function useWhitelistAccess(): UseWhitelistAccessReturn {
   }, []);
 
   // Función para verificar acceso
-  const verifyAccess = async (name: string, email: string): Promise<boolean> => {
+  const verifyAccess = async (name: string, email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
 
@@ -54,7 +54,7 @@ export function useWhitelistAccess(): UseWhitelistAccessReturn {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, email })
+        body: JSON.stringify({ name, email, password })
       });
 
       const data = await response.json();

@@ -160,7 +160,7 @@ const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      {/* Nuestra Historia */}
+      {/* Nuestra Historia
       <section className="py-24 px-6 max-w-4xl mx-auto">
         <div className="space-y-8">
           <div className="text-center mb-16">
@@ -181,9 +181,9 @@ const AboutUs: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Misión y Visión */}
+      {/* Misión y Visión
       <section className="py-24 px-6 bg-gradient-to-br from-slate-800 to-slate-900">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
@@ -219,9 +219,9 @@ const AboutUs: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* What We Do */}
+      {/* What We Do
       <section className="py-24 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-light text-white mb-4 tracking-tight">
@@ -238,9 +238,9 @@ const AboutUs: React.FC = () => {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Nuestros Valores */}
+      {/* Nuestros Valores
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-light text-white mb-4 tracking-tight">
@@ -272,7 +272,7 @@ const AboutUs: React.FC = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Contacto */}
       <section 
