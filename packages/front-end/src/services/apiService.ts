@@ -47,7 +47,7 @@ class ApiService {
   // GET /api/departments
   async getDepartments(): Promise<Department[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/departments`);
+      const response = await fetch(`${this.baseUrl}/api/departments`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

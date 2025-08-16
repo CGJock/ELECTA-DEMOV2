@@ -35,6 +35,8 @@ interface WhitelistManagementProps {
 
 export default function WhitelistManagement({ notifications }: WhitelistManagementProps) {
   const { t } = useTranslation();
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
   
   // Estados principales
   const [users, setUsers] = useState<WhitelistUser[]>([]);
@@ -80,153 +82,139 @@ export default function WhitelistManagement({ notifications }: WhitelistManageme
   }, [pagination.page, filters]);
 
   // Función para cargar usuarios
-  const loadUsers = async () => {
-    try {
-      setLoading(true);
-      
-      const params = new URLSearchParams({
-        page: pagination.page.toString(),
-        limit: pagination.limit.toString()
-      });
-      
-      if (filters.status) params.append('status', filters.status);
-      if (filters.search) params.append('search', filters.search);
-      
-              const response = await fetch(`http://localhost:5000/api/whitelist?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error al cargar usuarios');
-      }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        setUsers(data.data || []);
-        setPagination(prev => ({
-          ...prev,
-          total: data.total || 0,
-          totalPages: data.totalPages || 0
-        }));
-      } else {
-        notifications.showError('Error', data.error || 'Error al cargar usuarios');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      notifications.showError('Error', 'Error al cargar usuarios');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Cargar usuarios
+const loadUsers = async () => {
+  try {
+    setLoading(true);
 
-  // Función para crear/editar usuario
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-              const url = editingUser
-          ? `http://localhost:5000/api/whitelist/${editingUser.id}`
-          : 'http://localhost:5000/api/whitelist';
-      
-      const method = editingUser ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-        },
-        body: JSON.stringify(formData)
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error en la operación');
-      }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        notifications.showSuccess(
-          editingUser ? 'Usuario Actualizado' : 'Usuario Creado',
-          data.message || 'Operación exitosa'
-        );
-        
-        setShowForm(false);
-        setEditingUser(null);
-        resetForm();
-        loadUsers();
-      } else {
-        notifications.showError('Error', data.error || 'Error en la operación');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      notifications.showError('Error', 'Error en la operación');
-    }
-  };
+    const params = new URLSearchParams({
+      page: pagination.page.toString(),
+      limit: pagination.limit.toString()
+    });
 
-  // Función para cambiar status de usuario
-  const handleStatusChange = async (userId: number, newStatus: 'approved' | 'denied' | 'pending') => {
-    try {
-              const response = await fetch(`http://localhost:5000/api/whitelist/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error al cambiar status');
-      }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        notifications.showSuccess('Status Actualizado', 'Status del usuario actualizado exitosamente');
-        loadUsers();
-      } else {
-        notifications.showError('Error', data.error || 'Error al cambiar status');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      notifications.showError('Error', 'Error al cambiar status');
-    }
-  };
+    if (filters.status) params.append('status', filters.status);
+    if (filters.search) params.append('search', filters.search);
 
-  // Función para eliminar usuario
-  const handleDelete = async () => {
-    if (!deleteConfirm.userId) return;
-    
-    try {
-              const response = await fetch(`http://localhost:5000/api/whitelist/${deleteConfirm.userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error al eliminar usuario');
-      }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        notifications.showSuccess('Usuario Eliminado', 'Usuario eliminado exitosamente');
-        setDeleteConfirm({ isOpen: false, userId: null, userName: '' });
-        loadUsers();
-      } else {
-        notifications.showError('Error', data.error || 'Error al eliminar usuario');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      notifications.showError('Error', 'Error al eliminar usuario');
+    const response = await fetch(`${API_BASE_URL}/api/whitelist?${params}`, {
+      credentials: 'include' 
+    });
+
+    if (!response.ok) throw new Error('Error al cargar usuarios');
+
+    const data = await response.json();
+
+    if (data.success) {
+      setUsers(data.data || []);
+      setPagination(prev => ({
+        ...prev,
+        total: data.total || 0,
+        totalPages: data.totalPages || 0
+      }));
+    } else {
+      notifications.showError('Error', data.error || 'Error al cargar usuarios');
     }
-  };
+  } catch (error) {
+    console.error('Error:', error);
+    notifications.showError('Error', 'Error al cargar usuarios');
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Crear/editar usuario
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const url = editingUser
+      ? `${API_BASE_URL}/api/whitelist/${editingUser.id}`
+      : '${API_BASE_URL}/api/whitelist';
+
+    const method = editingUser ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', // ✅ Enviar cookie
+      body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) throw new Error('Error en la operación');
+
+    const data = await response.json();
+
+    if (data.success) {
+      notifications.showSuccess(
+        editingUser ? 'Usuario Actualizado' : 'Usuario Creado',
+        data.message || 'Operación exitosa'
+      );
+
+      setShowForm(false);
+      setEditingUser(null);
+      resetForm();
+      loadUsers();
+    } else {
+      notifications.showError('Error', data.error || 'Error en la operación');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    notifications.showError('Error', 'Error en la operación');
+  }
+};
+
+// Cambiar status de usuario
+const handleStatusChange = async (userId: number, newStatus: 'approved' | 'denied' | 'pending') => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/whitelist/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', // ✅ Enviar cookie
+      body: JSON.stringify({ status: newStatus })
+    });
+
+    if (!response.ok) throw new Error('Error al cambiar status');
+
+    const data = await response.json();
+
+    if (data.success) {
+      notifications.showSuccess('Status Actualizado', 'Status del usuario actualizado exitosamente');
+      loadUsers();
+    } else {
+      notifications.showError('Error', data.error || 'Error al cambiar status');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    notifications.showError('Error', 'Error al cambiar status');
+  }
+};
+
+// Eliminar usuario
+const handleDelete = async () => {
+  if (!deleteConfirm.userId) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/whitelist/${deleteConfirm.userId}`, {
+      method: 'DELETE',
+      credentials: 'include' // ✅ Enviar cookie
+    });
+
+    if (!response.ok) throw new Error('Error al eliminar usuario');
+
+    const data = await response.json();
+
+    if (data.success) {
+      notifications.showSuccess('Usuario Eliminado', 'Usuario eliminado exitosamente');
+      setDeleteConfirm({ isOpen: false, userId: null, userName: '' });
+      loadUsers();
+    } else {
+      notifications.showError('Error', data.error || 'Error al eliminar usuario');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    notifications.showError('Error', 'Error al eliminar usuario');
+  }
+};
+
 
   // Función para editar usuario
   const handleEdit = (user: WhitelistUser) => {
@@ -627,3 +615,4 @@ export default function WhitelistManagement({ notifications }: WhitelistManageme
     </div>
   );
 }
+

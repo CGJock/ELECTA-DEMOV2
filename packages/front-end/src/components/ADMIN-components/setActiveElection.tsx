@@ -13,7 +13,7 @@ export const ActiveElectionSelector: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/get-all-election-rounds`)
+    fetch(`${API_BASE_URL}/api/get-all-election-rounds`)
       .then(res => res.json())
       .then(data => {
         const opts = data.map((item: any) => ({
