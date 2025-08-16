@@ -21,7 +21,7 @@ export function useSiteStatus() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}site-status`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/site-status`);
       const data = await response.json();
       
       if (data.success) {
