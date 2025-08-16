@@ -104,11 +104,14 @@ router.post('/login', async (req: Request, res: Response) => {
     // Generar token
     const token = jwt.sign(payload, JWT_CONFIG.SECRET_KEY as string, options);
 
+    const isProd = process.env.NODE_ENV === 'production';
+
+
     // Enviar cookie HttpOnly
     res.cookie('adminToken', token, {
       httpOnly: true,
-      secure: false, //camibiar en prod
-      sameSite: 'lax',
+      secure: isProd,  // true en producción, false en desarrollo
+      sameSite: isProd ? 'none' : 'lax', // 'none' + secure=true para cross-site en prod
       maxAge: 60 * 60 * 1000, // 1 hora
     });
 
