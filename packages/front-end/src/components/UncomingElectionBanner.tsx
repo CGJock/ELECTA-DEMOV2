@@ -10,6 +10,7 @@ export default function UncomingElectionBanner() {
   if (!nextElection) {
     return null;
   }
+  
 
   return (
     <div className="w-full bg-gradient-to-r from-slate-800/40 via-slate-700/30 to-slate-800/40 border-y border-slate-700/50 mb-4">
