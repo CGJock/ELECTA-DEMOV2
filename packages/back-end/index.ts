@@ -83,7 +83,7 @@ async function main() {
   app.use('/api/get-emails', getmailsRouter);
   app.use('/api/post-emails', postmailsRouter);
   app.use('/api/get-ballot_id', getIdsBallots);
-  app.use('api/get-ballots',getBallotsRouter);
+  app.use('/api/get-ballots',getBallotsRouter);
   
   // Sistema de Autenticación y Admin (Tus cambios)
   app.use('/api/auth', authRouter);

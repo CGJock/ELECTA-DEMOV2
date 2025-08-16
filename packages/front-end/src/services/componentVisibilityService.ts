@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export interface ComponentVisibility {
   id: string;
@@ -28,7 +28,7 @@ class ComponentVisibilityService {
   // Obtener todas las fases disponibles
   async getPhases(): Promise<string[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/phases`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/phases`, {
         method: 'GET',
         credentials: 'include', // Enviar cookies
         headers: {
@@ -46,7 +46,7 @@ class ComponentVisibilityService {
   // Obtener la fase activa actual
   async getActivePhase(): Promise<string> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/active-phase`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/active-phase`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
@@ -79,7 +79,7 @@ class ComponentVisibilityService {
   // Obtener componentes visibles para una fase específica
   async getPhaseComponents(phaseName: string): Promise<ComponentVisibility[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/phase-components/${phaseName}`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/phase-components/${phaseName}`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
