@@ -69,28 +69,8 @@ class ApiService {
     }
   }
 
-  // POST /api/votes (para actualizar votos)
-  async updateVotes(voteData: any): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}/votes`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || '',
-        },
-        body: JSON.stringify(voteData),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Error updating votes:', error);
-      throw error;
-    }
-  }
+
+  
 }
 
 export const apiService = new ApiService(); 

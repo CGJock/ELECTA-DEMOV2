@@ -14,7 +14,7 @@ i18n
     lng: 'es', // Idioma por defecto (Bolivia)
     fallbackLng: 'es',
     interpolation: { escapeValue: false },
-    debug: true, // Mantener debug para desarrollo
+    debug: false, // Mantener debug para desarrollo
     react: { useSuspense: false }, // Deshabilitar Suspense para evitar problemas de hidratación
   });
 

@@ -133,31 +133,6 @@ export async function initTables(): Promise<void> {
       );
    `
     },
-    //  {
-    //   name: 'votes_data_tallies',
-    //   sql: `
-    //     CREATE TABLE IF NOT EXISTS votes_data_tallies (
-    //     id SERIAL PRIMARY KEY,
-    //     verification_code NUMERIC NOT NULL REFERENCES ballot_tallies(verification_code),
-    //     party_name TEXT DEFAULT 'UNDEFINED',
-    //     party_vote_count INTEGER DEFAULT NULL,
-    //     UNIQUE (verification_code, party_name)
-    //   );
-    //   `
-    // },
-    // {
-    //   name: 'votes',
-    //   sql: `
-    //     CREATE TABLE IF NOT EXISTS votes (
-    //       id SERIAL PRIMARY KEY,
-    //       election_round_id INT NOT NULL UNIQUE REFERENCES election_rounds(id),
-    //       valid_votes INT DEFAULT 0,
-    //       blank_votes INT DEFAULT 0,
-    //       null_votes INT DEFAULT 0,
-    //       expected_votes INT DEFAULT 0
-    //     );
-    //   `
-    // },
     {
       name: 'political_parties',
       sql: `

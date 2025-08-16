@@ -19,10 +19,14 @@ export const sendLocationSummaries = async (io: Server, db: Pool) => {
       const cached = await redisClient.get(redisKey);
 
       if (cached) {
+        if (process.env.NODE_ENV !== 'production') {
         console.log(`Found cached data for ${redisKey}`);
+        }
         data = JSON.parse(cached);
       } else {
+        if (process.env.NODE_ENV !== 'production') {
         console.log(`No cached data for ${redisKey}, fetching from DB`);
+        }
         data = await getLocationSummary(db, code);
 
         // Guardar en Redis con un TTL de 60 segundos, por ejemplo
@@ -31,7 +35,9 @@ export const sendLocationSummaries = async (io: Server, db: Pool) => {
 
       io.to(redisKey).emit('location-breakdown-summary', data);
     } catch (err) {
+      if (process.env.NODE_ENV !== 'production') {
       console.error(`Error processing ${redisKey}:`, err);
+      }
       io.to(redisKey).emit('location-breakdown-summary', {
         error: 'Failed to fetch location summary'
       });

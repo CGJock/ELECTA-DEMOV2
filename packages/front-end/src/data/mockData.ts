@@ -1,11 +1,11 @@
 import type { PoliticalParty, ElectionData } from '../types/election'
 
-export const mockParties: PoliticalParty[] =  [
+export const mockParties: PoliticalParty[] = [
   {
     id: '1',
     name: 'MAS-IPSP',
     abbreviation: 'MAS',
-    aliases: ['MAS-IPSP', 'MAS', 'IPSP'],
+    aliases: ['MAS-IPSP', 'MAS', 'IPSP', 'Movimiento al Socialismo', 'MAS Bolivia', 'MAS Evo', 'MAS Arce', 'MAS oficialista', 'MAS oficial'],
     color: '#FF6B35',
     votes: 0,
     percentage: 0,
@@ -34,7 +34,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '2',
     name: 'Alianza Popular',
     abbreviation: 'AP',
-    aliases: ['Alianza Popular', 'AP','PAN-BOL'],
+    aliases: ['Alianza Popular', 'AP', 'PAN-BOL', 'AP Bolivia'],
     color: '#4A90E2',
     votes: 0,
     percentage: 0,
@@ -61,9 +61,9 @@ export const mockParties: PoliticalParty[] =  [
   },
   {
     id: '3',
-    name: 'Frente Popular',
+    name: 'AUTONOMIA PARA BOLIVIA SUMATE',
     abbreviation: 'FP',
-    aliases: ['Frente Popular', 'FP'],
+    aliases: ['Frente Popular', 'FP', 'Frente Popular Bolivia','SUMATE','APB','APB-SUMATE'],
     color: '#50C878',
     votes: 0,
     percentage: 0,
@@ -98,7 +98,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '4',
     name: 'Alianza LIBRE',
     abbreviation: 'LIBRE',
-    aliases: ['Alianza LIBRE', 'AL', 'LIBRE'],
+    aliases: ['Alianza LIBRE', 'AL', 'libre', 'LIBRE Bolivia', 'LIBRE Tuto','libre 21'],
     color: '#FFD700',
     votes: 0,
     percentage: 0,
@@ -127,7 +127,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '5',
     name: 'Partido Demócrata Cristiano',
     abbreviation: 'PDC',
-    aliases: ['Partido Demócrata Cristiano', 'PDC', 'PC'],
+    aliases: ['Partido Demócrata Cristiano', 'PDC', 'PC', 'PDC Bolivia', 'PDC oficial'],
     color: '#8B4513',
     votes: 0,
     percentage: 0,
@@ -154,9 +154,9 @@ export const mockParties: PoliticalParty[] =  [
   },
   {
     id: '6',
-    name: 'LYP-ADN',
+    name: 'LIBERTDA Y PROGRESO ADN',
     abbreviation: 'ADN',
-    aliases: ['LYP-ADN', 'ADN', 'AD'],
+    aliases: ['LYP-ADN', 'ADN', 'AD', 'ADN Bolivia', 'ADN LYP'],
     color: '#DC2626',
     votes: 0,
     percentage: 0,
@@ -185,7 +185,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '7',
     name: 'Nueva Generación Patriótica',
     abbreviation: 'NGP',
-    aliases: ['NGP'],
+    aliases: ['NGP', 'Nueva Generación Patriótica', 'NGP Bolivia', 'NGP Jaime Dunn'],
     color: '#F43F5E',
     votes: 0,
     percentage: 0,
@@ -215,7 +215,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '8',
     name: 'La Fuerza del Pueblo',
     abbreviation: 'FP',
-    aliases: ['FP', 'Fuerza del Pueblo'],
+    aliases: ['FP', 'Fuerza del Pueblo', 'La Fuerza del Pueblo', 'Fuerza del Pueblo Bolivia', 'UCS', 'UCS Bolivia'],
     color: '#9B59B6',
     votes: 0,
     percentage: 0,
@@ -249,7 +249,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '9',
     name: 'Movimiento de Renovación Nacional',
     abbreviation: 'MORENA',
-    aliases: ['MORENA', 'Movimiento de Renovación Nacional'],
+    aliases: ['MORENA', 'Movimiento de Renovación Nacional', 'MORENA Bolivia', 'MORENA Mónica Eva Copa'],
     color: '#E67E22',
     votes: 0,
     percentage: 0,
@@ -284,7 +284,7 @@ export const mockParties: PoliticalParty[] =  [
     id: '10',
     name: 'Frente de Unidad Nacional',
     abbreviation: 'UN',
-    aliases: ['UN', 'Frente de Unidad Nacional'],
+    aliases: ['UN', 'Frente de Unidad Nacional', 'UN Bolivia', 'UN Samuel Doria Medina'],
     color: '#1ABC9C',
     votes: 0,
     percentage: 0,
@@ -314,4 +314,5 @@ export const mockParties: PoliticalParty[] =  [
       }
     }
   }
-]
+];
+
