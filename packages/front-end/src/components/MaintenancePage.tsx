@@ -14,7 +14,8 @@ export default function MaintenancePage({ isPrivateAccess = false }: Maintenance
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
-    email: ''
+    email: '',
+    password: ''
   });
   const [verificationResult, setVerificationResult] = useState<{
     success: boolean;
@@ -25,11 +26,11 @@ export default function MaintenancePage({ isPrivateAccess = false }: Maintenance
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.email) {
+    if (!formData.password) {
       setVerificationResult({
         success: false,
         allowed: false,
-        message: t('admin.sections.maintenance.complete_fields')
+        message: t('admin.sections.maintenance.password_required')
       });
       return;
     }
@@ -38,7 +39,7 @@ export default function MaintenancePage({ isPrivateAccess = false }: Maintenance
 
     try {
       // Usar el hook useWhitelistAccess para verificar
-      const success = await verifyAccess(formData.name, formData.email);
+      const success = await verifyAccess(formData.name, formData.email, formData.password);
       
       if (success) {
         setVerificationResult({
@@ -76,7 +77,7 @@ export default function MaintenancePage({ isPrivateAccess = false }: Maintenance
   };
 
   const resetForm = () => {
-    setFormData({ name: '', email: '' });
+    setFormData({ name: '', email: '', password: '' });
     setVerificationResult(null);
   };
 
@@ -151,6 +152,7 @@ export default function MaintenancePage({ isPrivateAccess = false }: Maintenance
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* CAMPOS ORIGINALES COMENTADOS - RESTAURAR PRÓXIMA SEMANA
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-3">
                   {t('admin.sections.maintenance.full_name')} *
@@ -179,6 +181,23 @@ export default function MaintenancePage({ isPrivateAccess = false }: Maintenance
                   onChange={handleInputChange}
                   className="w-full px-5 py-4 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-cyan-500 focus:outline-none transition-colors text-base"
                   placeholder={t('admin.sections.maintenance.email_placeholder')}
+                  disabled={isLoading}
+                />
+              </div>
+              */}
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-3">
+                  {t('admin.sections.maintenance.password')} *
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-5 py-4 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-cyan-500 focus:outline-none transition-colors text-base"
+                  placeholder={t('admin.sections.maintenance.password_placeholder')}
                   disabled={isLoading}
                 />
               </div>
