@@ -5,31 +5,19 @@ import { mockParties } from '@data/mockData';
 
 const elections = [
   {
-    flag: '🇨🇷',
-    countryKey: 'costaRica',
-    date: '1 febrero 2026',
-    whatKey: 'costaRica_what',
-    systemKey: 'costaRica_system',
+    flag: '🇧🇴',
+    countryKey: 'bolivia',
+    date: '17 agosto 2025',
+    whatKey: 'bolivia_what',
+    systemKey: 'bolivia_system',
     parties: [
-      { nameKey: 'costaRica_pln', candidateKey: 'costaRica_pln_candidate' },
-      { nameKey: 'costaRica_pusc', candidateKey: 'costaRica_pusc_candidate' },
-      { nameKey: 'costaRica_psd', candidateKey: 'costaRica_psd_candidate' },
+      { nameKey: 'bolivia_andronico', candidateKey: 'bolivia_andronico_candidate' },
+      { nameKey: 'bolivia_castillo', candidateKey: 'bolivia_castillo_candidate' },
+      { nameKey: 'bolivia_doria', candidateKey: 'bolivia_doria_candidate' },
+      { nameKey: 'bolivia_quiroga', candidateKey: 'bolivia_quiroga_candidate' },
     ],
-    summaryKey: 'costaRica_summary',
-    dateKey: 'costaRica_date',
-  },
-  {
-    flag: '🇪🇨',
-    countryKey: 'ecuador',
-    date: '9 febrero y 13 abril 2025',
-    whatKey: 'ecuador_what',
-    systemKey: 'ecuador_system',
-    parties: [
-      { nameKey: 'ecuador_noboa', candidateKey: 'ecuador_noboa_candidate' },
-      { nameKey: 'ecuador_gonzalez', candidateKey: 'ecuador_gonzalez_candidate' },
-    ],
-    summaryKey: 'ecuador_summary',
-    dateKey: 'ecuador_date',
+    summaryKey: 'bolivia_summary',
+    dateKey: 'bolivia_date',
   },
   {
     flag: '🇰🇷',
@@ -98,6 +86,20 @@ const elections = [
     ],
     summaryKey: 'guineaBissau_summary',
     dateKey: 'guineaBissau_date',
+  },
+  {
+    flag: '🇨🇷',
+    countryKey: 'costaRica',
+    date: '1 febrero 2026',
+    whatKey: 'costaRica_what',
+    systemKey: 'costaRica_system',
+    parties: [
+      { nameKey: 'costaRica_pln', candidateKey: 'costaRica_pln_candidate' },
+      { nameKey: 'costaRica_pusc', candidateKey: 'costaRica_pusc_candidate' },
+      { nameKey: 'costaRica_psd', candidateKey: 'costaRica_psd_candidate' },
+    ],
+    summaryKey: 'costaRica_summary',
+    dateKey: 'costaRica_date',
   },
 ];
 

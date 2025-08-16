@@ -16,14 +16,19 @@ export default function UncomingElectionBanner() {
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="text-center">
           <h2 className="text-base md:text-lg font-medium text-slate-200 mb-1">
-            {t('upcomingElections.banner_title')}
+            {nextElection.isElectionDay 
+              ? t('upcomingElections.election_day_title')
+              : t('upcomingElections.banner_title')
+            }
           </h2>
-          <p className="text-slate-400 text-sm">
-            {t('upcomingElections.banner_subtitle')}{' '}
-            <span className="text-emerald-400 font-medium">
-              {t(`upcomingElections.${nextElection.countryKey}`)} - 17 de agosto 2025
-            </span>
-          </p>
+          {!nextElection.isElectionDay && (
+            <p className="text-slate-400 text-sm">
+              {t('upcomingElections.banner_subtitle')}{' '}
+              <span className="text-emerald-400 font-medium">
+                {t(`upcomingElections.${nextElection.countryKey}`)} - 17 de agosto 2025
+              </span>
+            </p>
+          )}
         </div>
       </div>
     </div>

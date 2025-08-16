@@ -117,9 +117,22 @@ const elections: Election[] = [
 
 export function useNextElectionBanner() {
   const nextElection = useMemo(() => {
-    // Retorna la primera elección del array (ya está ordenado cronológicamente)
-    return elections[0];
+    const today = new Date();
+    const electionDate = new Date('2025-08-17'); // Bolivia
+    
+    // Si es el día de la elección
+    if (today.toDateString() === electionDate.toDateString()) {
+      return { ...elections[0], isElectionDay: true };
+    }
+    
+    // Si es después de la elección
+    if (today > electionDate) {
+      return null; // No mostrar banner
+    }
+    
+    // Elección futura
+    return { ...elections[0], isElectionDay: false };
   }, []);
-
+  
   return nextElection;
 }
