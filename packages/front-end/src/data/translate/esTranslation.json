@@ -14,6 +14,45 @@
     "election_statistics": "Estadísticas Electorales",
     "detailed_statistics": "Las estadísticas y análisis detallados se mostrarán aquí."
   },
+  "electionReportTable": {
+    "title": "Reporte de Elecciones - Vista Tabla",
+    "loading_backend": "Cargando actas del backend...",
+    "error_loading": "Error al cargar datos: {{error}}",
+    "data_available": "Datos del backend disponibles ({{count}} actas)",
+    "backend_stats": "Estadísticas del Backend",
+    "total_actas": "Total de Actas",
+    "total_pages": "Total de Páginas",
+    "current_page": "Página Actual",
+    "actas_this_page": "Actas en esta Página",
+    "search_placeholder": "Buscar por departamento, municipio o provincia...",
+    "clear": "Limpiar",
+    "total_records": "Total de registros: {{count}}",
+    "page_info": "Página {{current}} de {{total}}",
+    "showing_actas": "Mostrando {{count}} actas de esta página",
+    "loading_actas": "Cargando actas del backend...",
+    "no_results": "No se encontraron resultados",
+    "table_headers": {
+      "department": "Departamento",
+      "total_votes": "Total Votos",
+      "valid_votes": "Votos Válidos",
+      "null_votes": "Votos Nulos",
+      "blank_votes": "Votos Blancos"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "modal": {
+      "acta_info": "Acta {{id}}",
+      "votes_total": "📊 Votos: {{count}} total",
+      "valid_votes_info": "✅ {{count}} válidos ({{percentage}}%)",
+      "null_votes_info": "❌ {{count}} nulos ({{percentage}}%)",
+      "blank_votes_info": "⚪ {{count}} blancos ({{percentage}}%)",
+      "open_image": "Abrir imagen",
+      "download_image": "Descargar imagen",
+      "downloading": "Descargando..."
+    }
+  },
   "map": {
     "title": "Mostrando resultados: {{name}}",
     "return_global": "Volver a resultados nacionales",
