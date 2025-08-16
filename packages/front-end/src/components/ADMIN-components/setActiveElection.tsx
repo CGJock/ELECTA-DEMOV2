@@ -36,7 +36,7 @@ export const ActiveElectionSelector: React.FC = () => {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/post-active-election`, {
+      const res = await fetch(`${API_BASE_URL}/api/post-active-election`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ electionRoundId: selectedId }),

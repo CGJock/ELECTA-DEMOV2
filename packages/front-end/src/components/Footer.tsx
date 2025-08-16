@@ -69,7 +69,7 @@ const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
             </div>
 
             {/* Quick Links */}
-            <div>
+            {/* <div>
               <h4 style={{
                 fontSize: '1.1rem',
                 fontWeight: 'bold',
@@ -84,7 +84,7 @@ const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
                 margin: 0
               }}>
                 <li style={{ marginBottom: '0.5rem' }}>
-                  <a href="#" style={{
+                  <a href="/" style={{
                     color: '#64748B',
                     textDecoration: 'none',
                     transition: 'color 0.3s ease'
@@ -95,7 +95,7 @@ const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
                   </a>
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
-                  <a href="#" style={{
+                  <a href="/main/elections" style={{
                     color: '#64748B',
                     textDecoration: 'none',
                     transition: 'color 0.3s ease'
@@ -106,7 +106,7 @@ const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
                   </a>
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
-                  <a href="#" style={{
+                  <a href="/main/elections" style={{
                     color: '#64748B',
                     textDecoration: 'none',
                     transition: 'color 0.3s ease'
@@ -117,7 +117,7 @@ const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
                   </a>
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
-                  <a href="#" style={{
+                  <a href="/main/faq" style={{
                     color: '#64748B',
                     textDecoration: 'none',
                     transition: 'color 0.3s ease'
@@ -128,9 +128,9 @@ const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
                   </a>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
-            {/* Disclaimer Section */}
+            {/* Disclaimer Section
             <div>
               <h4 style={{
                 fontSize: '1.1rem',
@@ -175,7 +175,7 @@ const Footer: React.FC<FooterProps> = ({ onAddIncident }) => {
               >
                 {t('footer.ver_mas')}
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Bottom Bar */}

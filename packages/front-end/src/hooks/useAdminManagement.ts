@@ -88,7 +88,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
     setError(null);
 
     try {
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management`, {
         method: 'POST',
         body: JSON.stringify(adminData)
       });

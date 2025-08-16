@@ -154,7 +154,7 @@ export const mockParties: PoliticalParty[] = [
   },
   {
     id: '6',
-    name: 'LIBERTDA Y PROGRESO ADN',
+    name: 'Libertad y progreso ADN',
     abbreviation: 'ADN',
     aliases: ['LYP-ADN', 'ADN', 'AD', 'ADN Bolivia', 'ADN LYP'],
     color: '#DC2626',
