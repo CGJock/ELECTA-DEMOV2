@@ -371,6 +371,8 @@
   "upcomingElections": {
     "title": "Upcoming Elections",
     "subtitle": "Global electoral calendar 2025-2026",
+    "banner_title": "Currently there are no electoral processes in progress",
+    "banner_subtitle": "Upcoming scheduled elections:",
     "what": "What is elected",
     "system": "Electoral system",
     "main_parties": "Main parties",
@@ -452,7 +454,21 @@
     "chile_right_candidate": "favorite after Boric's wear",
     "chile_left": "Progressive opposition",
     "chile_left_candidate": "fragmented, with weak candidacies",
-    "chile_summary": "Critical election amid low approval of the current government; possible political reconfiguration."
+    "chile_summary": "Critical election amid low approval of the current government; possible political reconfiguration.",
+
+    "bolivia": "Bolivia",
+    "bolivia_date": "August 17, 2025",
+    "bolivia_what": "President, vice president, and members of the Plurinational Legislative Assembly.",
+    "bolivia_system": "Two rounds if no candidate achieves absolute majority (50% + 1). Second round on October 19, 2025.",
+    "bolivia_andronico": "Popular Alliance (ex-MAS)",
+    "bolivia_andronico_candidate": "Andrónico Rodríguez",
+    "bolivia_castillo": "MAS-IPSP (officialist)",
+    "bolivia_castillo_candidate": "Eduardo del Castillo",
+    "bolivia_doria": "Citizen Community (CC)",
+    "bolivia_doria_candidate": "Samuel Doria Medina",
+    "bolivia_quiroga": "Libre 21",
+    "bolivia_quiroga_candidate": "Jorge 'Tuto' Quiroga",
+    "bolivia_summary": "MAS completely fragmented after Arce's resignation and Morales' exclusion. Opposition leads polls with Doria Medina and Quiroga as favorites."
   },
   "election_report": {
     "title": "Voting Record Verification",
