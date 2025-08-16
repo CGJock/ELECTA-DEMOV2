@@ -735,11 +735,13 @@
       "maintenance": {
         "private_access": "Private Access",
         "verification_title": "Access Verification",
-        "verification_description": "Enter your name and email to verify site access",
+        "verification_description": "Enter the access password to verify site access",
         "full_name": "Full Name",
         "full_name_placeholder": "Your full name",
         "email": "Email",
         "email_placeholder": "your@email.com",
+        "password": "Access Password",
+        "password_placeholder": "Enter the access password",
         "verify_access": "Verify Access",
         "verifying": "Verifying...",
         "access_granted": "Access Granted",
@@ -752,6 +754,7 @@
         "maintenance_subtitle": "We'll be back soon with a better experience.",
         "maintenance_status": "Site under maintenance",
         "complete_fields": "Please complete all fields",
+        "password_required": "Please enter the access password",
         "connection_error": "Connection error. Please try again.",
         "disclaimer": {
           "title": "Restricted Access",
