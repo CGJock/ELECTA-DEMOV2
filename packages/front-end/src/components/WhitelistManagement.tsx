@@ -35,6 +35,8 @@ interface WhitelistManagementProps {
 
 export default function WhitelistManagement({ notifications }: WhitelistManagementProps) {
   const { t } = useTranslation();
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
   
   // Estados principales
   const [users, setUsers] = useState<WhitelistUser[]>([]);
@@ -93,7 +95,7 @@ const loadUsers = async () => {
     if (filters.status) params.append('status', filters.status);
     if (filters.search) params.append('search', filters.search);
 
-    const response = await fetch(`http://localhost:5000/api/whitelist?${params}`, {
+    const response = await fetch(`${API_BASE_URL}/api/whitelist?${params}`, {
       credentials: 'include' 
     });
 
@@ -125,8 +127,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   try {
     const url = editingUser
-      ? `http://localhost:5000/api/whitelist/${editingUser.id}`
-      : 'http://localhost:5000/api/whitelist';
+      ? `${API_BASE_URL}/api/whitelist/${editingUser.id}`
+      : '${API_BASE_URL}/api/whitelist';
 
     const method = editingUser ? 'PUT' : 'POST';
 
@@ -163,7 +165,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 // Cambiar status de usuario
 const handleStatusChange = async (userId: number, newStatus: 'approved' | 'denied' | 'pending') => {
   try {
-    const response = await fetch(`http://localhost:5000/api/whitelist/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/whitelist/${userId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include', // ✅ Enviar cookie
@@ -191,7 +193,7 @@ const handleDelete = async () => {
   if (!deleteConfirm.userId) return;
 
   try {
-    const response = await fetch(`http://localhost:5000/api/whitelist/${deleteConfirm.userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/whitelist/${deleteConfirm.userId}`, {
       method: 'DELETE',
       credentials: 'include' // ✅ Enviar cookie
     });
