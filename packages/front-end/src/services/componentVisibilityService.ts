@@ -28,7 +28,7 @@ class ComponentVisibilityService {
   // Obtener todas las fases disponibles
   async getPhases(): Promise<string[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/phases`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/phases`, {
         method: 'GET',
         credentials: 'include', // Enviar cookies
         headers: {
@@ -46,7 +46,7 @@ class ComponentVisibilityService {
   // Obtener la fase activa actual
   async getActivePhase(): Promise<string> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/active-phase`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/active-phase`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
@@ -63,7 +63,7 @@ class ComponentVisibilityService {
   // Activar una fase específica
   async activatePhase(phaseName: string): Promise<void> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/activate-phase`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/activate-phase`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,7 @@ class ComponentVisibilityService {
   // Obtener componentes visibles para una fase específica
   async getPhaseComponents(phaseName: string): Promise<ComponentVisibility[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/phase-components/${phaseName}`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/phase-components/${phaseName}`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
@@ -99,7 +99,7 @@ class ComponentVisibilityService {
     isVisible: boolean
   ): Promise<ComponentVisibility> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/update-component`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/update-component`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -116,7 +116,7 @@ class ComponentVisibilityService {
   // Aplicar cambios de visibilidad
   async applyChanges(phaseName: string, components: ComponentVisibility[]): Promise<void> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/apply-changes`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/apply-changes`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -132,7 +132,7 @@ class ComponentVisibilityService {
   // Obtener configuración del sitio
   async getSiteConfig(): Promise<SiteConfig[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/component-visibility/site-config`, {
+      const response = await fetch(`${API_BASE_URL}/api/component-visibility/site-config`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }

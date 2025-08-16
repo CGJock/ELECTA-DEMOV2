@@ -49,7 +49,7 @@ export function useWhitelistAccess(): UseWhitelistAccessReturn {
     setError(null);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/whitelist/verify`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/whitelist/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -65,7 +65,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
 
     try {
 
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management`);
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management`);
       if (data.success) {
         setAdmins(data.admins);
       } else {
@@ -88,7 +88,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
     setError(null);
 
     try {
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management`, {
         method: 'POST',
         body: JSON.stringify(adminData)
       });
@@ -112,7 +112,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
     setError(null);
 
     try {
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/${id}`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updates)
       });
@@ -136,7 +136,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
     setError(null);
 
     try {
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/${id}`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management/${id}`, {
         method: 'DELETE'
       });
 
@@ -159,7 +159,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
     setError(null);
 
     try {
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/change-password`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management/change-password`, {
         method: 'POST',
         body: JSON.stringify({ currentPassword, newPassword })
       });
@@ -178,7 +178,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
     setError(null);
 
     try {
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management/reset-password/${id}`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management/reset-password/${id}`, {
         method: 'POST',
         body: JSON.stringify({ newPassword })
       });
