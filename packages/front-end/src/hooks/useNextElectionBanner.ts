@@ -119,7 +119,17 @@ const elections: Election[] = [
 export function useNextElectionBanner() {
   const nextElection = useMemo(() => {
     const today = new Date();
-    const electionDate = new Date('2025-08-17'); // Bolivia
+    // Parsear la fecha de Bolivia desde el array de elecciones
+    const boliviaDateStr = elections[0].date; // "17 agosto 2025"
+    const [day, month, year] = boliviaDateStr.split(' ');
+    
+    // Mapear mes en español a número
+    const monthMap: { [key: string]: number } = {
+      'enero': 0, 'febrero': 1, 'marzo': 2, 'abril': 3, 'mayo': 4, 'junio': 5,
+      'julio': 6, 'agosto': 7, 'septiembre': 8, 'octubre': 9, 'noviembre': 10, 'diciembre': 11
+    };
+    
+    const electionDate = new Date(parseInt(year), monthMap[month], parseInt(day));
     
     // Si es el día de la elección
     if (today.toDateString() === electionDate.toDateString()) {

@@ -27,7 +27,7 @@ export default function UncomingElectionBanner() {
             <p className="text-slate-400 text-sm">
               {t('upcomingElections.banner_subtitle')}{' '}
               <span className="text-emerald-400 font-medium">
-                {t(`upcomingElections.${nextElection.countryKey}`)} - 17 de agosto 2025
+                {t(`upcomingElections.${nextElection.countryKey}`)} - {nextElection.date}
               </span>
             </p>
           )}
