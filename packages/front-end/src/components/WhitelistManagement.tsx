@@ -92,7 +92,7 @@ export default function WhitelistManagement({ notifications }: WhitelistManageme
       if (filters.status) params.append('status', filters.status);
       if (filters.search) params.append('search', filters.search);
       
-              const response = await fetch(`http://localhost:5000/api/whitelist?${params}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/whitelist?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -128,8 +128,8 @@ export default function WhitelistManagement({ notifications }: WhitelistManageme
     
     try {
               const url = editingUser
-          ? `http://localhost:5000/api/whitelist/${editingUser.id}`
-          : 'http://localhost:5000/api/whitelist';
+          ? `${process.env.NEXT_PUBLIC_API_URL}/whitelist/${editingUser.id}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/whitelist`;
       
       const method = editingUser ? 'PUT' : 'POST';
       
@@ -170,7 +170,7 @@ export default function WhitelistManagement({ notifications }: WhitelistManageme
   // Función para cambiar status de usuario
   const handleStatusChange = async (userId: number, newStatus: 'approved' | 'denied' | 'pending') => {
     try {
-              const response = await fetch(`http://localhost:5000/api/whitelist/${userId}`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/whitelist/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ export default function WhitelistManagement({ notifications }: WhitelistManageme
     if (!deleteConfirm.userId) return;
     
     try {
-              const response = await fetch(`http://localhost:5000/api/whitelist/${deleteConfirm.userId}`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/whitelist/${deleteConfirm.userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
