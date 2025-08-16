@@ -12,13 +12,17 @@ let noClientTimer: NodeJS.Timeout | null = null;
 
 export function setupSocketHandlers(io: Server, db: Pool) {
 io.on('connection', async(socket) => {
+  if (process.env.NODE_ENV !== 'production') {
   console.log(`Socketio client conected: ${socket.id}`);
+  }
 
   // Si había timer para detener intervalos, cancelar porque llegó un cliente
     if (noClientTimer) {
       clearTimeout(noClientTimer);
       noClientTimer = null;
+      if (process.env.NODE_ENV !== 'production') {
       console.log('Clients reconnected — canceled stop timer.');
+      }
     }
 
   // Arranca intervalos si no están activos
@@ -31,13 +35,17 @@ io.on('connection', async(socket) => {
       const raw = await redisClient.get(redisKey);
       if (raw) {
         const data = JSON.parse(raw);
+        if (process.env.NODE_ENV !== 'production') {
         console.log('getting latestvotedata from redis', JSON.stringify(data))
+        }
        socket.emit('full-vote-data', data);
       } else {
         const fallbackdata = await getVotesSummary(db)//votes summary is the function to get the plain without party information
 
         await redisClient.set('latest:vote:data', JSON.stringify(fallbackdata), 'EX', 600);
+        if (process.env.NODE_ENV !== 'production') {
         console.log(' getting fallback from db',fallbackdata)
+        }
         socket.emit('full-vote-data',fallbackdata)
       }
     } catch (error) {

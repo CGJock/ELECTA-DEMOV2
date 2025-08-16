@@ -47,11 +47,6 @@ interface SocketDataContextValue {
 
 const SocketDataContext = createContext<SocketDataContextValue | undefined>(undefined);
 
-// const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
-// const socket = io(socketUrl, {
-//     withCredentials: true,
-//   });
-
 
 
 export const SocketDataProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {

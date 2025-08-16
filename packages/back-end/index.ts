@@ -1,3 +1,7 @@
+//logs only in dev, change to see the logs in prod
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {};
+}
 import './register-tsconfig-paths.js';
 import express from 'express';
 import dotenv from 'dotenv';
