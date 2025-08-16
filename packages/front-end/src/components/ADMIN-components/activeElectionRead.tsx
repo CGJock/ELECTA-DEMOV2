@@ -17,7 +17,7 @@ export const ActiveElectionDisplay: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/get_full-active_election`)
+    fetch(`${API_BASE_URL}/get_full-active_election`)
       .then(res => {
         if (!res.ok) throw new Error('No active election set or error fetching');
         return res.json();
