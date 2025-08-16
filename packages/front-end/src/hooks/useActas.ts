@@ -6,9 +6,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 export interface Acta {
   id: string;
   imageUrl: string;
-  recinto: string;
-  municipio: string;
-  provincia: string;
   departamento: string;
   totalVotos: number;
   votosValidos: number;
@@ -46,10 +43,10 @@ export const useActas = (page: number = 1) => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
-  // Mapear datos del backend a la interfaz del frontend usando datos REALES
+  // Mapear datos del backend a la interfaz del frontend usando solo datos REALES
   const mapBackendToFrontend = (backendActas: BackendActa[]): Acta[] => {
     return backendActas.map((acta) => {
-      // Usar datos REALES del backend en lugar de generar datos falsos
+      // Extraer votos del raw_data
       const votosValidos = Number(acta.raw_data?.validVotes) || 0;
       const votosNulos = Number(acta.raw_data?.nullVotes) || 0;
       const votosBlancos = Number(acta.raw_data?.blankVotes) || 0;
@@ -76,9 +73,6 @@ export const useActas = (page: number = 1) => {
       return {
         id: acta.verification_code,
         imageUrl: acta.image_url,
-        recinto: `Recinto ${acta.verification_code}`,
-        municipio: `Municipio ${acta.verification_code}`,
-        provincia: `Provincia ${acta.verification_code}`,
         departamento: departmentNames[acta.department_code] || acta.department_code,
         totalVotos,
         votosValidos,

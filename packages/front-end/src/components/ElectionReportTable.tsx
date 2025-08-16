@@ -362,9 +362,7 @@ export default function ElectionReportTable() {
     actas.filter(a => {
       const searchLower = textSearch.toLowerCase();
       const matchesText = !textSearch || 
-        a.departamento.toLowerCase().includes(searchLower) ||
-        a.municipio.toLowerCase().includes(searchLower) ||
-        a.provincia.toLowerCase().includes(searchLower);
+        a.departamento.toLowerCase().includes(searchLower);
       
       return matchesText;
     }),
@@ -536,7 +534,7 @@ export default function ElectionReportTable() {
                textAlign: 'center'
              }}>
                <div style={{ color: '#22C55E', fontSize: '1.5rem', fontWeight: 'bold' }}>
-                 {backendTotalPages}
+                 {totalPages}
                </div>
                <div style={{ color: '#9CA3AF', fontSize: '0.9rem' }}>{t('electionReportTable.total_pages')}</div>
              </div>
@@ -791,8 +789,6 @@ export default function ElectionReportTable() {
             
                          {/* Información del acta */}
              <div style={{ fontWeight: 700, fontSize: isMobile ? '1rem' : '1.2rem', marginBottom: isMobile ? 4 : 6, color: '#fff' }}>{t('electionReportTable.modal.acta_info', { id: modalActa.id })}</div>
-            <div style={{ marginBottom: isMobile ? 2 : 3, fontSize: isMobile ? '0.95rem' : undefined, color: '#cbd5e1' }}>{modalActa.recinto}</div>
-            <div style={{ marginBottom: isMobile ? 2 : 3, fontSize: isMobile ? '0.95rem' : undefined, color: '#cbd5e1' }}>{modalActa.municipio}, {modalActa.provincia}</div>
             <div style={{ marginBottom: isMobile ? 8 : 10, fontSize: isMobile ? '0.95rem' : undefined, color: '#cbd5e1' }}>{modalActa.departamento}</div>
             
             {/* Estadísticas de votos simplificadas */}
