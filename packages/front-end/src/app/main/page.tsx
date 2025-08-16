@@ -97,7 +97,7 @@ export default function Page() {
   return (
     <>
       {/* Panel de incidentes - Siempre visible (fases eliminadas) */}
-      <IncidentsFlag incidents={incidents} />
+      {/* <IncidentsFlag incidents={incidents} /> */}
 
       <Suspense fallback={<div>Loading translations...</div>}>
       <div style={{
