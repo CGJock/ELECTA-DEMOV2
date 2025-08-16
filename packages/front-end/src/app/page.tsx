@@ -1,6 +1,7 @@
 'use client'
 import React from 'react';
 import Header from '@/components/Header';
+import UncomingElectionBanner from '@/components/UncomingElectionBanner';
 import GlobalCounter from '@/components/GlobalCounter';
 import Map from '@/components/Map';
 import StatsContainer from '@/components/StatsContainer';
@@ -29,6 +30,8 @@ import ComponentVisibilityProvider from '@/context/componentVisibilityContext';
 // import HeaderWrapper from '@components/components-wrappers/HeaderWrapper';
 // import FooterWrapper from '@components/components-wrappers/FooterWrapper';
 
+
+
 export default function Home() {
   return (
     <ComponentVisibilityProvider>
@@ -38,24 +41,15 @@ export default function Home() {
           <Header />
         </VisibilityWrapper>
 
+        {/* Banner de próximas elecciones */}
+        <UncomingElectionBanner />
+
         {/* Global Counter */}
         <VisibilityWrapper componentName="GlobalCounter">
           <GlobalCounter />
         </VisibilityWrapper>
 
-        {/* Main Content */}
-        {/* ===== CÓDIGO DE DEVELOPER (COMENTADO) ===== */}
-        {/* Este código incluye layout con CSS inline y componentes de elecciones */}
-        {/* NO ELIMINAR - Solo comentar para mantener funcionalidad */}
-        {/* =========================================== */}
-        
-        {/* 
-        CÓDIGO DE DEVELOPER COMENTADO:
-        - Layout con CSS inline
-        - Componentes de elecciones (ElectionForm, ActiveElectionSelector, etc.)
-        - Grid layout personalizado
-        - Este código se moverá al admin page después
-        */}
+ 
 
         <div className="container mx-auto px-4 py-8">
           {/* Map Section */}

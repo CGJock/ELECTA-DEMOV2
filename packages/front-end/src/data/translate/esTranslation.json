@@ -362,9 +362,13 @@
       ]
     }
   },
+  
   "upcomingElections": {
     "title": "Próximas Elecciones",
     "subtitle": "Calendario electoral mundial 2025-2026",
+    "banner_title": "Actualmente no hay procesos electorales en curso",
+    "banner_subtitle": "Próximas elecciones programadas:",
+    "election_day_title": "DÍA DE ELECCIONES: BOLIVIA 2025",
     "what": "Qué se elige",
     "system": "Sistema electoral",
     "main_parties": "Principales partidos",
@@ -446,7 +450,21 @@
     "chile_right_candidate": "favorita tras desgaste de Boric",
     "chile_left": "Oposición progresista",
     "chile_left_candidate": "fragmentada, con candidaturas débiles",
-    "chile_summary": "Elección crítica en contexto de baja aprobación del gobierno actual; reconfiguración política posible."
+    "chile_summary": "Elección crítica en contexto de baja aprobación del gobierno actual; reconfiguración política posible.",
+
+    "bolivia": "Bolivia",
+    "bolivia_date": "17 agosto 2025",
+    "bolivia_what": "Presidente, vicepresidente y miembros de la Asamblea Legislativa Plurinacional.",
+    "bolivia_system": "Dos vueltas si ningún candidato logra mayoría absoluta (50% + 1). Segunda vuelta el 19 octubre 2025.",
+    "bolivia_andronico": "Alianza Popular (ex-MAS)",
+    "bolivia_andronico_candidate": "Andrónico Rodríguez",
+    "bolivia_castillo": "MAS-IPSP (oficialista)",
+    "bolivia_castillo_candidate": "Eduardo del Castillo",
+    "bolivia_doria": "Comunidad Ciudadana (CC)",
+    "bolivia_doria_candidate": "Samuel Doria Medina",
+    "bolivia_quiroga": "Libre 21",
+    "bolivia_quiroga_candidate": "Jorge 'Tuto' Quiroga",
+    "bolivia_summary": "MAS completamente fragmentado tras renuncia de Arce y exclusión de Morales. Oposición lidera encuestas con Doria Medina y Quiroga como favoritos."
   },
   "election_report": {
     "title": "Verificación de Actas de Votación",
