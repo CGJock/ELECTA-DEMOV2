@@ -11,75 +11,76 @@ import redisClient from '@db/redis.js';
 let noClientTimer: NodeJS.Timeout | null = null;
 
 export function setupSocketHandlers(io: Server, db: Pool) {
-io.on('connection', async(socket) => {
-  if (process.env.NODE_ENV !== 'production') {
-  console.log(`Socketio client conected: ${socket.id}`);
-  }
+  io.on('connection', async (socket) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Socket.io client connected: ${socket.id}`);
+    }
 
-  // Si había timer para detener intervalos, cancelar porque llegó un cliente
+    // Si había timer de apagar, lo cancelamos
     if (noClientTimer) {
       clearTimeout(noClientTimer);
       noClientTimer = null;
       if (process.env.NODE_ENV !== 'production') {
-      console.log('Clients reconnected — canceled stop timer.');
+        console.log('Clients reconnected — canceled stop timer.');
       }
     }
 
-  // Arranca intervalos si no están activos
+    // Arranca intervalos si no están activos
     startSummaryIntervals(io, db);
-    
-   // get the latest data for the global counter component
-  try {
+
+    /**
+     * --- Emitir datos iniciales al conectar ---
+     */
+    try {
       const roundId = await getActiveElectionRoundId();
       const redisKey = `latest:vote:data:${roundId}`;
       const raw = await redisClient.get(redisKey);
+
       if (raw) {
         const data = JSON.parse(raw);
         if (process.env.NODE_ENV !== 'production') {
-        console.log('getting latestvotedata from redis', JSON.stringify(data))
+          console.log('getting latest vote data from redis', JSON.stringify(data));
         }
-       socket.emit('full-vote-data', data);
+        socket.emit('full-vote-data', data);
       } else {
-        const fallbackdata = await getVotesSummary(db)//votes summary is the function to get the plain without party information
+        const fallbackData = await getVotesSummary(db);
+        await redisClient.set(redisKey, JSON.stringify(fallbackData), 'EX', 600);
 
-        await redisClient.set('latest:vote:data', JSON.stringify(fallbackdata), 'EX', 600);
         if (process.env.NODE_ENV !== 'production') {
-        console.log(' getting fallback from db',fallbackdata)
+          console.log('getting fallback from db', fallbackData);
         }
-        socket.emit('full-vote-data',fallbackdata)
+        socket.emit('full-vote-data', fallbackData);
       }
     } catch (error) {
       console.error('Error leyendo de Redis al conectar cliente:', error);
     }
 
-    
-
-
-    //checks last data for parties to initialize the component 
-    try{
-    const lastSummary = await getTotalSummary(db);
+    try {
+      const lastSummary = await getTotalSummary(db);
       if (lastSummary) {
-        console.log('dataincial de las parties',lastSummary)
-        socket.emit('initial-vote-summary',lastSummary);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Datos iniciales de las parties', lastSummary);
+        }
+        socket.emit('initial-vote-summary', lastSummary);
       }
     } catch (error) {
-      console.error('error getting last summary:', error);
+      console.error('Error getting last summary:', error);
     }
 
-    //Global summary
-   socket.on('get-total-breakdown', async () => {
-    await sendGlobalSummary(io, db);
-  });
+    /**
+     * --- Eventos ---
+     */
+    socket.on('get-total-breakdown', async () => {
+      await sendGlobalSummary(io, db);
+    });
 
-
-    // Suscripción a un locationId específico
     socket.on('subscribe-to-location', async (locationCode: string) => {
       const room = `location-${locationCode}`;
-        if (socket.rooms.has(room)) {
-          console.log(`Socket ${socket.id} already subscribed to ${room}`);
-          return; // no hacer nada
-        }
-      
+      if (socket.rooms.has(room)) {
+        console.log(`Socket ${socket.id} already subscribed to ${room}`);
+        return;
+      }
+
       try {
         const redisKey = `location-${locationCode}`;
         const cached = await redisClient.get(redisKey);
@@ -102,15 +103,16 @@ io.on('connection', async(socket) => {
       }
     });
 
-    // disconnect users
+    /**
+     * --- Desconexión ---
+     */
     socket.on('disconnect', () => {
       console.log(`Disconnected Client: ${socket.id}`);
 
       if (io.sockets.sockets.size === 0) {
-        // Si no hay clientes conectados, espera 1 minuto antes de parar intervalos
         console.log('No clients connected, starting 1 minute timer to stop intervals...');
         noClientTimer = setTimeout(() => {
-          stopSummaryIntervals();
+          stopSummaryIntervals(); // Solo apaga intervalos
           console.log('No clients for 1 minute, stopped summary intervals.');
         }, 60 * 1000);
       }
