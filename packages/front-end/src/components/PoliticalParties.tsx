@@ -26,9 +26,7 @@ export function PoliticalParties({
   const { t } = useTranslation();
   const { selectedLocationCode, globalSummary, breakdownLocData } = useSocketData();
 
-  
 
-  console.log('globalsummary',globalSummary)
 
    if (!globalSummary && !breakdownLocData) {
     return <div className="text-white p-4">{t('loading')}...</div>;
@@ -42,8 +40,6 @@ export function PoliticalParties({
   const sourcePartyBreakdown = selectedLocationCode && breakdownLocData
   ? breakdownLocData?.partyBreakdown
   : globalSummary?.politicalParties; 
-
-  console.log('datadelasparties',sourcePartyBreakdown)
 
   // Enriquecer partidos con datos del backend
   const defaultPhoto = '/img/default-candidate.svg';

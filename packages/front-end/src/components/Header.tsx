@@ -88,7 +88,7 @@ const Header: React.FC = () => {
               key === 'about' ? (
                 <Link
                   key={key}
-                  href="/about"
+                  href="/main/about"
                   className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
                 >
                   <span className="relative z-10">{t(`nav.${key}`)}</span>
@@ -98,7 +98,7 @@ const Header: React.FC = () => {
               ) : key === 'elections' ? (
                 <Link
                   key={key}
-                  href="/elections"
+                  href="/main/elections"
                   className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
                 >
                   <span className="relative z-10">{t(`nav.${key}`)}</span>
@@ -108,7 +108,7 @@ const Header: React.FC = () => {
               ) : key === 'faq' ? (
                 <Link
                   key={key}
-                  href="/faq"
+                  href="/main/faq"
                   className="group relative text-white font-medium text-sm px-4 py-1 rounded-lg transition-all duration-300 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
                 >
                   <span className="relative z-10">{t(`nav.${key}`)}</span>

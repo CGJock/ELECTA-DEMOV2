@@ -34,7 +34,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
   const [error, setError] = useState<string | null>(null);
   const {  logout } = useAuth();
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
   // Función genérica para manejar fetch con cookie HttpOnly
   const fetchWithCredentials = async (url: string, options: RequestInit = {}) => {
@@ -65,7 +65,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
 
     try {
 
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management`);
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management`);
       if (data.success) {
         setAdmins(data.admins);
       } else {
@@ -88,7 +88,7 @@ export function useAdminManagement(): UseAdminManagementReturn {
     setError(null);
 
     try {
-      const data = await fetchWithCredentials(`${API_BASE_URL}/admin-management`, {
+      const data = await fetchWithCredentials(`${API_BASE_URL}/api/admin-management`, {
         method: 'POST',
         body: JSON.stringify(adminData)
       });

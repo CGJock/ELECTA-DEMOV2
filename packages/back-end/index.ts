@@ -1,3 +1,11 @@
+
+
+//logs only in dev, change to see the logs in prod
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {};
+}
+
+
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -14,6 +22,9 @@ import depRouter from '@routes/departments.js';
 import newVoteRouter from '@routes/newUpdate.js'
 import getmailsRouter from '@routes/getMails.js';
 import postmailsRouter from '@routes/postEmail.js';
+import getBallotsRouter from '@routes/getBallots.js';
+import getIdsBallots from '@routes/getIdBallot.js'
+
 
 // Sistema de Elecciones (Developer)
 import getElectionsTypeRouter from '@routes/getElectionType.js'
@@ -77,7 +88,9 @@ async function main() {
     console.warn('redis not conected, :', (error as Error).message);
   }
   app.use('/api/get-emails', getmailsRouter);
-  app.use('/api/post-emails', postmailsRouter)
+  app.use('/api/post-emails', postmailsRouter);
+  app.use('/api/get-ballot_id', getIdsBallots);
+  app.use('/api/get-ballots',getBallotsRouter);
   
   // Sistema de Autenticación y Admin (Tus cambios)
   app.use('/api/auth', authRouter);

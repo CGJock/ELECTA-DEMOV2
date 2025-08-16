@@ -21,17 +21,17 @@ interface IncidentsFlagProps {
 const getSocket = () => ({
   on: (event: string, callback: (data: any) => void) => {
     // Mock socket listener
-    console.log(`Mock socket listening for: ${event}`)
+    
   },
   off: (event: string) => {
     // Mock socket cleanup
-    console.log(`Mock socket stopped listening for: ${event}`)
+    
   }
 })
 
 const emitIncidentUpdate = (incident: Incident) => {
   // Mock socket emit
-  console.log('Mock socket emitting incident:', incident)
+ 
 }
 
 // NUEVO: sistema de status de incidentes con colores
