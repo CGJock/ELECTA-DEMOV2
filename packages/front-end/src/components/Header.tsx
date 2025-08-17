@@ -105,6 +105,7 @@ const Header: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-slate-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-cyan-300 to-slate-400 transition-all duration-300 group-hover:w-3/4"></div>
                 </Link>
+                
               ) : key === 'faq' ? (
                 <Link
                   key={key}
