@@ -14,6 +14,32 @@
     "election_statistics": "Estadísticas Electorales",
     "detailed_statistics": "Las estadísticas y análisis detallados se mostrarán aquí."
   },
+  "electionReportTable": {
+    "title": "Tabla de Actas Electorales",
+    "loading": "Cargando...",
+    "error": "Error: {{error}}",
+    "table_headers": {
+      "department": "Departamento",
+      "image": "Imagen"
+    },
+    "buttons": {
+      "view_image": "Ver Imagen",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    
+    "pagination": {
+      "page_info": "{{current}} de {{total}}"
+    },
+    "modal": {
+      "loading_image": "Cargando imagen...",
+      "acta_info": "Acta {{id}}",
+      "download": "Descargar",
+      "open_new_tab": "Abrir en nueva pestaña",
+      "image_load_error": "Error al cargar la imagen. Haz clic en \"Abrir en nueva pestaña\" para verla.",
+      "image_error": "Error al cargar la imagen"
+    }
+  },
   "map": {
     "title": "Mostrando resultados: {{name}}",
     "return_global": "Volver a resultados nacionales",

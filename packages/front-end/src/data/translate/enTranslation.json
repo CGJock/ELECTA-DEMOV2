@@ -14,6 +14,31 @@
     "election_statistics": "Election Statistics",
     "detailed_statistics": "Detailed statistics and analytics will be displayed here."
   },
+  "electionReportTable": {
+    "title": "Electoral Ballots Table",
+    "loading": "Loading...",
+    "error": "Error: {{error}}",
+    "table_headers": {
+      "department": "Department",
+      "image": "Image"
+    },
+    "buttons": {
+      "view_image": "View Image",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "pagination": {
+      "page_info": "{{current}} of {{total}}"
+    },
+    "modal": {
+      "loading_image": "Loading image...",
+      "acta_info": "Ballot {{id}}",
+      "download": "Download",
+      "open_new_tab": "Open in new tab",
+      "image_load_error": "Error loading image. Click on \"Open in new tab\" to view it.",
+      "image_error": "Error loading image"
+    }
+  },
   "map": {
     "title": "Showing Results: {{name}}",
     "return_global": "Go To National Results",
@@ -122,6 +147,7 @@
   "location": "Location",
   "timestamp": "Generated At"
   },
+  
   "ver_mas": "See more",
   "ver_menos": "See less",
   "votechart": {

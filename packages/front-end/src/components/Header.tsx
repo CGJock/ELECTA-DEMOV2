@@ -84,7 +84,7 @@ const Header: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/50 via-slate-800/30 to-slate-900/50"></div>
         <div className="relative z-10 max-w-7xl mx-auto px-6">
           <div className="flex justify-center items-center py-0.5 gap-8">
-            {['home', 'elections', 'about', 'faq'].map((key) => (
+            {['home', 'elections', 'about'/*, 'faq'*/].map((key) => (
               key === 'about' ? (
                 <Link
                   key={key}
@@ -143,7 +143,7 @@ const Header: React.FC = () => {
               <X size={28} className="text-white" />
             </button>
             <div className="flex flex-col gap-4 mt-10">
-              {['home', 'elections', 'about', 'faq'].map((key) => (
+              {['home', 'elections', 'about'/*, 'faq'*/].map((key) => (
                 <Link
                   key={key}
                   href={key === 'home' ? '/' : `/${key}`}
