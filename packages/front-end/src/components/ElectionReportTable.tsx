@@ -64,6 +64,7 @@ export default function ElectionReportTable() {
     }
   };
 
+  
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '2rem', color: '#fff' }}>
       <Loader2 size={32} style={{ animation: 'spin 1s linear infinite' }} />

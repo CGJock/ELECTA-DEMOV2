@@ -27,6 +27,7 @@
       "previous": "Anterior",
       "next": "Siguiente"
     },
+    
     "pagination": {
       "page_info": "{{current}} de {{total}}"
     },
