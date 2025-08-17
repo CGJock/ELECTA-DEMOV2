@@ -30,6 +30,7 @@ class ComponentVisibilityService {
     try {
       const response = await fetch(`${API_BASE_URL}/api/component-visibility/phases`, {
         method: 'GET',
+        credentials: 'include', // Enviar cookies
         headers: {
           'Content-Type': 'application/json'
         }
@@ -47,6 +48,7 @@ class ComponentVisibilityService {
     try {
       const response = await fetch(`${API_BASE_URL}/api/component-visibility/active-phase`, {
         method: 'GET',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
