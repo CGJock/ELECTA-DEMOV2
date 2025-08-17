@@ -64,15 +64,16 @@ export default function Home() {
             <StatsContainer />
           </VisibilityWrapper>
 
+
           {/* Election Report Table */}
           {/* <VisibilityWrapper componentName="ElectionReportTable">
             <ElectionReportTable />
           </VisibilityWrapper> */}
 
           {/* Incidents Flag */}
-          <VisibilityWrapper componentName="IncidentsFlag">
+          {/* <VisibilityWrapper componentName="IncidentsFlag">
             <IncidentsFlag />
-          </VisibilityWrapper>
+          </VisibilityWrapper> */}
 
           {/* Winner Banner */}
           <VisibilityWrapper componentName="WinnerBanner">

@@ -347,8 +347,9 @@ const getDepartmentName = (code: string | null): string => {
 
   return (
     <div className="flex flex-col items-center mt-6">
+      
       {/* IncidentsFlag modal controlled from Map */}
-      <IncidentsFlag
+      {/* <IncidentsFlag
         key={focusedIncidentId}
         incidents={incidents}
         isOpen={incidentModalOpen}
@@ -359,7 +360,7 @@ const getDepartmentName = (code: string | null): string => {
           setIncidentModalOpen(false);
           setFocusedIncidentId(null);
         }}
-      />
+      /> */}
          {selectedLocationCode !== null && (
           <div className="w-full text-center mt-3" style={{ minHeight: '30px' }}>
             <button
