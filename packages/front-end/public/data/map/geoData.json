@@ -6441,7 +6441,7 @@
         "source": "https://simplemaps.com", 
         "id": "BOT", 
         "name": "Tarija",
-        "code": " BO06"
+        "code": "BO06"
       }, 
       "id": 4
     }, 
@@ -17170,7 +17170,7 @@
         "source": "https://simplemaps.com", 
         "id": "BOC", 
         "name": "Cochabamba",
-        "code": " BO03"
+        "code": "BO03"
       }, 
       "id": 9
     }
