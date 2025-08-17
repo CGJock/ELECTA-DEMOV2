@@ -134,7 +134,6 @@ class ComponentVisibilityService {
     try {
       const response = await fetch(`${API_BASE_URL}/api/component-visibility/site-config`, {
         method: 'GET',
-        credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
