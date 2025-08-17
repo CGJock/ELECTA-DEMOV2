@@ -144,6 +144,7 @@ const AboutUs: React.FC = () => {
             {t('about.hero.subtitle')}
           </p>
           
+          {/* 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
               onClick={scrollToContact}
@@ -157,6 +158,7 @@ const AboutUs: React.FC = () => {
               </span>
             </button>
           </div>
+          */}
         </div>
       </section>
 
@@ -275,6 +277,7 @@ const AboutUs: React.FC = () => {
       </section> */}
 
       {/* Contacto */}
+      {/* 
       <section 
         ref={contactRef} 
         className="py-24 px-6 bg-gradient-to-br from-slate-800 to-slate-900"
@@ -393,6 +396,7 @@ const AboutUs: React.FC = () => {
           </div>
         </div>
       </section>
+      */}
     </div>
   );
 };
