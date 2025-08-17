@@ -145,16 +145,12 @@ router.post('/', validateApiKey, votosLimiter, async (req: Request, res: Respons
   try {
     await client.query('BEGIN');
 
-    // Check verification_code uniqueness in ballot_tallies
-    const ballotExists = await client.query(
-      `SELECT verification_code FROM ballot_tallies WHERE verification_code = $1`,
-      [tallyImage?.verification]
-    );
-    if (ballotExists.rows.length > 0) {
-      res.status(409).json({ error: 'Verification code already stored.' });
-      await client.query('ROLLBACK');
-      return;
-    }
+    // ---------------------------------------------
+    // REPARO: Eliminamos el SELECT inicial en ballot_tallies
+    // para que no rompa la transacción si el verification_code ya existe.
+    // En su lugar, usamos ON CONFLICT DO NOTHING más adelante y
+    // enviamos un mensaje indicando que se omitió si ya existía en ballots_data.
+    // ---------------------------------------------
 
     // Get latest election round
     const election_round_id = await getActiveElectionRoundId();
@@ -184,8 +180,12 @@ router.post('/', validateApiKey, votosLimiter, async (req: Request, res: Respons
       parties: partyVotes,
     };
 
+    let alreadyExistsInData = false;
+
     if (hasMissingData) {
-      // Insert/update ballots_missing_data with all info
+      // ---------------------------------------------
+      // Actas incompletas: se actualizan en ballots_missing_data
+      // ---------------------------------------------
       const existingInMissing = await client.query(
         `SELECT verification_code FROM ballots_missing_data WHERE verification_code = $1`,
         [tallyImage?.verification]
@@ -242,28 +242,35 @@ router.post('/', validateApiKey, votosLimiter, async (req: Request, res: Respons
         );
       }
     } else {
+      // ---------------------------------------------
+      // Actas completas: se inserta en ballots_data con ON CONFLICT DO NOTHING
+      // para que no rompa la transacción si ya existe.  
+      // Se registra en ballot_tallies igual con ON CONFLICT DO NOTHING.
+      // Si ya existía en ballots_data, se marca ya existente para el mensaje.
+      // ---------------------------------------------
+
       // Delete from missing data if exists
       await client.query(
         `DELETE FROM ballots_missing_data WHERE verification_code = $1`,
         [tallyImage?.verification]
       );
 
-      // Insert or update ballots_data (raw_data)
-      await client.query(
+      const result = await client.query(
         `INSERT INTO ballots_data (
           verification_code,
           raw_data,
           election_round_id,
           department_code
         ) VALUES ($1,$2,$3,$4)
-        ON CONFLICT (verification_code) DO UPDATE SET
-          raw_data = EXCLUDED.raw_data,
-          election_round_id = EXCLUDED.election_round_id,
-          department_code = EXCLUDED.department_code`,
+        ON CONFLICT (verification_code) DO NOTHING
+        RETURNING verification_code`,
         [tallyImage?.verification, JSON.stringify(rawDataToSave), election_round_id, department_code]
       );
 
-      // Insert ballot_tallies metadatos (incluyendo raw_data)
+      if (result.rowCount === 0) {
+        alreadyExistsInData = true;
+      }
+
       if (tallyImage) {
         await client.query(`
           INSERT INTO ballot_tallies (
@@ -297,7 +304,9 @@ router.post('/', validateApiKey, votosLimiter, async (req: Request, res: Respons
     res.status(200).json({
       message: hasMissingData
         ? 'Data saved as missing due to incomplete values.'
-        : 'Data successfully saved as complete.',
+        : alreadyExistsInData
+          ? 'Skipped: ballot already exists in ballots_data.'
+          : 'Data successfully saved as complete.',
       election_round_id,
       department,
       parties: partyVotes,
