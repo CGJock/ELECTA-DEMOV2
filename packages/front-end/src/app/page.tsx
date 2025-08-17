@@ -64,6 +64,7 @@ export default function Home() {
             <StatsContainer />
           </VisibilityWrapper>
 
+
           {/* Election Report Table */}
           {/* <VisibilityWrapper componentName="ElectionReportTable">
             <ElectionReportTable />

@@ -347,6 +347,7 @@ const getDepartmentName = (code: string | null): string => {
 
   return (
     <div className="flex flex-col items-center mt-6">
+      
       {/* IncidentsFlag modal controlled from Map */}
       {/* <IncidentsFlag
         key={focusedIncidentId}
