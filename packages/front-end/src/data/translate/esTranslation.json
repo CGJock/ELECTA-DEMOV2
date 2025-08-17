@@ -15,42 +15,28 @@
     "detailed_statistics": "Las estadísticas y análisis detallados se mostrarán aquí."
   },
   "electionReportTable": {
-    "title": "Reporte de Elecciones - Vista Tabla",
-    "loading_backend": "Cargando actas del backend...",
-    "error_loading": "Error al cargar datos: {{error}}",
-    "data_available": "Datos del backend disponibles ({{count}} actas)",
-    "backend_stats": "Estadísticas del Backend",
-    "total_actas": "Total de Actas",
-    "total_pages": "Total de Páginas",
-    "current_page": "Página Actual",
-    "actas_this_page": "Actas en esta Página",
-    "search_placeholder": "Buscar por departamento, municipio o provincia...",
-    "clear": "Limpiar",
-    "total_records": "Total de registros: {{count}}",
-    "page_info": "Página {{current}} de {{total}}",
-    "showing_actas": "Mostrando {{count}} actas de esta página",
-    "loading_actas": "Cargando actas del backend...",
-    "no_results": "No se encontraron resultados",
+    "title": "Tabla de Actas Electorales",
+    "loading": "Cargando...",
+    "error": "Error: {{error}}",
     "table_headers": {
       "department": "Departamento",
-      "total_votes": "Total Votos",
-      "valid_votes": "Votos Válidos",
-      "null_votes": "Votos Nulos",
-      "blank_votes": "Votos Blancos"
+      "image": "Imagen"
     },
-    "pagination": {
+    "buttons": {
+      "view_image": "Ver Imagen",
       "previous": "Anterior",
       "next": "Siguiente"
     },
+    "pagination": {
+      "page_info": "{{current}} de {{total}}"
+    },
     "modal": {
+      "loading_image": "Cargando imagen...",
       "acta_info": "Acta {{id}}",
-      "votes_total": "📊 Votos: {{count}} total",
-      "valid_votes_info": "✅ {{count}} válidos ({{percentage}}%)",
-      "null_votes_info": "❌ {{count}} nulos ({{percentage}}%)",
-      "blank_votes_info": "⚪ {{count}} blancos ({{percentage}}%)",
-      "open_image": "Abrir imagen",
-      "download_image": "Descargar imagen",
-      "downloading": "Descargando..."
+      "download": "Descargar",
+      "open_new_tab": "Abrir en nueva pestaña",
+      "image_load_error": "Error al cargar la imagen. Haz clic en \"Abrir en nueva pestaña\" para verla.",
+      "image_error": "Error al cargar la imagen"
     }
   },
   "map": {

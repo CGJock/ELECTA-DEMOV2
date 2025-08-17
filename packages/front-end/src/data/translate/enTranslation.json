@@ -15,42 +15,28 @@
     "detailed_statistics": "Detailed statistics and analytics will be displayed here."
   },
   "electionReportTable": {
-    "title": "Election Report - Table View",
-    "loading_backend": "Loading ballots from backend...",
-    "error_loading": "Error loading data: {{error}}",
-    "data_available": "Backend data available ({{count}} ballots)",
-    "backend_stats": "Backend Statistics",
-    "total_actas": "Total Ballots",
-    "total_pages": "Total Pages",
-    "current_page": "Current Page",
-    "actas_this_page": "Ballots on this Page",
-    "search_placeholder": "Search by department, municipality or province...",
-    "clear": "Clear",
-    "total_records": "Total records: {{count}}",
-    "page_info": "Page {{current}} of {{total}}",
-    "showing_actas": "Showing {{count}} ballots from this page",
-    "loading_actas": "Loading ballots from backend...",
-    "no_results": "No results found",
+    "title": "Electoral Ballots Table",
+    "loading": "Loading...",
+    "error": "Error: {{error}}",
     "table_headers": {
       "department": "Department",
-      "total_votes": "Total Votes",
-      "valid_votes": "Valid Votes",
-      "null_votes": "Null Votes",
-      "blank_votes": "Blank Votes"
+      "image": "Image"
     },
-    "pagination": {
+    "buttons": {
+      "view_image": "View Image",
       "previous": "Previous",
       "next": "Next"
     },
+    "pagination": {
+      "page_info": "{{current}} of {{total}}"
+    },
     "modal": {
+      "loading_image": "Loading image...",
       "acta_info": "Ballot {{id}}",
-      "votes_total": "📊 Votes: {{count}} total",
-      "valid_votes_info": "✅ {{count}} valid ({{percentage}}%)",
-      "null_votes_info": "❌ {{count}} null ({{percentage}}%)",
-      "blank_votes_info": "⚪ {{count}} blank ({{percentage}}%)",
-      "open_image": "Open image",
-      "download_image": "Download image",
-      "downloading": "Downloading..."
+      "download": "Download",
+      "open_new_tab": "Open in new tab",
+      "image_load_error": "Error loading image. Click on \"Open in new tab\" to view it.",
+      "image_error": "Error loading image"
     }
   },
   "map": {
